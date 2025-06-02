@@ -29,7 +29,7 @@ const Translator: React.FC = () => {
     ur: { name: 'اردو' },
     ne: { name: 'नेपाली' },
     si: { name: 'සිංහල' },
-    brahmi: { name: 'Brahmi Lipi (𑀩𑁆𑀭��𑀳𑁆𑀫𑀻)' }
+    brahmi: { name: 'Brahmi Lipi (𑀩𑁆𑀭𑀳𑁆𑀫𑀻)' }
   };
 
   // Google Translate API call
@@ -521,49 +521,6 @@ const Translator: React.FC = () => {
             </div>
           </div>
         </Card>
-      </motion.div>
-
-      {/* Sample Translations */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, delay: 0.4 }}
-        className="mt-16"
-      >
-        <h3 className="text-xl font-serif font-semibold text-center mb-8">
-          Sample Translations
-        </h3>
-        
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            { english: 'Namaste', hindi: 'नमस्कार', brahmi: '𑀦𑀫𑀲𑁆𑀓𑀸𑀭' },
-            { english: 'Jai Jinendra', hindi: 'जय जिनेन्द्र', brahmi: '𑀚𑀬 𑀚𑀺𑀦𑁂𑀦𑁆𑀤𑁆𑀭' },
-            { english: 'Ahimsa', hindi: 'अहिंसा', brahmi: '𑀅𑀳𑀺𑀁𑀲𑀸' },
-            { english: 'Dharma', hindi: 'धर्म', brahmi: '𑀥𑀭𑁆𑀫' },
-            { english: 'Peace', hindi: 'शांति', brahmi: '𑀰𑀸𑀁𑀢𑀺' },
-            { english: 'Liberation', hindi: 'मोक्ष', brahmi: '𑀫𑁄𑀓𑁆𑀱' },
-            { english: 'Tirthankara', hindi: 'तीर्थंकर', brahmi: '𑀢𑀻𑀭𑁆𑀣𑀁𑀓𑀭' },
-            { english: 'Adinath', hindi: 'आदिनाथ', brahmi: '𑀆𑀤𑀺𑀦𑀸𑀣' },
-            { english: 'Brahmi', hindi: 'ब्राह्मी', brahmi: '𑀩𑁆𑀭𑀸𑀳𑁆𑀫𑀻' },
-          ].map((sample, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-surface-200 rounded-lg p-6 border border-surface-100 cursor-pointer hover:bg-surface-100 transition-colors"
-              onClick={() => setInputText(sample.english)}
-            >
-              <div className="space-y-3">
-                <div className="text-white font-medium">{sample.english}</div>
-                <div className="text-white font-medium" style={{ fontFamily: 'Noto Sans Devanagari, serif' }}>{sample.hindi}</div>
-                <div className="text-primary-400 font-brahmi text-lg">{sample.brahmi}</div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
       </motion.div>
     </Section>
   );
