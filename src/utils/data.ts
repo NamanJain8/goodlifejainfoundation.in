@@ -124,41 +124,49 @@ export const timelineData: TimelineItem[] = [
     id: 1,
     title: 'The Six Karmas',
     description: 'At the end of the Bhogabhumi, when the Kalpavriksha-affected subjects came to the court of the fourteenth Kulakara king Nabhirayaji, he sent them to his son Rishabadeva, the holder of tri-knowledge (Mati-Srut-Avadhi Jnana). Rishabadeva taught the people the practice of the six karmas (Asi, Masi, Krishi, Vidya, Vanijya and Shilpa). People made their lives easier with the help of these six karmas.',
+    image: '/assets/story/01_six_karmas.png',
   },
   {
     id: 2,
     title: "Women's Education Initiative",
     description: 'Of these six actions, the action called Vidya(education) is the deepest, the widest and the best. Rishabhdev taught the same to his 101 sons and also to his 2 daughters by not considering them inferior to his sons. Adi Vidhata also preached to the general public that "unless women are educated, our next generation cannot be educated."',
+    image: '/assets/story/02_womens_education.png',
   },
   {
     id: 3,
     title: 'Brahmi and Sundari',
     description: 'The daughters named Brahmi and Sundari, who were entering their youth, were called by King Rishabhdev and were told the importance of education in life. An educated person was called a guide in society; a man without education was called an animal. Thus, knowing the importance of education in life, Brahmi and Sundari requested their father to give them knowledge.',
+    image: '/assets/story/03_requesting_education.png',
   },
   {
     id: 4,
     title: 'The Teaching Begins',
     description: 'Seeing his two daughters eligible and enthusiastic for receiving education, he started educating them in the auspicious Nakshatra-muhurta etc. \'Brahmi\' was the eldest daughter, so he donated \'Akshar Vidya\' by making her sit on the right hand side and \'Ank Vidya\' by making \'Sundari\' sit on the left hand side.',
+    image: '/assets/story/04_teaching_begins.png',
   },
   {
     id: 5,
     title: 'The Era of Bhog Bhoomi',
     description: 'Bhog bhoomi exists till the third period(era), that is, ten types of useful items of life are easily accessible to humans from Kalpavriksha during this period. The creatures born in this land got the desired thing only by contemplating in front of the trees without making any effort.',
+    image: '/assets/story/05_bhog_bhoomi.png',
   },
   {
     id: 6,
     title: 'Language and Script',
     description: 'Language is a means of expressing one\'s feelings. The art of writing the language is called \'script\'. At the end of the third period there was language - Prakrit language, the language of nature. At the end of the third period, there was interaction through the \'Prakrit language\', but the language could not be written. King Rishabhdev Ji fulfilled this deficiency and taught \'Lipi Vidya\' to his elder daughter Brahmi.',
+    image: '/assets/story/06_language_vs_script.png',
   },
   {
     id: 7,
     title: 'Scripts and Languages',
     description: 'Every language has its own script like Sanskrit, Apabhramsha, Hindi, Pali, etc. have their script as \'Devanagari\'. The script of the English language is Roman and that of Punjabi language is \'Gurmukhi\'. You can write any language from any script, but to write completely and correctly, you need to use the script of that language.',
+    image: '/assets/story/07_scripts_languages.png',
   },
   {
     id: 8,
     title: 'The Origin of Brahmi Script',
     description: 'The natural language of human beings is called the Prakrit language. Its script was taught by King Rishabhdev to his daughter Brahmi and by Brahmi to everyone. For this reason, the script of the Prakrit language came to be known as Brahmi. King Rishabhdev taught Brahmi to write by sitting on the right side, which is why 99% of the world\'s scripts are written from left to right.',
+    image: '/assets/story/08_origin_brahmi.png',
   },
 ];
 
