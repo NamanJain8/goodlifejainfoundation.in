@@ -82,18 +82,6 @@ const Tools: React.FC = () => {
                     <ExternalLink size={16} className="group-hover:translate-x-1 transition-transform" />
                   )}
                 </Button>
-
-                {/* Special Badge for Widget */}
-                {tool.isWidget && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.5 + index * 0.1 }}
-                    className="absolute -top-2 -right-2 bg-accent-500 text-white text-xs px-2 py-1 rounded-full"
-                  >
-                    Live
-                  </motion.div>
-                )}
               </div>
             </Card>
           </motion.div>
