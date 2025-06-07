@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Play, X } from 'lucide-react';
-import Button from '../ui/Button';
+import { Play } from 'lucide-react';
 import { heroVideoUrl, spiritualContent } from '../../utils/data';
 
 const Hero: React.FC = () => {
-  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  useEffect(() => {
+    // Initialize Lity - dynamic import to avoid TypeScript issues
+    import('lity').catch(console.error);
+  }, []);
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -87,54 +89,21 @@ const Hero: React.FC = () => {
             transition={{ duration: 0.8, delay: 1.3 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => setIsVideoModalOpen(true)}
-              className="group"
+            <motion.a
+              href={heroVideoUrl}
+              data-lity=""
+              className="inline-flex items-center gap-2 px-6 py-3 font-medium text-center border border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-dark-950 rounded-lg transition-all duration-300 ease-in-out group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-950 focus:ring-primary-500"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               <Play size={20} className="group-hover:scale-110 transition-transform" />
               <span>Watch Story</span>
-            </Button>
+            </motion.a>
           </motion.div>
 
 
         </motion.div>
       </div>
-
-      {/* Video Modal */}
-      {isVideoModalOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
-          onClick={() => setIsVideoModalOpen(false)}
-        >
-          <motion.div
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0.8 }}
-            className="relative w-full max-w-4xl mx-4 aspect-video"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <iframe
-              src={heroVideoUrl}
-              className="w-full h-full rounded-lg"
-              frameBorder="0"
-              allow="autoplay; fullscreen; picture-in-picture"
-              allowFullScreen
-              title="Brahmi Script Story"
-            />
-            <button
-              onClick={() => setIsVideoModalOpen(false)}
-              className="absolute -top-12 right-0 text-white hover:text-primary-500 transition-colors"
-            >
-              <X size={32} />
-            </button>
-          </motion.div>
-        </motion.div>
-      )}
     </section>
   );
 };
