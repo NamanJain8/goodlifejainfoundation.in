@@ -62,9 +62,11 @@ const Header: React.FC = () => {
             className="flex items-center space-x-3"
             whileHover={{ scale: 1.05 }}
           >
-            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
-              <span className="text-dark-950 font-bold text-lg font-brahmi">𑀩</span>
-            </div>
+            <img 
+              src="/logo.png" 
+              alt="Good Life Jain Foundation Logo" 
+              className="w-10 h-10 object-contain"
+            />
             <div>
               <h1 className="text-xl font-serif font-bold gradient-text">
                 Good Life Jain Foundation
