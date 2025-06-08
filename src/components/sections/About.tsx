@@ -147,9 +147,15 @@ const About: React.FC = () => {
                             <h3 className="text-xl font-serif font-semibold text-primary-400 mb-3">
                               {item.title}
                             </h3>
-                            <p className="text-gray-300 leading-relaxed">
-                              {item.description}
-                            </p>
+                            <div className="text-gray-300 leading-relaxed space-y-3">
+                              {Array.isArray(item.description) ? (
+                                item.description.map((paragraph, index) => (
+                                  <p key={index}>{paragraph}</p>
+                                ))
+                              ) : (
+                                <p>{item.description}</p>
+                              )}
+                            </div>
                           </div>
                         </Card>
                       </div>
@@ -226,9 +232,15 @@ const About: React.FC = () => {
                             <h3 className="text-xl font-serif font-semibold text-primary-400 mb-3">
                               {item.title}
                             </h3>
-                            <p className="text-gray-300 leading-relaxed">
-                              {item.description}
-                            </p>
+                            <div className="text-gray-300 leading-relaxed space-y-3">
+                              {Array.isArray(item.description) ? (
+                                item.description.map((paragraph, index) => (
+                                  <p key={index}>{paragraph}</p>
+                                ))
+                              ) : (
+                                <p>{item.description}</p>
+                              )}
+                            </div>
                           </div>
                         </Card>
                       </div>
@@ -245,9 +257,15 @@ const About: React.FC = () => {
                     <h3 className="text-xl font-serif font-semibold text-primary-400 mb-3">
                       {item.title}
                     </h3>
-                    <p className="text-gray-300 leading-relaxed">
-                      {item.description}
-                    </p>
+                    <div className="text-gray-300 leading-relaxed space-y-3">
+                      {Array.isArray(item.description) ? (
+                        item.description.map((paragraph, index) => (
+                          <p key={index}>{paragraph}</p>
+                        ))
+                      ) : (
+                        <p>{item.description}</p>
+                      )}
+                    </div>
                   </div>
                 </Card>
 
