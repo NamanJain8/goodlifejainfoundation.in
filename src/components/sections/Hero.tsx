@@ -39,9 +39,10 @@ const Hero: React.FC = () => {
             className="mb-8"
           >
             <div className="text-6xl md:text-8xl font-brahmi text-primary-500 mb-4 animate-float">
-              𑀩𑁆𑀭𑀸𑀳𑁆𑀫𑀻
+              𑀩𑁆𑀭𑀸𑀳𑁆𑀫𑀻 𑀮𑀺𑀧𑀺
             </div>
-            <p className="text-primary-400 text-lg">Brahmi Script</p>
+            <p className="text-primary-400 text-lg">Brahmi Lipi</p>
+            <p className="text-primary-100 text-lg">Mother of all scripts</p>
           </motion.div>
 
           {/* Main Heading */}
