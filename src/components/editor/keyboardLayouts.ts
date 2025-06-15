@@ -34,14 +34,14 @@ export const keyboardLayouts = {
   },
   brahmi: {
     default: [
-      '◌𑁀 𑁧 𑁨 𑁩 𑁪 𑁫 𑁬 𑁭 𑁮 𑁯 𑁦 𑀂 ◌𑀾 {bksp}',
-      '{tab} ◌𑀿 ◌𑁃 ◌𑀸 ◌𑀻 ◌𑀽 𑀩 𑀳 𑀕 𑀤 𑀚 𑀟 ◌𑀹',
-      '{lock} ◌𑁂 ◌𑁂 ◌𑁆 ◌𑀺 ◌𑀼 𑀧 𑀭 𑀓 𑀢 𑀘 𑀝 {enter}',
-      '{shift} 𑀬 ◌𑀁 𑀫 𑀦 𑀯 𑀮 𑀲 𑁇 𑁈 {shift}',
+      '𑁀 𑁧 𑁨 𑁩 𑁪 𑁫 𑁬 𑁭 𑁮 𑁯 𑁦 𑀂 𑀾 {bksp}',
+      '{tab} 𑀿 𑁃 𑀸 𑀻 𑀽 𑀩 𑀳 𑀕 𑀤 𑀚 𑀟 𑀹',
+      '{lock} 𑁂 𑁂 𑁆 𑀺 𑀼 𑀧 𑀭 𑀓 𑀢 𑀘 𑀝 {enter}',
+      '{shift} 𑀬 𑀁 𑀫 𑀦 𑀯 𑀮 𑀲 𑁇 𑁈 {shift}',
       '{space}'
     ],
     shift: [
-      '◌𑁁 𑀋 𑀌 𑀍 𑀎 𑁌 𑁋 𑁍 ◌𑀿 {bksp}',
+      '𑁁 𑀋 𑀌 𑀍 𑀎 𑁌 𑁋 𑁍 𑀿 {bksp}',
       '{tab} 𑀒 𑀐 𑀆 𑀈 𑀊 𑀪 𑀗 𑀖 𑀥 𑀛 𑀠 𑀜',
       '{lock} 𑀑 𑀏 𑀅 𑀇 𑀉 𑀨 𑀶 𑀔 𑀣 𑀙 𑀞 {enter}',
       '{shift} 𑀖 𑀀 𑀡 𑀵 𑀷 𑀴 𑀰 𑁉 𑁊 {shift}',
