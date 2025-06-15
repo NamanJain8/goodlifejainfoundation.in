@@ -11,6 +11,7 @@ import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
 import './BrahmiEditor.css';
 import { keyboardLayouts } from './keyboardLayouts';
+import { translateMixedTextToBrahmi, getLanguageStats } from '../../utils/languageDetection';
 
 const BrahmiEditor: React.FC = () => {
   const [inputLanguage, setInputLanguage] = useState<'english' | 'hindi' | 'brahmi'>('brahmi');
@@ -18,6 +19,9 @@ const BrahmiEditor: React.FC = () => {
   const [showKeyboard, setShowKeyboard] = useState(true);
   const [isCapsLock, setIsCapsLock] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [brahmiTranslation, setBrahmiTranslation] = useState('');
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [languageStats, setLanguageStats] = useState<{ [key: string]: number }>({});
   const keyboardRef = useRef<any>(null);
   const colorPickerRef = useRef<HTMLDivElement>(null);
 
@@ -139,6 +143,54 @@ const BrahmiEditor: React.FC = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showColorPicker]);
+
+  // Translation effect - translate editor content to Brahmi
+  useEffect(() => {
+    if (!editor) return;
+
+    const handleTranslation = async () => {
+      const content = editor.getText();
+      
+      if (!content.trim()) {
+        setBrahmiTranslation('');
+        return;
+      }
+
+      setIsTranslating(true);
+      
+      try {
+        // Get language statistics for the input
+        const stats = getLanguageStats(content);
+        setLanguageStats(stats);
+        
+        // Translate mixed-language content to Brahmi
+        const translated = await translateMixedTextToBrahmi(content);
+        setBrahmiTranslation(translated);
+      } catch (error) {
+        console.error('Translation failed:', error);
+        setBrahmiTranslation('Translation failed');
+      } finally {
+        setIsTranslating(false);
+      }
+    };
+
+    // Debounce translation to avoid too many API calls
+    const debounceTimer = setTimeout(handleTranslation, 500);
+    
+    // Listen for editor updates
+    const handleUpdate = () => {
+      clearTimeout(debounceTimer);
+      const newTimer = setTimeout(handleTranslation, 500);
+      return newTimer;
+    };
+
+    editor.on('update', handleUpdate);
+
+    return () => {
+      clearTimeout(debounceTimer);
+      editor.off('update', handleUpdate);
+    };
+  }, [editor, inputLanguage]);
 
   if (!editor) return null;
 
@@ -286,7 +338,39 @@ const BrahmiEditor: React.FC = () => {
         </button>
       </div>
       
-      <EditorContent editor={editor} />
+      <div className="editor-sections">
+        {/* Main Editor Section */}
+        <div className="main-editor-section">
+          <div className="section-header">
+            <h3 className="section-title">Input (Mixed Languages)</h3>
+            {Object.keys(languageStats).length > 0 && (
+              <div className="language-stats">
+                {Object.entries(languageStats).map(([lang, count]) => (
+                  <span key={lang} className="lang-stat">
+                    {lang}: {count} chars
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+          <EditorContent editor={editor} />
+        </div>
+
+        {/* Brahmi Translation Section */}
+        <div className="brahmi-translation-section">
+          <div className="section-header">
+            <h3 className="section-title">Brahmi Translation (Auto-detected)</h3>
+            {isTranslating && <span className="translation-status">Translating...</span>}
+          </div>
+          <div className="brahmi-output">
+            {brahmiTranslation || (
+              <span className="placeholder-text">
+                Brahmi translation will appear here as you type...
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
       
       {showKeyboard && (
         <div className="virtual-keyboard">
