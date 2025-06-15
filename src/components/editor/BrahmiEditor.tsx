@@ -45,9 +45,9 @@ const keyboardLayouts = {
   brahmi: {
     default: [
       '◌𑁀 𑁧 𑁨 𑁩 𑁪 𑁫 𑁬 𑁭 𑁮 𑁯 𑁦 𑀂 ◌𑀾 {bksp}',
-      '{tab} ◌𑀿 ◌𑁃 ◌𑀸 ◌𑀻 ◌𑀽 𑀩 𑀳 𑀕 𑀤 𑀚 𑀟 ◌𑀹 \\',
+      '{tab} ◌𑀿 ◌𑁃 ◌𑀸 ◌𑀻 ◌𑀽 𑀩 𑀳 𑀕 𑀤 𑀚 𑀟 ◌𑀹',
       '{lock} ◌𑁂 ◌𑁂 ◌𑁆 ◌𑀺 ◌𑀼 𑀧 𑀭 𑀓 𑀢 𑀘 𑀝 {enter}',
-      '{shift} 𑀬 ◌𑀁 𑀫 𑀦 𑀯 𑀮 𑀲 𑁇 𑁈 / {shift}',
+      '{shift} 𑀬 ◌𑀁 𑀫 𑀦 𑀯 𑀮 𑀲 𑁇 𑁈 {shift}',
       '{space}'
     ],
     shift: [
