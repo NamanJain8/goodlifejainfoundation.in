@@ -1,0 +1,459 @@
+/* Editor Container */
+.editor-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Editor */
+.ProseMirror {
+  padding: 1rem;
+  min-height: 200px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  background: white;
+  color: #000;
+  font-size: 16px;
+  line-height: 1.5;
+  position: relative;
+  caret-color: #000;
+  outline: none;
+}
+
+.ProseMirror p {
+  margin: 0;
+  min-height: 1.5em;
+}
+
+.ProseMirror:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.ProseMirror-cursor {
+  border-left: 2px solid #000;
+  width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.toolbar button {
+  padding: 0.5rem;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  color: #495057;
+  transition: all 0.2s;
+}
+
+.toolbar button:hover {
+  background: #e9ecef;
+  border-color: #ced4da;
+}
+
+.toolbar button.active {
+  background: #007bff;
+  color: white;
+  border-color: #0056b3;
+}
+
+.toolbar .divider {
+  width: 1px;
+  background: #dee2e6;
+  margin: 0 0.5rem;
+}
+
+/* Virtual Keyboard */
+.virtual-keyboard {
+  position: relative;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.hg-theme-default {
+  background: transparent !important;
+}
+
+.hg-theme-default .hg-button {
+  height: 40px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  background: white !important;
+  border: 1px solid #ccc !important;
+  border-radius: 4px !important;
+  font-size: 16px !important;
+  color: #000 !important;
+  min-width: 40px !important;
+  margin: 2px !important;
+  cursor: pointer !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.hg-theme-default .hg-button:active {
+  background: #e9ecef !important;
+  transform: translateY(1px) !important;
+}
+
+.hg-theme-default .hg-button.shift-active {
+  background: #007bff !important;
+  color: white !important;
+  border-color: #0056b3 !important;
+}
+
+/* Special key widths */
+.hg-theme-default .hg-button[data-skbtn="{bksp}"] { min-width: 80px !important; }
+.hg-theme-default .hg-button[data-skbtn="{space}"] { min-width: 200px !important; }
+.hg-theme-default .hg-button[data-skbtn="{enter}"] { min-width: 80px !important; }
+.hg-theme-default .hg-button[data-skbtn="{tab}"] { min-width: 60px !important; }
+.hg-theme-default .hg-button[data-skbtn="{shift}"] { min-width: 80px !important; }
+.hg-theme-default .hg-button[data-skbtn="{lock}"] { min-width: 60px !important; }
+
+/* Text Formatting */
+.ProseMirror strong { font-weight: bold; }
+.ProseMirror em { font-style: italic; }
+.ProseMirror u { text-decoration: underline; }
+.ProseMirror h1 { font-size: 2em; margin: 0.67em 0; }
+.ProseMirror h2 { font-size: 1.5em; margin: 0.75em 0; }
+.ProseMirror h3 { font-size: 1.17em; margin: 0.83em 0; }
+.ProseMirror p { margin: 1em 0; }
+.ProseMirror ul, .ProseMirror ol { padding-left: 2em; margin: 1em 0; }
+
+/* Virtual Keyboard Styles */
+.virtual-keyboard {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+/* Override default keyboard styles */
+.hg-theme-default {
+  background: transparent !important;
+}
+
+.hg-theme-default .hg-button {
+  height: 40px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  background: white !important;
+  border: 1px solid #ccc !important;
+  border-radius: 4px !important;
+  font-size: 16px !important;
+  color: #000 !important;
+  min-width: 40px !important;
+  margin: 2px !important;
+  cursor: pointer !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.hg-theme-default .hg-button:active {
+  background: #e9ecef !important;
+  transform: translateY(1px) !important;
+}
+
+/* Special key widths */
+.hg-theme-default .hg-button[data-skbtn="{bksp}"] {
+  min-width: 80px !important;
+}
+
+.hg-theme-default .hg-button[data-skbtn="{space}"] {
+  min-width: 200px !important;
+}
+
+.hg-theme-default .hg-button[data-skbtn="{enter}"] {
+  min-width: 80px !important;
+}
+
+.hg-theme-default .hg-button[data-skbtn="{tab}"] {
+  min-width: 60px !important;
+}
+
+.hg-theme-default .hg-button[data-skbtn="{shift}"] {
+  min-width: 80px !important;
+}
+
+.hg-theme-default .hg-button[data-skbtn="{lock}"] {
+  min-width: 60px !important;
+}
+
+.hg-theme-default .hg-button.shift-active {
+  background: #007bff !important;
+  color: white !important;
+  border-color: #0056b3 !important;
+}
+
+/* Text Formatting Styles */
+.ProseMirror strong {
+  font-weight: bold;
+}
+
+.ProseMirror em {
+  font-style: italic;
+}
+
+.ProseMirror u {
+  text-decoration: underline;
+}
+
+.ProseMirror h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+.ProseMirror h2 {
+  font-size: 1.5em;
+  margin: 0.75em 0;
+}
+
+.ProseMirror h3 {
+  font-size: 1.17em;
+  margin: 0.83em 0;
+}
+
+.ProseMirror p {
+  margin: 1em 0;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 2em;
+  margin: 1em 0;
+}
+
+.ProseMirror blockquote {
+  border-left: 3px solid #ccc;
+  margin: 1em 0;
+  padding-left: 1em;
+  color: #666;
+}
+
+.ProseMirror pre {
+  background: #f4f4f4;
+  padding: 1em;
+  border-radius: 4px;
+  margin: 1em 0;
+}
+
+.ProseMirror code {
+  background: #f4f4f4;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #adb5bd;
+  pointer-events: none;
+  height: 0;
+}
+
+/* Keyboard styles */
+.virtual-keyboard {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+}
+
+/* Override react-simple-keyboard default styles */
+.hg-theme-default {
+  background-color: transparent !important;
+}
+
+.hg-theme-default .hg-button {
+  height: 50px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  background: white !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 4px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+  color: #1a202c !important;
+  font-size: 1.2rem !important;
+  font-weight: 500 !important;
+  margin: 2px !important;
+  min-width: 50px !important;
+  padding: 0 10px !important;
+}
+
+.hg-theme-default .hg-button:active {
+  background: #e2e8f0 !important;
+  transform: scale(0.95);
+}
+
+.hg-theme-default .hg-button[data-skbtn="{bksp}"] {
+  min-width: 80px !important;
+}
+
+.hg-theme-default .hg-button[data-skbtn="{space}"] {
+  min-width: 200px !important;
+}
+
+.hg-theme-default .hg-button[data-skbtn="{enter}"] {
+  min-width: 80px !important;
+}
+
+.hg-theme-default .hg-button[data-skbtn="{tab}"] {
+  min-width: 80px !important;
+}
+
+.hg-theme-default .hg-button[data-skbtn="{shift}"] {
+  min-width: 80px !important;
+}
+
+.hg-theme-default .hg-button[data-skbtn="{lock}"] {
+  min-width: 80px !important;
+}
+
+/* Text formatting styles */
+.ProseMirror strong {
+  font-weight: bold;
+}
+
+.ProseMirror em {
+  font-style: italic;
+}
+
+.ProseMirror u {
+  text-decoration: underline;
+}
+
+.ProseMirror h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0.67em 0;
+}
+
+.ProseMirror h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0.83em 0;
+}
+
+.ProseMirror h3 {
+  font-size: 1.17em;
+  font-weight: bold;
+  margin: 1em 0;
+}
+
+.ProseMirror ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
+}
+
+.ProseMirror blockquote {
+  border-left: 3px solid #e5e7eb;
+  padding-left: 1em;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.ProseMirror code {
+  background-color: #f3f4f6;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+.ProseMirror pre {
+  background-color: #f3f4f6;
+  padding: 1em;
+  border-radius: 4px;
+  font-family: monospace;
+  white-space: pre-wrap;
+}
+
+.ProseMirror pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+.ProseMirror mark {
+  background-color: #fef08a;
+}
+
+.ProseMirror hr {
+  border: none;
+  border-top: 2px solid #e5e7eb;
+  margin: 1em 0;
+}
+
+.language-menu {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  z-index: 1000;
+}
+
+.language-menu button {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #495057;
+  transition: background-color 0.2s;
+}
+
+.language-menu button:hover {
+  background-color: #f8f9fa;
+}
+
+.virtual-keyboard {
+  position: relative;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+} 
