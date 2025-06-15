@@ -635,6 +635,96 @@
   word-wrap: break-word;
 }
 
+/* Preserve formatting in Brahmi output */
+.brahmi-output strong {
+  font-weight: bold;
+}
+
+.brahmi-output em {
+  font-style: italic;
+}
+
+.brahmi-output u {
+  text-decoration: underline;
+}
+
+.brahmi-output h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0.67em 0;
+}
+
+.brahmi-output h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0.83em 0;
+}
+
+.brahmi-output h3 {
+  font-size: 1.17em;
+  font-weight: bold;
+  margin: 1em 0;
+}
+
+.brahmi-output p {
+  margin: 1em 0;
+}
+
+.brahmi-output ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+  margin: 1em 0;
+}
+
+.brahmi-output ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
+  margin: 1em 0;
+}
+
+.brahmi-output blockquote {
+  border-left: 3px solid #e5e7eb;
+  padding-left: 1em;
+  margin: 1em 0;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.brahmi-output code {
+  background-color: #f3f4f6;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+.brahmi-output pre {
+  background-color: #f3f4f6;
+  padding: 1em;
+  border-radius: 4px;
+  font-family: monospace;
+  white-space: pre-wrap;
+  margin: 1em 0;
+}
+
+.brahmi-output mark {
+  background-color: #fef08a;
+  padding: 0.1em 0.2em;
+}
+
+/* Handle text colors in output */
+.brahmi-output [style*="color"] {
+  /* Preserve inline color styles */
+}
+
+/* Ensure proper spacing for formatted content */
+.brahmi-output > :first-child {
+  margin-top: 0;
+}
+
+.brahmi-output > :last-child {
+  margin-bottom: 0;
+}
+
 .placeholder-text {
   color: #adb5bd;
   font-style: italic;

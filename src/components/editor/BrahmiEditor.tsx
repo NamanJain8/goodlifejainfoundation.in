@@ -11,7 +11,8 @@ import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
 import './BrahmiEditor.css';
 import { keyboardLayouts } from './keyboardLayouts';
-import { translateMixedTextToBrahmi, getLanguageStats } from '../../utils/languageDetection';
+import { getLanguageStats } from '../../utils/languageDetection';
+import { translateFormattedTextToBrahmi, cleanTranslatedHTML } from '../../utils/formattedTranslation';
 
 const BrahmiEditor: React.FC = () => {
   const [inputLanguage, setInputLanguage] = useState<'english' | 'hindi' | 'brahmi'>('brahmi');
@@ -149,23 +150,26 @@ const BrahmiEditor: React.FC = () => {
     if (!editor) return;
 
     const handleTranslation = async () => {
-      const content = editor.getText();
+      const htmlContent = editor.getHTML();
+      const textContent = editor.getText();
       
-      if (!content.trim()) {
+      if (!textContent.trim()) {
         setBrahmiTranslation('');
+        setLanguageStats({});
         return;
       }
 
       setIsTranslating(true);
       
       try {
-        // Get language statistics for the input
-        const stats = getLanguageStats(content);
+        // Get language statistics for the input (using plain text)
+        const stats = getLanguageStats(textContent);
         setLanguageStats(stats);
         
-        // Translate mixed-language content to Brahmi
-        const translated = await translateMixedTextToBrahmi(content);
-        setBrahmiTranslation(translated);
+        // Translate formatted content to Brahmi while preserving formatting
+        const translated = await translateFormattedTextToBrahmi(htmlContent);
+        const cleanedTranslation = cleanTranslatedHTML(translated);
+        setBrahmiTranslation(cleanedTranslation);
       } catch (error) {
         console.error('Translation failed:', error);
         setBrahmiTranslation('Translation failed');
@@ -362,13 +366,14 @@ const BrahmiEditor: React.FC = () => {
             <h3 className="section-title">Brahmi Translation (Auto-detected)</h3>
             {isTranslating && <span className="translation-status">Translating...</span>}
           </div>
-          <div className="brahmi-output">
-            {brahmiTranslation || (
-              <span className="placeholder-text">
+          <div 
+            className="brahmi-output"
+            dangerouslySetInnerHTML={{
+              __html: brahmiTranslation || `<span class="placeholder-text">
                 Brahmi translation will appear here as you type...
-              </span>
-            )}
-          </div>
+              </span>`
+            }}
+          />
         </div>
       </div>
       
