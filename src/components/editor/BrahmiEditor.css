@@ -94,6 +94,99 @@
   margin: 0 0.5rem;
 }
 
+/* Color Picker Styles */
+.color-picker-container {
+  position: relative;
+}
+
+.color-button {
+  padding: 0.5rem !important;
+  background: white !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 36px !important;
+  height: 36px !important;
+  color: #495057 !important;
+  transition: all 0.2s !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+  position: relative !important;
+}
+
+.color-button::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 3px;
+  background: #ff0000;
+  border-radius: 1px;
+}
+
+.color-button:hover {
+  background: #e9ecef !important;
+  border-color: #ced4da !important;
+}
+
+.color-picker-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 0.25rem;
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.color-swatch {
+  width: 24px !important;
+  height: 24px !important;
+  border: 1px solid #ccc !important;
+  border-radius: 2px !important;
+  cursor: pointer !important;
+  transition: transform 0.1s !important;
+  padding: 0 !important;
+  min-width: unset !important;
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+  border-color: #007bff !important;
+}
+
+.reset-color-btn {
+  width: 100% !important;
+  padding: 0.25rem 0.5rem !important;
+  background: #f8f9fa !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  font-size: 12px !important;
+  color: #495057 !important;
+  min-width: unset !important;
+  height: auto !important;
+}
+
+.reset-color-btn:hover {
+  background: #e9ecef !important;
+}
+
 /* Virtual Keyboard */
 .virtual-keyboard {
   position: relative;
@@ -151,6 +244,12 @@
 .ProseMirror h3 { font-size: 1.17em; margin: 0.83em 0; }
 .ProseMirror p { margin: 1em 0; }
 .ProseMirror ul, .ProseMirror ol { padding-left: 2em; margin: 1em 0; }
+
+/* Text Alignment */
+.ProseMirror[style*="text-align: left"] { text-align: left; }
+.ProseMirror[style*="text-align: center"] { text-align: center; }
+.ProseMirror[style*="text-align: right"] { text-align: right; }
+.ProseMirror[style*="text-align: justify"] { text-align: justify; }
 
 /* Virtual Keyboard Styles */
 .virtual-keyboard {

@@ -2,6 +2,9 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
+import TextStyle from '@tiptap/extension-text-style';
+import Color from '@tiptap/extension-color';
+import TextAlign from '@tiptap/extension-text-align';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import Keyboard from 'react-simple-keyboard';
@@ -14,10 +17,20 @@ const BrahmiEditor: React.FC = () => {
   const [keyboardLayout, setKeyboardLayout] = useState<'default' | 'shift'>('default');
   const [showKeyboard, setShowKeyboard] = useState(true);
   const [isCapsLock, setIsCapsLock] = useState(false);
+  const [showColorPicker, setShowColorPicker] = useState(false);
   const keyboardRef = useRef<any>(null);
+  const colorPickerRef = useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
-    extensions: [StarterKit, Underline],
+    extensions: [
+      StarterKit,
+      Underline,
+      TextStyle,
+      Color,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
+    ],
     content: '',
     autofocus: 'start',
     editable: true,
@@ -37,7 +50,7 @@ const BrahmiEditor: React.FC = () => {
         editor.commands.insertContent(' ');
         break;
       case '{enter}':
-        editor.commands.createParagraphNear();
+        editor.commands.setHardBreak();
         break;
       case '{tab}':
         editor.commands.insertContent('    ');
@@ -82,6 +95,13 @@ const BrahmiEditor: React.FC = () => {
     pdf.save('document.pdf');
   };
 
+  const handleColorChange = (color: string) => {
+    if (editor) {
+      editor.chain().focus().setColor(color).run();
+      setShowColorPicker(false);
+    }
+  };
+
   const getCurrentLayout = () => {
     const languageLayouts = keyboardLayouts[inputLanguage];
     if (!languageLayouts) return ['{space} {lang}'];
@@ -104,7 +124,29 @@ const BrahmiEditor: React.FC = () => {
     setKeyboardLayout('default');
   }, [inputLanguage]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
+        setShowColorPicker(false);
+      }
+    };
+
+    if (showColorPicker) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showColorPicker]);
+
   if (!editor) return null;
+
+  const commonColors = [
+    '#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF',
+    '#800000', '#008000', '#000080', '#808000', '#800080', '#008080', '#808080',
+    '#C0C0C0', '#FF8000', '#8000FF', '#FF0080', '#80FF00', '#0080FF', '#FF8080'
+  ];
 
   return (
     <div className="editor-container">
@@ -131,6 +173,77 @@ const BrahmiEditor: React.FC = () => {
           <u>U</u>
         </button>
         <div className="divider" />
+        
+        {/* Color Picker */}
+        <div className="color-picker-container" ref={colorPickerRef}>
+          <button
+            onClick={() => setShowColorPicker(!showColorPicker)}
+            className="color-button"
+            title="Text Color"
+          >
+            A
+          </button>
+          {showColorPicker && (
+            <div className="color-picker-dropdown">
+              <div className="color-grid">
+                {commonColors.map((color) => (
+                  <button
+                    key={color}
+                    className="color-swatch"
+                    style={{ backgroundColor: color }}
+                    onClick={() => handleColorChange(color)}
+                    title={color}
+                  />
+                ))}
+              </div>
+              <button
+                onClick={() => {
+                  editor.chain().focus().unsetColor().run();
+                  setShowColorPicker(false);
+                }}
+                className="reset-color-btn"
+                title="Reset Color"
+              >
+                Reset Color
+              </button>
+            </div>
+          )}
+        </div>
+        
+        <div className="divider" />
+        
+        {/* Text Alignment */}
+        <button
+          onClick={() => editor.chain().focus().setTextAlign('left').run()}
+          className={editor.isActive({ textAlign: 'left' }) ? 'active' : ''}
+          title="Align Left"
+        >
+          ⫷
+        </button>
+        <button
+          onClick={() => editor.chain().focus().setTextAlign('center').run()}
+          className={editor.isActive({ textAlign: 'center' }) ? 'active' : ''}
+          title="Align Center"
+        >
+          ≡
+        </button>
+        <button
+          onClick={() => editor.chain().focus().setTextAlign('right').run()}
+          className={editor.isActive({ textAlign: 'right' }) ? 'active' : ''}
+          title="Align Right"
+        >
+          ⫸
+        </button>
+        <button
+          onClick={() => editor.chain().focus().setTextAlign('justify').run()}
+          className={editor.isActive({ textAlign: 'justify' }) ? 'active' : ''}
+          title="Justify"
+        >
+          ≣
+        </button>
+        
+        <div className="divider" />
+        
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           className={editor.isActive('heading', { level: 1 }) ? 'active' : ''}
@@ -168,13 +281,6 @@ const BrahmiEditor: React.FC = () => {
           1. List
         </button>
         <div className="divider" />
-        <button
-          onClick={() => setShowKeyboard(!showKeyboard)}
-          className={showKeyboard ? 'active' : ''}
-          title="Toggle Keyboard"
-        >
-          ⌨️
-        </button>
         <button onClick={downloadPDF} title="Download PDF">
           📄
         </button>
