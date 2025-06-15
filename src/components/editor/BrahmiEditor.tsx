@@ -44,17 +44,17 @@ const keyboardLayouts = {
   },
   brahmi: {
     default: [
-      '` 1 2 3 4 5 6 7 8 9 0 - = {bksp}',
-      '{tab} 𑀒 𑀐 𑀆 𑀇 𑀈 𑀉 𑀊 𑀩 𑀳 𑀕 𑀤 𑀚 𑀟 𑀡',
-      '{lock} 𑀑 𑀏 𑀅 𑀇 𑀈 𑀉 𑀊 𑀧 𑀭 𑀓 𑀢 𑀘 𑀝',
-      '{shift} 𑀐 𑀒 𑀁 𑀫 𑀦 𑀯 𑀮 𑀲 , . / {shift}',
+      '◌𑁀 𑁧 𑁨 𑁩 𑁪 𑁫 𑁬 𑁭 𑁮 𑁯 𑁦 𑀂 ◌𑀾 {bksp}',
+      '{tab} ◌𑀿 ◌𑁃 ◌𑀸 ◌𑀻 ◌𑀽 𑀩 𑀳 𑀕 𑀤 𑀚 𑀟 ◌𑀹 \\',
+      '{lock} ◌𑁂 ◌𑁂 ◌𑁆 ◌𑀺 ◌𑀼 𑀧 𑀭 𑀓 𑀢 𑀘 𑀝 {enter}',
+      '{shift} 𑀬 ◌𑀁 𑀫 𑀦 𑀯 𑀮 𑀲 𑁇 𑁈 / {shift}',
       '{space}'
     ],
     shift: [
-      '~ ! @ # $ % ^ & * ( ) _ + {bksp}',
-      '{tab} 𑀑 𑀐 𑀆 𑀇 𑀈 𑀉 𑀊 𑀪 𑀡 𑀖 𑀥 𑀛 𑀠 𑀡',
-      '{lock} 𑀑 𑀏 𑀅 𑀇 𑀈 𑀉 𑀊 𑀨 𑀱 𑀔 𑀣 𑀙 𑀞',
-      '{shift} 𑀐 1 𑀁 𑀡 𑀫 𑀯 𑀮 𑀰 , . / {shift}',
+      '◌𑁁 𑀋 𑀌 𑀍 𑀎 𑁌 𑁋 𑁍 ◌𑀿 {bksp}',
+      '{tab} 𑀒 𑀐 𑀆 𑀈 𑀊 𑀪 𑀗 𑀖 𑀥 𑀛 𑀠 𑀜',
+      '{lock} 𑀑 𑀏 𑀅 𑀇 𑀉 𑀨 𑀶 𑀔 𑀣 𑀙 𑀞 {enter}',
+      '{shift} 𑀖 𑀀 𑀡 𑀵 𑀷 𑀴 𑀰 𑁉 𑁊 {shift}',
       '{space}'
     ]
   }
@@ -76,6 +76,9 @@ const BrahmiEditor: React.FC = () => {
 
   const handleKeyPress = useCallback((button: string) => {
     if (!editor) return;
+
+    // Focus the editor first to ensure cursor is visible
+    editor.commands.focus();
 
     switch (button) {
       case '{bksp}':
@@ -111,6 +114,11 @@ const BrahmiEditor: React.FC = () => {
         const text = (inputLanguage === 'english' && isCapsLock) ? button.toUpperCase() : button;
         editor.commands.insertContent(text);
     }
+
+    // Ensure editor stays focused after the action
+    setTimeout(() => {
+      editor.commands.focus();
+    }, 10);
   }, [editor, inputLanguage, isCapsLock]);
 
   const downloadPDF = async () => {
