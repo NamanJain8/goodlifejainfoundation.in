@@ -49,7 +49,11 @@ const BrahmiEditor: React.FC = () => {
 
     switch (button) {
       case '{bksp}':
-        editor.commands.deleteSelection();
+        editor.commands.first(({ commands }) => [
+          () => commands.undoInputRule(),
+          () => commands.deleteSelection(),
+          () => commands.deleteRange({ from: Math.max(0, editor.state.selection.from - 1), to: editor.state.selection.from })
+        ]);
         break;
       case '{space}':
         editor.commands.insertContent(' ');
