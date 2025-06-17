@@ -1,7 +1,7 @@
 // Translation utility functions extracted from Translator component
 
 // Helper function to split text into chunks while preserving word boundaries
-const chunkText = (text: string, maxChunkSize: number = 1500): string[] => {
+const chunkText = (text: string, maxChunkSize: number = 200): string[] => {
   if (text.length <= maxChunkSize) {
     return [text];
   }
