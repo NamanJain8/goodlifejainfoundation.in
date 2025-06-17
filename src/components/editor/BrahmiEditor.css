@@ -99,6 +99,60 @@
   position: relative;
 }
 
+/* Heading Dropdown Styles */
+.heading-dropdown-container {
+  position: relative;
+}
+
+.heading-dropdown-container button {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  min-width: 80px !important;
+}
+
+.dropdown-arrow {
+  font-size: 10px;
+  color: #6c757d;
+}
+
+.heading-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 0.5rem 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 0.25rem;
+  min-width: 150px;
+}
+
+.heading-dropdown button {
+  width: 100% !important;
+  padding: 0.5rem 1rem !important;
+  text-align: left !important;
+  background: white !important;
+  border: none !important;
+  border-radius: 0 !important;
+  font-size: 14px !important;
+  color: #495057 !important;
+  transition: background-color 0.2s !important;
+  min-width: unset !important;
+  height: auto !important;
+}
+
+.heading-dropdown button:hover {
+  background: #f8f9fa !important;
+}
+
+.heading-dropdown button.active {
+  background: #e3f2fd !important;
+  color: #1976d2 !important;
+}
+
 .color-button {
   padding: 0.5rem !important;
   background: white !important;
@@ -242,6 +296,9 @@
 .ProseMirror h1 { font-size: 2em; margin: 0.67em 0; }
 .ProseMirror h2 { font-size: 1.5em; margin: 0.75em 0; }
 .ProseMirror h3 { font-size: 1.17em; margin: 0.83em 0; }
+.ProseMirror h4 { font-size: 1em; margin: 1.12em 0; font-weight: bold; }
+.ProseMirror h5 { font-size: 0.83em; margin: 1.5em 0; font-weight: bold; }
+.ProseMirror h6 { font-size: 0.75em; margin: 1.67em 0; font-weight: bold; }
 .ProseMirror p { margin: 1em 0; }
 .ProseMirror ul, .ProseMirror ol { padding-left: 2em; margin: 1em 0; }
 
@@ -344,6 +401,24 @@
   margin: 0.83em 0;
 }
 
+.ProseMirror h4 {
+  font-size: 1em;
+  margin: 1.12em 0;
+  font-weight: bold;
+}
+
+.ProseMirror h5 {
+  font-size: 0.83em;
+  margin: 1.5em 0;
+  font-weight: bold;
+}
+
+.ProseMirror h6 {
+  font-size: 0.75em;
+  margin: 1.67em 0;
+  font-weight: bold;
+}
+
 .ProseMirror p {
   margin: 1em 0;
 }
@@ -355,10 +430,11 @@
 }
 
 .ProseMirror blockquote {
-  border-left: 3px solid #ccc;
-  margin: 1em 0;
-  padding-left: 1em;
+  border-left: 4px solid #ddd;
+  padding-left: 1rem;
+  margin: 1.5rem 0;
   color: #666;
+  font-style: italic;
 }
 
 .ProseMirror pre {
@@ -473,6 +549,24 @@
   margin: 1em 0;
 }
 
+.ProseMirror h4 {
+  font-size: 1em;
+  margin: 1.12em 0;
+  font-weight: bold;
+}
+
+.ProseMirror h5 {
+  font-size: 0.83em;
+  margin: 1.5em 0;
+  font-weight: bold;
+}
+
+.ProseMirror h6 {
+  font-size: 0.75em;
+  margin: 1.67em 0;
+  font-weight: bold;
+}
+
 .ProseMirror ul {
   list-style-type: disc;
   padding-left: 1.5em;
@@ -516,8 +610,9 @@
 
 .ProseMirror hr {
   border: none;
-  border-top: 2px solid #e5e7eb;
-  margin: 1em 0;
+  border-top: 2px solid #ddd;
+  margin: 2rem 0;
+  clear: both;
 }
 
 .language-menu {
@@ -666,6 +761,24 @@
   margin: 1em 0;
 }
 
+.brahmi-output h4 {
+  font-size: 1em;
+  margin: 1.12em 0;
+  font-weight: bold;
+}
+
+.brahmi-output h5 {
+  font-size: 0.83em;
+  margin: 1.5em 0;
+  font-weight: bold;
+}
+
+.brahmi-output h6 {
+  font-size: 0.75em;
+  margin: 1.67em 0;
+  font-weight: bold;
+}
+
 .brahmi-output p {
   margin: 1em 0;
 }
@@ -741,4 +854,11 @@
     min-height: 150px;
     font-size: 1.1rem;
   }
+}
+
+.brahmi-output hr {
+  border: none;
+  border-top: 2px solid #ddd;
+  margin: 2rem 0;
+  clear: both;
 } 

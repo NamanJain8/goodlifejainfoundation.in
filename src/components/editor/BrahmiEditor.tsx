@@ -5,6 +5,8 @@ import Underline from '@tiptap/extension-underline';
 import TextStyle from '@tiptap/extension-text-style';
 import Color from '@tiptap/extension-color';
 import TextAlign from '@tiptap/extension-text-align';
+import Blockquote from '@tiptap/extension-blockquote';
+import HorizontalRule from '@tiptap/extension-horizontal-rule';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import Keyboard from 'react-simple-keyboard';
@@ -20,11 +22,13 @@ const BrahmiEditor: React.FC = () => {
   const [showKeyboard, setShowKeyboard] = useState(true);
   const [isCapsLock, setIsCapsLock] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showHeadingDropdown, setShowHeadingDropdown] = useState(false);
   const [brahmiTranslation, setBrahmiTranslation] = useState('');
   const [isTranslating, setIsTranslating] = useState(false);
   const [languageStats, setLanguageStats] = useState<{ [key: string]: number }>({});
   const keyboardRef = useRef<any>(null);
   const colorPickerRef = useRef<HTMLDivElement>(null);
+  const headingDropdownRef = useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
     extensions: [
@@ -35,6 +39,8 @@ const BrahmiEditor: React.FC = () => {
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
+      Blockquote,
+      HorizontalRule,
     ],
     content: '',
     autofocus: 'start',
@@ -111,6 +117,26 @@ const BrahmiEditor: React.FC = () => {
     }
   };
 
+  const getCurrentHeadingLevel = () => {
+    if (!editor) return null;
+    for (let level = 1; level <= 6; level++) {
+      if (editor.isActive('heading', { level: level as 1 | 2 | 3 | 4 | 5 | 6 })) {
+        return level;
+      }
+    }
+    return null;
+  };
+
+  const setHeading = (level: number | null) => {
+    if (!editor) return;
+    if (level === null) {
+      editor.chain().focus().setParagraph().run();
+    } else {
+      editor.chain().focus().toggleHeading({ level: level as 1 | 2 | 3 | 4 | 5 | 6 }).run();
+    }
+    setShowHeadingDropdown(false);
+  };
+
   const getCurrentLayout = () => {
     const languageLayouts = keyboardLayouts[inputLanguage];
     if (!languageLayouts) return ['{space} {lang}'];
@@ -138,16 +164,19 @@ const BrahmiEditor: React.FC = () => {
       if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
         setShowColorPicker(false);
       }
+      if (headingDropdownRef.current && !headingDropdownRef.current.contains(event.target as Node)) {
+        setShowHeadingDropdown(false);
+      }
     };
 
-    if (showColorPicker) {
+    if (showColorPicker || showHeadingDropdown) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showColorPicker]);
+  }, [showColorPicker, showHeadingDropdown]);
 
   // Translation effect - translate editor content to Brahmi
   useEffect(() => {
@@ -304,28 +333,58 @@ const BrahmiEditor: React.FC = () => {
         
         <div className="divider" />
         
-        <button
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          className={editor.isActive('heading', { level: 1 }) ? 'active' : ''}
-          title="Heading 1"
-        >
-          H1
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={editor.isActive('heading', { level: 2 }) ? 'active' : ''}
-          title="Heading 2"
-        >
-          H2
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          className={editor.isActive('heading', { level: 3 }) ? 'active' : ''}
-          title="Heading 3"
-        >
-          H3
-        </button>
+        {/* Heading Dropdown */}
+        <div className="heading-dropdown-container" ref={headingDropdownRef}>
+          <button
+            onClick={() => setShowHeadingDropdown(!showHeadingDropdown)}
+            className={getCurrentHeadingLevel() ? 'active' : ''}
+            title="Headings"
+          >
+            {getCurrentHeadingLevel() ? `H${getCurrentHeadingLevel()}` : 'Heading'}
+            <span className="dropdown-arrow">▼</span>
+          </button>
+          {showHeadingDropdown && (
+            <div className="heading-dropdown">
+              <button
+                onClick={() => setHeading(null)}
+                className={!getCurrentHeadingLevel() ? 'active' : ''}
+              >
+                Normal Text
+              </button>
+              {[1, 2, 3, 4, 5, 6].map(level => (
+                <button
+                  key={level}
+                  onClick={() => setHeading(level)}
+                  className={getCurrentHeadingLevel() === level ? 'active' : ''}
+                >
+                  Heading {level}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        
         <div className="divider" />
+        
+        {/* Blockquote */}
+        <button
+          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          className={editor.isActive('blockquote') ? 'active' : ''}
+          title="Blockquote"
+        >
+          ❝
+        </button>
+        
+        {/* Horizontal Rule */}
+        <button
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          title="Horizontal Rule"
+        >
+          ―
+        </button>
+        
+        <div className="divider" />
+        
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={editor.isActive('bulletList') ? 'active' : ''}
