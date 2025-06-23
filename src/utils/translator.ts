@@ -1,134 +1,8 @@
-// Translation utility functions extracted from Translator component
+// Translation utility functions with modular translation providers
 
-// Helper function to split text into chunks while preserving word boundaries
-const chunkText = (text: string, maxChunkSize: number = 200): string[] => {
-  if (text.length <= maxChunkSize) {
-    return [text];
-  }
+import { translateText as translateWithService } from './translationProviders/translationService';
 
-  const chunks: string[] = [];
-  const sentences = text.split(/([.!?।॥]\s*)/); // Split on sentence boundaries including Hindi punctuation
-  
-  let currentChunk = '';
-  
-  for (let i = 0; i < sentences.length; i++) {
-    const sentence = sentences[i];
-    
-    // If adding this sentence would exceed the limit, save current chunk and start new one
-    if (currentChunk.length + sentence.length > maxChunkSize && currentChunk.length > 0) {
-      chunks.push(currentChunk.trim());
-      currentChunk = sentence;
-    } else {
-      currentChunk += sentence;
-    }
-  }
-  
-  // Add the last chunk if it has content
-  if (currentChunk.trim().length > 0) {
-    chunks.push(currentChunk.trim());
-  }
-  
-  // If we still have chunks that are too large, split them by words
-  const finalChunks: string[] = [];
-  for (const chunk of chunks) {
-    if (chunk.length <= maxChunkSize) {
-      finalChunks.push(chunk);
-    } else {
-      // Split by words if sentence splitting wasn't enough
-      const words = chunk.split(/(\s+)/);
-      let wordChunk = '';
-      
-      for (const word of words) {
-        if (wordChunk.length + word.length > maxChunkSize && wordChunk.length > 0) {
-          finalChunks.push(wordChunk.trim());
-          wordChunk = word;
-        } else {
-          wordChunk += word;
-        }
-      }
-      
-      if (wordChunk.trim().length > 0) {
-        finalChunks.push(wordChunk.trim());
-      }
-    }
-  }
-  
-  return finalChunks.filter(chunk => chunk.length > 0);
-};
 
-// Helper function to add delay between requests
-const delay = (ms: number): Promise<void> => {
-  return new Promise(resolve => setTimeout(resolve, ms));
-};
-
-// Google Translate API call with better error handling
-const translateWithGoogle = async (text: string, from: string, to: string): Promise<string> => {
-  try {
-    // Check if text is too long for a single request
-    const encodedText = encodeURIComponent(text);
-    const baseUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from}&tl=${to}&dt=t&q=`;
-    const fullUrl = baseUrl + encodedText;
-    
-    // If URL is too long, reject and let chunking handle it
-    if (fullUrl.length > 1800) { // Conservative limit
-      throw new Error('Text too long for single request');
-    }
-
-    const response = await fetch(fullUrl);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    
-    // Handle different response structures
-    if (data && data[0] && Array.isArray(data[0])) {
-      // Multiple translation segments
-      return data[0].map((segment: any[]) => segment[0]).join('');
-    } else if (data && data[0] && data[0][0]) {
-      // Single translation segment
-      return data[0][0][0];
-    }
-    
-    throw new Error('Invalid response format');
-  } catch (error) {
-    console.error('Translation error:', error);
-    throw error; // Re-throw to handle in chunked translation
-  }
-};
-
-// Enhanced translation with chunking support
-const translateWithGoogleChunked = async (text: string, from: string, to: string): Promise<string> => {
-  try {
-    // Try single request first for shorter text
-    return await translateWithGoogle(text, from, to);
-  } catch (error) {
-    console.log('Falling back to chunked translation...');
-    
-    // Chunk the text and translate each chunk
-    const chunks = chunkText(text);
-    const translatedChunks: string[] = [];
-    
-    for (let i = 0; i < chunks.length; i++) {
-      try {
-        const translatedChunk = await translateWithGoogle(chunks[i], from, to);
-        translatedChunks.push(translatedChunk);
-        
-        // Add delay between requests to avoid rate limiting
-        if (i < chunks.length - 1) {
-          await delay(500); // 500ms delay between chunks
-        }
-      } catch (chunkError) {
-        console.error(`Error translating chunk ${i + 1}:`, chunkError);
-        // If chunk translation fails, keep original text for that chunk
-        translatedChunks.push(chunks[i]);
-      }
-    }
-    
-    return translatedChunks.join(' ');
-  }
-};
 
 // Convert Devanagari script to Brahmi script
 const devanagariToBrahmi = (text: string): string => {
@@ -328,6 +202,7 @@ const brahmiToDevanagari = (text: string): string => {
 
 /**
  * Main translation function that handles text translation between different languages including Brahmi script
+ * Uses the modular translation service with Google Translate and Azure Translate providers
  * @param inputText - The text to translate
  * @param sourceLanguage - The source language code (e.g., 'hi', 'en', 'brahmi')
  * @param targetLanguage - The target language code (e.g., 'hi', 'en', 'brahmi')
@@ -346,7 +221,7 @@ export const translateText = async (
     let translated = '';
     
     if (sourceLanguage === 'brahmi') {
-      // Input is Brahmi: convert to Devanagari first, then Google translate to target
+      // Input is Brahmi: convert to Devanagari first, then translate to target
       const devanagariText = brahmiToDevanagari(inputText);
       if (targetLanguage === 'brahmi') {
         // Brahmi to Brahmi (no change needed)
@@ -355,22 +230,23 @@ export const translateText = async (
         // Brahmi to Devanagari-based languages
         translated = devanagariText;
       } else {
-        // Brahmi to other languages via Google Translate
-        translated = await translateWithGoogleChunked(devanagariText, 'hi', targetLanguage);
+        // Brahmi to other languages via translation service
+        translated = await translateWithService(devanagariText, 'hi', targetLanguage);
       }
     } else if (targetLanguage === 'brahmi') {
-      // Output is Brahmi: Google translate to Hindi first, then convert to Brahmi
+      // Output is Brahmi: translate to Hindi first, then convert to Brahmi
       if (['hi', 'sa', 'mr', 'ne'].includes(sourceLanguage)) {
         // Direct Devanagari to Brahmi conversion
         translated = devanagariToBrahmi(inputText);
       } else {
-        // Other languages to Brahmi via Google Translate to Hindi
-        const hindiText = await translateWithGoogleChunked(inputText, sourceLanguage, 'hi');
+        // Other languages to Brahmi via translation service to Hindi
+        const hindiText = await translateWithService(inputText, sourceLanguage, 'hi');
+        console.log('hindiText', hindiText);
         translated = devanagariToBrahmi(hindiText);
       }
     } else {
-      // Neither input nor output is Brahmi: use Google Translate directly
-      translated = await translateWithGoogleChunked(inputText, sourceLanguage, targetLanguage);
+      // Neither input nor output is Brahmi: use translation service directly
+      translated = await translateWithService(inputText, sourceLanguage, targetLanguage);
     }
     
     return translated;
@@ -381,4 +257,7 @@ export const translateText = async (
 };
 
 // Export individual functions for direct use if needed
-export { devanagariToBrahmi, brahmiToDevanagari }; 
+export { devanagariToBrahmi, brahmiToDevanagari };
+
+// Re-export translation service for advanced usage
+export { translationService } from './translationProviders/translationService'; 
