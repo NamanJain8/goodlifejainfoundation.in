@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Clock, BookOpen, Users, Scroll } from 'lucide-react';
+import { Clock, BookOpen } from 'lucide-react';
 import Section from '../ui/Section';
 import Card from '../ui/Card';
 import { timelineData, spiritualContent } from '../../utils/data';
@@ -38,8 +38,6 @@ const About: React.FC = () => {
         {[
           { icon: Clock, label: 'Ancient Origin', value: '5000+ Years' },
           { icon: BookOpen, label: 'Scripts Derived', value: '200+' },
-          { icon: Users, label: 'Languages Supported', value: '50+' },
-          { icon: Scroll, label: 'Historical Steps', value: '8' },
         ].map((stat, index) => (
           <motion.div
             key={stat.label}
