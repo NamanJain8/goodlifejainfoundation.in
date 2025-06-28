@@ -41,13 +41,10 @@ function App() {
         await loadScript('https://s.keyman.com/kmw/engine/18.0.238/keymanweb.js');
         
         if (window.keyman) {
-          // 2. Initialize the core engine.
-          await window.keyman.init({ attachType: 'manual' });
+          // 2. Initialize the core engine, but disable its default UI.
+          await window.keyman.init({ ui: 'none', attachType: 'manual' });
 
-          // 3. Now load the UI module, which depends on the core.
-          await loadScript('https://s.keyman.com/kmw/engine/18.0.238/kmwuitoolbar.js');
-          
-          // 4. Load all keyboards.
+          // 3. Load all keyboards.
           await window.keyman.addKeyboards('@en');
           await window.keyman.addKeyboards('@hi'); 
           await window.keyman.addKeyboards('@gu');

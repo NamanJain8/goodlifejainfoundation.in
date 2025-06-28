@@ -113,11 +113,30 @@ const Translator: React.FC = () => {
       // Show the virtual keyboard if container exists
       const keyboardContainer = document.getElementById('KeymanWebControl');
       if (keyboardContainer && window.keyman.osk) {
-        // Enable and show the On-Screen Keyboard
+      //   Enable and show the On-Screen Keyboard
         window.keyman.osk.show(true);
-        window.keyman.osk.userPositioned = true; // Allow Keyman to position it
+        window.keyman.osk.userPositioned = true;
       }
+
+      // const keyboardContainer = document.getElementById('keyman-keyboard');
+      // if (!keyboardContainer) return;
+
+      // const oskElements = document.getElementsByClassName('kmw-osk-frame');
+      // const oskElement = oskElements[0];
+      // if (oskElement) {
+      //   // Move the OSK from the body into our container.
+      //   while (keyboardContainer.firstChild) {
+      //     keyboardContainer.removeChild(keyboardContainer.firstChild);
+      //   }
+      //   console.log(oskElement);
+      //   const style = oskElement.getAttribute('style');
+      //   console.log(style);
+      //   oskElement.setAttribute('style', 'width: 100%; position: relative;');
+      //   console.log(oskElement.getAttribute('style'));
+      //   keyboardContainer.appendChild(oskElement);
+      // }
       
+      // setKeyboardEnabled(false);
       setKeyboardEnabled(true);
     } catch (error) {
       console.error('Failed to attach Keyman keyboard:', error);
@@ -135,23 +154,28 @@ const Translator: React.FC = () => {
   // This effect handles the OSK embedding after the container is rendered.
   useEffect(() => {
     if (keyboardEnabled && window.keyman?.osk) {
-      const keyboardContainer = document.getElementById('KeymanWebControl');
-      if (keyboardContainer) {
-        window.keyman.osk.show(true);
+      window.keyman.osk.show(true);
+      window.keyman.osk.userPositioned = true;
 
-        // const oskElement = window.keyman.osk.getElement();
-        // if (oskElement) {
-        //   // Move the OSK from the body into our container.
-        //   while (keyboardContainer.firstChild) {
-        //     keyboardContainer.removeChild(keyboardContainer.firstChild);
-        //   }
-        //   keyboardContainer.appendChild(oskElement);
-        // }
-        // // Prevent Keyman from repositioning the OSK.
-        window.keyman.osk.userPositioned = true;
+      const keyboardContainer = document.getElementById('keyman-keyboard');
+      if (!keyboardContainer) return;
+
+      const oskElements = document.getElementsByClassName('kmw-osk-frame');
+      const oskElement = oskElements[0];
+      if (oskElement) {
+        // Move the OSK from the body into our container.
+        while (keyboardContainer.firstChild) {
+          keyboardContainer.removeChild(keyboardContainer.firstChild);
+        }
+        console.log(oskElement);
+        const style = oskElement.getAttribute('style');
+        console.log(style);
+        oskElement.setAttribute('style', 'width: 100%; position: relative;');
+        console.log(oskElement.getAttribute('style'));
+        keyboardContainer.appendChild(oskElement);
       }
     }
-  }, [keyboardEnabled]);
+  }, [sourceLanguage, keyboardEnabled]);
 
   // Live translation effect
   useEffect(() => {
@@ -388,13 +412,7 @@ const Translator: React.FC = () => {
                 <div className="text-lg font-semibold text-text-700 mb-2">
                   Virtual Keyboard - {languages[sourceLanguage].name}
                 </div>
-                {/* <div 
-                  id="KeymanWebControl" 
-                  className="bg-surface-50 rounded-lg p-2 min-h-[200px] border border-surface-200"
-                  style={{ 
-                    fontFamily: languages[sourceLanguage]?.fontFamily || 'inherit'
-                  }}
-                ></div> */}
+                <div id="keyman-keyboard"></div>
               </div>
             </div>
           )}
