@@ -41,7 +41,7 @@ const Tools: React.FC = () => {
       </motion.div>
 
       {/* Tools Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {toolsData.map((tool, index) => (
           <motion.div
             key={tool.id}
