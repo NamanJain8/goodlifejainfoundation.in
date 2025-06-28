@@ -125,12 +125,12 @@ const Translator: React.FC = () => {
     }
   }, []);
 
-  // Effect to handle keyboard switching when source language changes
+  // Effect to handle keyboard attachment and switching
   useEffect(() => {
-    if (keyboardEnabled && textareaRef.current && window.keyman) {
+    if (textareaRef.current && window.keyman) {
       attachKeymanKeyboard(sourceLanguage).catch(console.error);
     }
-  }, [sourceLanguage, keyboardEnabled, attachKeymanKeyboard]);
+  }, [sourceLanguage, attachKeymanKeyboard]);
 
   // Live translation effect
   useEffect(() => {
@@ -269,13 +269,7 @@ const Translator: React.FC = () => {
               <textarea
                 ref={textareaRef}
                 value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                onFocus={() => {
-                  // Automatically attach keyboard when input area is focused
-                  if (window.keyman && textareaRef.current) {
-                    attachKeymanKeyboard(sourceLanguage).catch(console.error);
-                  }
-                }}
+                onInput={(e) => setInputText((e.target as HTMLTextAreaElement).value)}
                 placeholder={`Type in ${languages[sourceLanguage].name}...`}
                 className="w-full h-64 sm:h-80 p-4 sm:p-6 bg-transparent text-white text-base sm:text-lg resize-none focus:outline-none placeholder-gray-500"
                 style={{ 
