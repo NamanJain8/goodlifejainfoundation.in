@@ -33,7 +33,7 @@ const About: React.FC = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20"
+        className="flex flex-col sm:flex-row justify-center items-center gap-8 sm:gap-16 mb-20"
       >
         {[
           { icon: Clock, label: 'Ancient Origin', value: '5000+ Years' },
