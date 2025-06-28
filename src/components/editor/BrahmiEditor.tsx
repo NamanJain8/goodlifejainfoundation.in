@@ -9,23 +9,17 @@ import Blockquote from '@tiptap/extension-blockquote';
 import HorizontalRule from '@tiptap/extension-horizontal-rule';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
-import Keyboard from 'react-simple-keyboard';
-import 'react-simple-keyboard/build/css/index.css';
 import './BrahmiEditor.css';
-import { keyboardLayouts } from './keyboardLayouts';
 import { getLanguageStats } from '../../utils/languageDetection';
 import { translateFormattedTextToBrahmi, cleanTranslatedHTML } from '../../utils/formattedTranslation';
+import VirtualKeyboard from './VirtualKeyboard';
 
 const BrahmiEditor: React.FC = () => {
-  const [inputLanguage, setInputLanguage] = useState<'english' | 'hindi' | 'brahmi'>('brahmi');
-  const [keyboardLayout, setKeyboardLayout] = useState<'default' | 'shift'>('default');
-  const [isCapsLock, setIsCapsLock] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showHeadingDropdown, setShowHeadingDropdown] = useState(false);
   const [brahmiTranslation, setBrahmiTranslation] = useState('');
   const [isTranslating, setIsTranslating] = useState(false);
   const [languageStats, setLanguageStats] = useState<{ [key: string]: number }>({});
-  const keyboardRef = useRef<any>(null);
   const colorPickerRef = useRef<HTMLDivElement>(null);
   const headingDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -46,13 +40,13 @@ const BrahmiEditor: React.FC = () => {
     editable: true,
   });
 
-  const handleKeyPress = useCallback((button: string) => {
+  const handleVirtualKeyPress = useCallback((key: string) => {
     if (!editor) return;
 
     // Focus the editor first to ensure cursor is visible
     editor.commands.focus();
 
-    switch (button) {
+    switch (key) {
       case '{bksp}':
         editor.commands.first(({ commands }) => [
           () => commands.undoInputRule(),
@@ -69,33 +63,15 @@ const BrahmiEditor: React.FC = () => {
       case '{tab}':
         editor.commands.insertContent('    ');
         break;
-      case '{shift}':
-        setKeyboardLayout(prev => prev === 'default' ? 'shift' : 'default');
-        break;
-      case '{lock}':
-        if (inputLanguage === 'english') {
-          setIsCapsLock(prev => !prev);
-        }
-        break;
-      case '{lang}':
-        setInputLanguage(prev => {
-          if (prev === 'brahmi') return 'hindi';
-          if (prev === 'hindi') return 'english';
-          return 'brahmi';
-        });
-        setIsCapsLock(false);
-        setKeyboardLayout('default');
-        break;
       default:
-        const text = (inputLanguage === 'english' && isCapsLock) ? button.toUpperCase() : button;
-        editor.commands.insertContent(text);
+        editor.commands.insertContent(key);
     }
 
     // Ensure editor stays focused after the action
     setTimeout(() => {
       editor.commands.focus();
     }, 10);
-  }, [editor, inputLanguage, isCapsLock]);
+  }, [editor]);
 
   const downloadPDF = async () => {
     if (!editor) return;
@@ -136,27 +112,7 @@ const BrahmiEditor: React.FC = () => {
     setShowHeadingDropdown(false);
   };
 
-  const getCurrentLayout = () => {
-    const languageLayouts = keyboardLayouts[inputLanguage];
-    if (!languageLayouts) return ['{space} {lang}'];
-    
-    const currentLayout = keyboardLayout === 'shift' && languageLayouts.shift 
-      ? languageLayouts.shift 
-      : languageLayouts.default;
-    
-    if (!currentLayout || !Array.isArray(currentLayout)) {
-      return ['{space} {lang}'];
-    }
-    
-    return [...currentLayout.slice(0, -1), '{space} {lang}'];
-  };
 
-  useEffect(() => {
-    if (inputLanguage !== 'english') {
-      setIsCapsLock(false);
-    }
-    setKeyboardLayout('default');
-  }, [inputLanguage]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -226,7 +182,7 @@ const BrahmiEditor: React.FC = () => {
       clearTimeout(debounceTimer);
       editor.off('update', handleUpdate);
     };
-  }, [editor, inputLanguage]);
+  }, [editor]);
 
   if (!editor) return null;
 
@@ -439,36 +395,7 @@ const BrahmiEditor: React.FC = () => {
         </div>
       </div>
       
-      <div className="virtual-keyboard">
-        <Keyboard
-          keyboardRef={r => (keyboardRef.current = r)}
-          layoutName="default"
-          layout={{ 
-            default: getCurrentLayout()
-          }}
-          onKeyPress={handleKeyPress}
-          display={{
-            '{bksp}': '⌫',
-            '{enter}': '↵',
-            '{tab}': '⇥',
-            '{space}': 'Space',
-            '{shift}': '⇧',
-            '{lock}': inputLanguage === 'english' ? (isCapsLock ? '🔒' : '⇪') : '⇪',
-            '{lang}': `🌐 ${inputLanguage.charAt(0).toUpperCase() + inputLanguage.slice(1)}`
-          }}
-          theme="hg-theme-default"
-          buttonTheme={[
-            {
-              class: "special-key",
-              buttons: "{bksp} {enter} {tab} {space} {shift} {lock} {lang}"
-            },
-            ...(keyboardLayout === 'shift' ? [{
-              class: "shift-active",
-              buttons: "{shift}"
-            }] : [])
-          ]}
-        />
-      </div>
+      <VirtualKeyboard onKeyPress={handleVirtualKeyPress} />
     </div>
   );
 };
