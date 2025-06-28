@@ -1,10 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeftRight, Copy, Volume2, ClipboardPaste } from 'lucide-react';
+import { ArrowLeftRight, Copy, Volume2, ClipboardPaste, Keyboard } from 'lucide-react';
 import Section from '../ui/Section';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 import { translateText } from '../../utils/translator';
+
+// Extend Window interface to include keyman
+declare global {
+  interface Window {
+    keyman?: any;
+  }
+}
 
 const Translator: React.FC = () => {
   const [inputText, setInputText] = useState('');
@@ -12,28 +19,118 @@ const Translator: React.FC = () => {
   const [sourceLanguage, setSourceLanguage] = useState<string>('en');
   const [targetLanguage, setTargetLanguage] = useState<string>('brahmi');
   const [isTranslating, setIsTranslating] = useState(false);
+  const [keyboardEnabled, setKeyboardEnabled] = useState(false);
+  
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Language options
-  const languages: { [key: string]: { name: string } } = {
-    en: { name: 'English' },
-    hi: { name: 'हिंदी' },
-    sa: { name: 'संस्कृत' },
-    gu: { name: 'ગુજરાતી' },
-    bn: { name: 'বাংলা' },
-    ta: { name: 'தமிழ்' },
-    te: { name: 'తెలుగు' },
-    ml: { name: 'മലയാളം' },
-    kn: { name: 'ಕನ್ನಡ' },
-    or: { name: 'ଓଡ଼ିଆ' },
-    pa: { name: 'ਪੰਜਾਬੀ' },
-    mr: { name: 'मराठी' },
-    ur: { name: 'اردو' },
-    ne: { name: 'नेपाली' },
-    si: { name: 'සිංහල' },
-    brahmi: { name: 'Brahmi Lipi (𑀩𑁆𑀭𑀳𑁆𑀫𑀻)' }
+  // Language options with Keyman keyboard mappings
+  const languages: { [key: string]: { name: string; keyboardId: string } } = {
+    en: { name: 'English', keyboardId: 'en' },
+    hi: { name: 'हिंदी', keyboardId: 'hi' },
+    sa: { name: 'संस्कृत', keyboardId: 'sa-deva' },
+    gu: { name: 'ગુજરાતી', keyboardId: 'gu' },
+    bn: { name: 'বাংলা', keyboardId: 'bn' },
+    ta: { name: 'தமிழ்', keyboardId: 'ta' },
+    te: { name: 'తెలుగు', keyboardId: 'te' },
+    ml: { name: 'മലയാളം', keyboardId: 'ml' },
+    kn: { name: 'ಕನ್ನಡ', keyboardId: 'kn' },
+    or: { name: 'ଓଡ଼ିଆ', keyboardId: 'or' },
+    pa: { name: 'ਪੰਜਾਬੀ', keyboardId: 'pa' },
+    mr: { name: 'मराठी', keyboardId: 'mr' },
+    ur: { name: 'اردو', keyboardId: 'ur' },
+    ne: { name: 'नेपाली', keyboardId: 'ne' },
+    si: { name: 'සිංහල', keyboardId: 'si' },
+    brahmi: { name: 'Brahmi Lipi (𑀩𑁆𑀭𑀳𑁆𑀫𑀻)', keyboardId: 'sa-brah' }
   };
 
+  // Keyman integration functions
+  const attachKeymanKeyboard = useCallback(async (language: string) => {
+    if (!window.keyman || !textareaRef.current) return;
+    
+    try {
+      const keyboardId = languages[language]?.keyboardId || 'en';
+      
+      // Wait for keyboards to be loaded with better error handling
+      await new Promise<void>((resolve, reject) => {
+        let attempts = 0;
+        const maxAttempts = 50; // 5 seconds max wait
+        
+        const checkKeyboards = () => {
+          attempts++;
+          
+          try {
+            // Check if keyman and getKeyboards are available
+            if (!window.keyman || typeof window.keyman.getKeyboards !== 'function') {
+              if (attempts >= maxAttempts) {
+                reject(new Error('Keyman not properly initialized'));
+                return;
+              }
+              setTimeout(checkKeyboards, 100);
+              return;
+            }
+            
+            const keyboards = window.keyman.getKeyboards();
+            if (keyboards && keyboards.length > 0) {
+              resolve();
+            } else {
+              if (attempts >= maxAttempts) {
+                reject(new Error('No keyboards available after maximum wait time'));
+                return;
+              }
+              setTimeout(checkKeyboards, 100);
+            }
+          } catch (error) {
+            console.warn('Error checking keyboards:', error);
+            if (attempts >= maxAttempts) {
+              reject(error);
+              return;
+            }
+            setTimeout(checkKeyboards, 100);
+          }
+        };
+        
+        checkKeyboards();
+      });
+      
+      // Extract the specific keyboard to use  
+      const availableKeyboards = window.keyman.getKeyboards();
+      const keyboardToUse = availableKeyboards.find((kb: any) => kb.LanguageCode === keyboardId);
+      
+      console.log('Available keyboards:', availableKeyboards);
+      console.log('Looking for keyboard with language code:', keyboardId);
+      console.log('Found keyboard:', keyboardToUse);
+      
+      if (!keyboardToUse) {
+        console.warn(`Keyboard ${keyboardId} not found. Available keyboards:`, 
+          availableKeyboards.map((kb: any) => `${kb.Name || kb.name} (${kb.LanguageCode})`));
+        return;
+      }
+      
+      // Attach keyboard to the control
+      window.keyman.attachToControl(textareaRef.current);
+      window.keyman.setActiveKeyboard(keyboardToUse.InternalName, keyboardToUse.LanguageCode);
+      
+      // Show the virtual keyboard if container exists
+      const keyboardContainer = document.getElementById('KeymanWebControl');
+      if (keyboardContainer && window.keyman.osk) {
+        // Enable and show the On-Screen Keyboard
+        window.keyman.osk.show(true);
+        window.keyman.osk.userPositioned = true; // Allow Keyman to position it
+      }
+      
+      setKeyboardEnabled(true);
+    } catch (error) {
+      console.error('Failed to attach Keyman keyboard:', error);
+      setKeyboardEnabled(false);
+    }
+  }, [languages]);
 
+  // Effect to handle keyboard switching when source language changes
+  useEffect(() => {
+    if (keyboardEnabled && textareaRef.current && window.keyman) {
+      attachKeymanKeyboard(sourceLanguage).catch(console.error);
+    }
+  }, [sourceLanguage, keyboardEnabled, attachKeymanKeyboard]);
 
   // Live translation effect
   useEffect(() => {
@@ -241,8 +338,15 @@ const Translator: React.FC = () => {
             {/* Input Section */}
             <div className="flex-1 relative lg:border-r border-surface-100">
               <textarea
+                ref={textareaRef}
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
+                onFocus={async () => {
+                  // Automatically attach keyboard when input area is focused
+                  if (window.keyman && textareaRef.current) {
+                    await attachKeymanKeyboard(sourceLanguage);
+                  }
+                }}
                 placeholder={`Type in ${languages[sourceLanguage].name}...`}
                 className="w-full h-64 sm:h-80 p-4 sm:p-6 bg-transparent text-white text-base sm:text-lg resize-none focus:outline-none placeholder-gray-500"
                 style={{ 
@@ -332,6 +436,24 @@ const Translator: React.FC = () => {
               </div>
             </div>
           </div>
+          
+          {/* Virtual Keyboard Container */}
+          {keyboardEnabled && (
+            <div className="border-t border-surface-100">
+              <div className="p-4">
+                <div className="text-sm text-gray-400 mb-2">
+                  Virtual Keyboard - {languages[sourceLanguage].name}
+                </div>
+                <div 
+                  id="KeymanWebControl" 
+                  className="bg-surface-50 rounded-lg p-2 min-h-[200px] border border-surface-200"
+                  style={{ 
+                    fontFamily: getFontFamily(sourceLanguage)
+                  }}
+                ></div>
+              </div>
+            </div>
+          )}
         </Card>
       </motion.div>
     </Section>
