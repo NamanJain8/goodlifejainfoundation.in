@@ -391,7 +391,7 @@ const BrahmiEditor: React.FC = () => {
         </div>
       </div>
       
-      <VirtualKeyboard onKeyPress={handleVirtualKeyPress} />
+      {/* <VirtualKeyboard onKeyPress={handleVirtualKeyPress} /> */}
     </div>
   );
 };
