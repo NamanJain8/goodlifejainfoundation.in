@@ -242,7 +242,7 @@ const Translator: React.FC = () => {
             <div className="flex-1 relative lg:border-r border-surface-100">
               <textarea
                 value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
+                onInput={(e) => setInputText((e.target as HTMLTextAreaElement).value)}
                 placeholder={`Type in ${languages[sourceLanguage].name}...`}
                 className="w-full h-64 sm:h-80 p-4 sm:p-6 bg-transparent text-white text-base sm:text-lg resize-none focus:outline-none placeholder-gray-500"
                 style={{ 

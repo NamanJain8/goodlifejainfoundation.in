@@ -42,6 +42,18 @@
     
     <!-- Canonical URL -->
     <link rel="canonical" href="https://brahmi-script.netlify.app/" />
+
+    <script src='https://s.keyman.com/kmw/engine/18.0.238/keymanweb.js'></script>
+    <script src='https://s.keyman.com/kmw/engine/18.0.238/kmwuitoggle.js'></script>
+    <script>
+      (function() {
+        keyman.init({attachType:'manual'}).then(function() {
+          keyman.addKeyboards('@en');
+          keyman.addKeyboards('@hi');
+          keyman.addKeyboards('@sa-brah');
+        });
+      })(keyman);
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

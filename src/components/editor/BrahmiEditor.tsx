@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
@@ -8,9 +8,15 @@ import TextAlign from '@tiptap/extension-text-align';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import './BrahmiEditor.css';
+import VirtualKeyboard from './VirtualKeyboard';
 import { getLanguageStats } from '../../utils/languageDetection';
 import { translateFormattedTextToBrahmi, cleanTranslatedHTML } from '../../utils/formattedTranslation';
-import VirtualKeyboard from './VirtualKeyboard';
+
+// Device detection utility
+const isMobileDevice = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+         (typeof navigator.maxTouchPoints === 'number' && navigator.maxTouchPoints > 2 && /MacIntel/.test(navigator.platform));
+};
 
 const BrahmiEditor: React.FC = () => {
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -18,6 +24,7 @@ const BrahmiEditor: React.FC = () => {
   const [brahmiTranslation, setBrahmiTranslation] = useState('');
   const [isTranslating, setIsTranslating] = useState(false);
   const [languageStats, setLanguageStats] = useState<{ [key: string]: number }>({});
+  const [isMobile, setIsMobile] = useState(false);
   const colorPickerRef = useRef<HTMLDivElement>(null);
   const headingDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -34,24 +41,38 @@ const BrahmiEditor: React.FC = () => {
     content: '',
     autofocus: 'start',
     editable: true,
+    editorProps: {
+      handleKeyDown: (view, event) => {
+        // We are intercepting special keys to have custom behavior
+        switch (event.key) {
+          case 'Enter':
+            editor?.chain().focus().setHardBreak().run();
+            return true;
+          case 'Backspace':
+            editor?.commands.first(({ commands }) => [
+              () => commands.undoInputRule(),
+              () => commands.deleteSelection(),
+              () => commands.deleteRange({ from: Math.max(0, editor.state.selection.from - 1), to: editor.state.selection.from })
+            ]);
+            return true;
+          case 'Tab':
+            editor?.commands.insertContent('    ');
+            return true;
+          default:
+            // For all other keys, let Tiptap handle them
+            return false;
+        }
+      },
+    },
   });
 
-  const handleVirtualKeyPress = useCallback((key: string) => {
+  // Virtual keyboard handler for desktop
+  const handleVirtualKeyPress = (key: string) => {
     if (!editor) return;
-
-    // Focus the editor first to ensure cursor is visible
-    editor.commands.focus();
 
     switch (key) {
       case '{bksp}':
-        editor.commands.first(({ commands }) => [
-          () => commands.undoInputRule(),
-          () => commands.deleteSelection(),
-          () => commands.deleteRange({ from: Math.max(0, editor.state.selection.from - 1), to: editor.state.selection.from })
-        ]);
-        break;
-      case '{space}':
-        editor.commands.insertContent(' ');
+        editor.commands.deleteSelection();
         break;
       case '{enter}':
         editor.commands.setHardBreak();
@@ -59,15 +80,14 @@ const BrahmiEditor: React.FC = () => {
       case '{tab}':
         editor.commands.insertContent('    ');
         break;
+      case '{space}':
+        editor.commands.insertContent(' ');
+        break;
       default:
         editor.commands.insertContent(key);
+        break;
     }
-
-    // Ensure editor stays focused after the action
-    setTimeout(() => {
-      editor.commands.focus();
-    }, 10);
-  }, [editor]);
+  };
 
   const downloadPDF = async () => {
     if (!editor) return;
@@ -108,8 +128,6 @@ const BrahmiEditor: React.FC = () => {
     setShowHeadingDropdown(false);
   };
 
-
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
@@ -128,6 +146,31 @@ const BrahmiEditor: React.FC = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showColorPicker, showHeadingDropdown]);
+
+  // Device detection effect
+  useEffect(() => {
+    setIsMobile(isMobileDevice());
+  }, []);
+
+  // Keyman initialization for mobile devices
+  useEffect(() => {
+    console.log('isMobile', isMobile);
+    if (!isMobile || !editor) return;
+
+    const initializeKeyman = async () => {
+      try {
+        if (typeof window !== 'undefined' && window.keyman) {
+          await window.keyman.init();
+          window.keyman.attachToControl(editor.view.dom);
+          console.log('Keyman initialized for mobile device');
+        }
+      } catch (error) {
+        console.error('Failed to initialize Keyman:', error);
+      }
+    };
+
+    initializeKeyman();
+  }, [isMobile, editor]);
 
   // Translation effect - translate editor content to Brahmi
   useEffect(() => {
@@ -391,7 +434,14 @@ const BrahmiEditor: React.FC = () => {
         </div>
       </div>
       
-      {/* <VirtualKeyboard onKeyPress={handleVirtualKeyPress} /> */}
+      {/* Virtual Keyboard for Desktop */}
+      {!isMobile && (
+        <div className="virtual-keyboard-container">
+          <VirtualKeyboard onKeyPress={handleVirtualKeyPress} />
+        </div>
+      )}
+      
+      {isMobile && <div id="KeymanWebControl"></div>}
     </div>
   );
 };
