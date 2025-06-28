@@ -132,6 +132,27 @@ const Translator: React.FC = () => {
     }
   }, [sourceLanguage, attachKeymanKeyboard]);
 
+  // This effect handles the OSK embedding after the container is rendered.
+  useEffect(() => {
+    if (keyboardEnabled && window.keyman?.osk) {
+      const keyboardContainer = document.getElementById('KeymanWebControl');
+      if (keyboardContainer) {
+        window.keyman.osk.show(true);
+
+        // const oskElement = window.keyman.osk.getElement();
+        // if (oskElement) {
+        //   // Move the OSK from the body into our container.
+        //   while (keyboardContainer.firstChild) {
+        //     keyboardContainer.removeChild(keyboardContainer.firstChild);
+        //   }
+        //   keyboardContainer.appendChild(oskElement);
+        // }
+        // // Prevent Keyman from repositioning the OSK.
+        window.keyman.osk.userPositioned = true;
+      }
+    }
+  }, [keyboardEnabled]);
+
   // Live translation effect
   useEffect(() => {
     if (!inputText.trim()) {
@@ -364,16 +385,16 @@ const Translator: React.FC = () => {
           {keyboardEnabled && (
             <div className="border-t border-surface-100">
               <div className="p-4">
-                <div className="text-sm text-gray-400 mb-2">
+                <div className="text-lg font-semibold text-text-700 mb-2">
                   Virtual Keyboard - {languages[sourceLanguage].name}
                 </div>
-                <div 
+                {/* <div 
                   id="KeymanWebControl" 
                   className="bg-surface-50 rounded-lg p-2 min-h-[200px] border border-surface-200"
                   style={{ 
                     fontFamily: languages[sourceLanguage]?.fontFamily || 'inherit'
                   }}
-                ></div>
+                ></div> */}
               </div>
             </div>
           )}

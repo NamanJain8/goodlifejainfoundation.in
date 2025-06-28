@@ -42,42 +42,6 @@
     
     <!-- Canonical URL -->
     <link rel="canonical" href="https://brahmi-script.netlify.app/" />
-    
-    <!-- Keyman Web Integration -->
-    <script src='https://s.keyman.com/kmw/engine/18.0.238/keymanweb.js'></script>
-    <script src='https://s.keyman.com/kmw/engine/18.0.238/kmwuitoolbar.js'></script>
-    <script>
-      (function() {
-        keyman.init({
-          attachType: 'manual',
-        });
-        
-        // Load keyboards for different languages with simpler approach
-        try {
-          keyman.addKeyboards('@en');           // English
-          keyman.addKeyboards('@hi');           // Hindi (Devanagari)
-          keyman.addKeyboards('@gu');           // Gujarati
-          keyman.addKeyboards('@bn');           // Bengali
-          keyman.addKeyboards('@ta');           // Tamil
-          keyman.addKeyboards('@te');           // Telugu
-          keyman.addKeyboards('@ml');           // Malayalam
-          keyman.addKeyboards('@kn');           // Kannada
-          keyman.addKeyboards('@or');           // Odia
-          keyman.addKeyboards('@pa');           // Punjabi
-          keyman.addKeyboards('@mr');           // Marathi
-          keyman.addKeyboards('@ur');           // Urdu
-          keyman.addKeyboards('@ne');           // Nepali
-          keyman.addKeyboards('@si');           // Sinhala
-          keyman.addKeyboards('@sa-brah');      // Brahmi
-          keyman.addKeyboards('@sa-deva');      // Sanskrit
-        } catch (error) {
-          console.warn('Some keyboards failed to load:', error);
-        }
-        
-        // Make keyman globally available
-        window.keyman = keyman;
-      })();
-    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

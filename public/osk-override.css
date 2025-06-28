@@ -1,0 +1,50 @@
+/* 
+  This CSS file overrides the default KeymanWeb OSK styling to allow it to be
+  embedded responsively within a container.
+*/
+
+/* Hides the OSK's draggable header and other extraneous elements */
+.kmw-osk-header,
+.kmw-osk-splitter,
+.kmw-osk-close-button,
+.kmw-title-bar,
+.kmw-footer,
+.kmw-resize-bar {
+  display: none !important;
+}
+
+/* 
+  The main container for the OSK. We make its size and positioning relative
+  to the parent container.
+*/
+.kmw-osk-inner-frame {
+  position: absolute !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+
+/* 
+  Ensures the layer (the part with the keys) fills its container and has a 
+  transparent background to match the overall design.
+*/
+.kmw-osk-layer-frame {
+  width: 100% !important;
+  height: 100% !important;
+  background-color: transparent !important;
+}
+
+/* 
+  Makes sure the keys are laid out to fill the available width.
+  `!important` is used here to override Keyman's inline styles.
+*/
+.kmw-key-row {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+.kmw-key {
+  font-size: 1em;
+}
