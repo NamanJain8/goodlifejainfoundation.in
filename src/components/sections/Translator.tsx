@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeftRight, Copy, Volume2, ClipboardPaste, Keyboard } from 'lucide-react';
+import { ArrowLeftRight, Copy, Volume2, ClipboardPaste } from 'lucide-react';
 import Section from '../ui/Section';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
@@ -23,24 +23,24 @@ const Translator: React.FC = () => {
   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Language options with Keyman keyboard mappings
-  const languages: { [key: string]: { name: string; keyboardId: string } } = {
-    en: { name: 'English', keyboardId: 'en' },
-    hi: { name: 'हिंदी', keyboardId: 'hi' },
-    sa: { name: 'संस्कृत', keyboardId: 'sa-deva' },
-    gu: { name: 'ગુજરાતી', keyboardId: 'gu' },
-    bn: { name: 'বাংলা', keyboardId: 'bn' },
-    ta: { name: 'தமிழ்', keyboardId: 'ta' },
-    te: { name: 'తెలుగు', keyboardId: 'te' },
-    ml: { name: 'മലയാളം', keyboardId: 'ml' },
-    kn: { name: 'ಕನ್ನಡ', keyboardId: 'kn' },
-    or: { name: 'ଓଡ଼ିଆ', keyboardId: 'or' },
-    pa: { name: 'ਪੰਜਾਬੀ', keyboardId: 'pa' },
-    mr: { name: 'मराठी', keyboardId: 'mr' },
-    ur: { name: 'اردو', keyboardId: 'ur' },
-    ne: { name: 'नेपाली', keyboardId: 'ne' },
-    si: { name: 'සිංහල', keyboardId: 'si' },
-    brahmi: { name: 'Brahmi Lipi (𑀩𑁆𑀭𑀳𑁆𑀫𑀻)', keyboardId: 'sa-brah' }
+  // Language options with complete configuration
+  const languages: { [key: string]: { name: string; keyboardId: string; speechLangCode: string; fontFamily: string } } = {
+    en: { name: 'English', keyboardId: 'en', speechLangCode: 'en-US', fontFamily: 'inherit' },
+    hi: { name: 'हिंदी', keyboardId: 'hi', speechLangCode: 'hi-IN', fontFamily: 'Noto Sans Devanagari, serif' },
+    sa: { name: 'संस्कृत', keyboardId: 'sa-deva', speechLangCode: 'hi-IN', fontFamily: 'Noto Sans Devanagari, serif' },
+    gu: { name: 'ગુજરાતી', keyboardId: 'gu', speechLangCode: 'gu-IN', fontFamily: 'Noto Sans Gujarati, serif' },
+    bn: { name: 'বাংলা', keyboardId: 'bn', speechLangCode: 'bn-IN', fontFamily: 'Noto Sans Bengali, serif' },
+    ta: { name: 'தமிழ்', keyboardId: 'ta', speechLangCode: 'ta-IN', fontFamily: 'Noto Sans Tamil, serif' },
+    te: { name: 'తెలుగు', keyboardId: 'te', speechLangCode: 'te-IN', fontFamily: 'Noto Sans Telugu, serif' },
+    ml: { name: 'മലയാളം', keyboardId: 'ml', speechLangCode: 'ml-IN', fontFamily: 'Noto Sans Malayalam, serif' },
+    kn: { name: 'ಕನ್ನಡ', keyboardId: 'kn', speechLangCode: 'kn-IN', fontFamily: 'Noto Sans Kannada, serif' },
+    or: { name: 'ଓଡ଼ିଆ', keyboardId: 'or', speechLangCode: 'hi-IN', fontFamily: 'Noto Sans Oriya, serif' },
+    pa: { name: 'ਪੰਜਾਬੀ', keyboardId: 'pa', speechLangCode: 'pa-IN', fontFamily: 'Noto Sans Gurmukhi, serif' },
+    mr: { name: 'मराठी', keyboardId: 'mr', speechLangCode: 'mr-IN', fontFamily: 'Noto Sans Devanagari, serif' },
+    ur: { name: 'اردو', keyboardId: 'ur', speechLangCode: 'ur-PK', fontFamily: 'Noto Sans Arabic, serif' },
+    ne: { name: 'नेपाली', keyboardId: 'ne', speechLangCode: 'ne-NP', fontFamily: 'Noto Sans Devanagari, serif' },
+    si: { name: 'සිංහල', keyboardId: 'si', speechLangCode: 'si-LK', fontFamily: 'Noto Sans Sinhala, serif' },
+    brahmi: { name: 'Brahmi Lipi (𑀩𑁆𑀭𑀳𑁆𑀫𑀻)', keyboardId: 'sa-brah', speechLangCode: 'hi-IN', fontFamily: 'Noto Sans Brahmi, serif' }
   };
 
   // Keyman integration functions
@@ -123,7 +123,7 @@ const Translator: React.FC = () => {
       console.error('Failed to attach Keyman keyboard:', error);
       setKeyboardEnabled(false);
     }
-  }, [languages]);
+  }, []);
 
   // Effect to handle keyboard switching when source language changes
   useEffect(() => {
@@ -158,11 +158,8 @@ const Translator: React.FC = () => {
   }, [inputText, sourceLanguage, targetLanguage]);
 
   const handleSwapLanguages = () => {
-    const newSource = targetLanguage;
-    const newTarget = sourceLanguage;
-    
-    setSourceLanguage(newSource);
-    setTargetLanguage(newTarget);
+    setSourceLanguage(targetLanguage);
+    setTargetLanguage(sourceLanguage);
     setInputText(outputText);
   };
 
@@ -170,98 +167,30 @@ const Translator: React.FC = () => {
     try {
       const text = await navigator.clipboard.readText();
       setInputText(text);
-    } catch (err) {
-      console.error('Failed to paste:', err);
+    } catch (error) {
+      console.error('Failed to paste:', error);
     }
   };
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(outputText);
-    } catch (err) {
-      console.error('Failed to copy:', err);
+    } catch (error) {
+      console.error('Failed to copy:', error);
     }
   };
 
   const handleSpeak = (text: string, language: string) => {
-    if ('speechSynthesis' in window && text) {
-      let textToSpeak = text;
-      let langCode = 'hi-IN'; // Default fallback
-      
-      // For Brahmi, use the source language to speak the original input text
-      if (language === 'brahmi') {
-        textToSpeak = inputText; // Speak the original input instead of Brahmi output
-        langCode = sourceLanguage === 'hi' ? 'hi-IN' : 
-                   sourceLanguage === 'en' ? 'en-US' :
-                   sourceLanguage === 'gu' ? 'gu-IN' :
-                   sourceLanguage === 'bn' ? 'bn-IN' :
-                   sourceLanguage === 'ta' ? 'ta-IN' :
-                   sourceLanguage === 'te' ? 'te-IN' :
-                   sourceLanguage === 'ml' ? 'ml-IN' :
-                   sourceLanguage === 'kn' ? 'kn-IN' :
-                   sourceLanguage === 'pa' ? 'pa-IN' :
-                   sourceLanguage === 'mr' ? 'mr-IN' :
-                   sourceLanguage === 'ur' ? 'ur-PK' :
-                   sourceLanguage === 'ne' ? 'ne-NP' :
-                   sourceLanguage === 'si' ? 'si-LK' :
-                   sourceLanguage === 'sa' ? 'hi-IN' : // Sanskrit fallback to Hindi
-                   'hi-IN';
-      } else {
-        langCode = language === 'hi' ? 'hi-IN' : 
-                   language === 'en' ? 'en-US' :
-                   language === 'gu' ? 'gu-IN' :
-                   language === 'bn' ? 'bn-IN' :
-                   language === 'ta' ? 'ta-IN' :
-                   language === 'te' ? 'te-IN' :
-                   language === 'ml' ? 'ml-IN' :
-                   language === 'kn' ? 'kn-IN' :
-                   language === 'pa' ? 'pa-IN' :
-                   language === 'mr' ? 'mr-IN' :
-                   language === 'ur' ? 'ur-PK' :
-                   language === 'ne' ? 'ne-NP' :
-                   language === 'si' ? 'si-LK' :
-                   language === 'sa' ? 'hi-IN' : // Sanskrit fallback to Hindi
-                   'hi-IN';
-      }
-      
-      const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      utterance.lang = langCode;
-      speechSynthesis.speak(utterance);
-    }
-  };
-
-  const getFontFamily = (language: string) => {
-    switch (language) {
-      case 'hi':
-      case 'sa':
-      case 'mr':
-      case 'ne':
-        return 'Noto Sans Devanagari, serif';
-      case 'gu':
-        return 'Noto Sans Gujarati, serif';
-      case 'bn':
-        return 'Noto Sans Bengali, serif';
-      case 'ta':
-        return 'Noto Sans Tamil, serif';
-      case 'te':
-        return 'Noto Sans Telugu, serif';
-      case 'ml':
-        return 'Noto Sans Malayalam, serif';
-      case 'kn':
-        return 'Noto Sans Kannada, serif';
-      case 'or':
-        return 'Noto Sans Oriya, serif';
-      case 'pa':
-        return 'Noto Sans Gurmukhi, serif';
-      case 'ur':
-        return 'Noto Sans Arabic, serif';
-      case 'si':
-        return 'Noto Sans Sinhala, serif';
-      case 'brahmi':
-        return 'Noto Sans Brahmi, serif';
-      default:
-        return 'inherit';
-    }
+    if (!('speechSynthesis' in window) || !text) return;
+    
+    // For Brahmi, use the source language to speak the original input text
+    const textToSpeak = language === 'brahmi' ? inputText : text;
+    const langToUse = language === 'brahmi' ? sourceLanguage : language;
+    const langCode = languages[langToUse]?.speechLangCode || 'hi-IN';
+    
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    utterance.lang = langCode;
+    speechSynthesis.speak(utterance);
   };
 
   return (
@@ -341,16 +270,16 @@ const Translator: React.FC = () => {
                 ref={textareaRef}
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                onFocus={async () => {
+                onFocus={() => {
                   // Automatically attach keyboard when input area is focused
                   if (window.keyman && textareaRef.current) {
-                    await attachKeymanKeyboard(sourceLanguage);
+                    attachKeymanKeyboard(sourceLanguage).catch(console.error);
                   }
                 }}
                 placeholder={`Type in ${languages[sourceLanguage].name}...`}
                 className="w-full h-64 sm:h-80 p-4 sm:p-6 bg-transparent text-white text-base sm:text-lg resize-none focus:outline-none placeholder-gray-500"
                 style={{ 
-                  fontFamily: getFontFamily(sourceLanguage)
+                  fontFamily: languages[sourceLanguage]?.fontFamily || 'inherit'
                 }}
               />
               
@@ -397,7 +326,7 @@ const Translator: React.FC = () => {
                     targetLanguage === 'brahmi' ? 'font-brahmi text-primary-400' : 'text-white'
                   }`}
                   style={{ 
-                    fontFamily: targetLanguage === 'brahmi' ? 'inherit' : getFontFamily(targetLanguage)
+                    fontFamily: targetLanguage === 'brahmi' ? 'inherit' : (languages[targetLanguage]?.fontFamily || 'inherit')
                   }}
                 >
                   {isTranslating ? (
@@ -448,7 +377,7 @@ const Translator: React.FC = () => {
                   id="KeymanWebControl" 
                   className="bg-surface-50 rounded-lg p-2 min-h-[200px] border border-surface-200"
                   style={{ 
-                    fontFamily: getFontFamily(sourceLanguage)
+                    fontFamily: languages[sourceLanguage]?.fontFamily || 'inherit'
                   }}
                 ></div>
               </div>
