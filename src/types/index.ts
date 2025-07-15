@@ -27,7 +27,7 @@ export interface CardProps {
 export interface TimelineItem {
   id: number;
   title: string;
-  description: string;
+  description: string | string[];
   image?: string;
 }
 
