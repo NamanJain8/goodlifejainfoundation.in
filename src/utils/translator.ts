@@ -21,9 +21,15 @@ const devanagariToBrahmi = (text: string): string => {
     const codePoint = text.codePointAt(i);
     if (!codePoint) continue;
 
+    // Handle space explicitly
     if (codePoint === 0x20) {
       result += ' '; // Keep spaces as spaces
       continue;
+    }
+
+    // Handle surrogate pairs - if this is a high surrogate, skip the next character
+    if (codePoint > 0xFFFF) {
+      i++; // Skip the low surrogate
     }
 
     switch (codePoint) {
@@ -112,6 +118,17 @@ const brahmiToDevanagari = (text: string): string => {
   for (let i = 0; i < text.length; i++) {
     const codePoint = text.codePointAt(i);
     if (!codePoint) continue;
+
+    // Handle space explicitly
+    if (codePoint === 0x20) {
+      result += ' '; // Keep spaces as spaces
+      continue;
+    }
+
+    // Handle surrogate pairs - if this is a high surrogate, skip the next character
+    if (codePoint > 0xFFFF) {
+      i++; // Skip the low surrogate
+    }
 
     switch (codePoint) {
       case 0x11001: result += String.fromCodePoint(0x902); break;
