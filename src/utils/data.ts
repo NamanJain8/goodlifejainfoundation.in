@@ -299,7 +299,7 @@ export const socialLinks = {
 };
 
 // Video URL
-export const heroVideoUrl = 'https://player.vimeo.com/video/1025487433';
+export const heroVideoUrl = 'https://player.vimeo.com/video/1025487433?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479';
 
 // Contact Information
 export const contactInfo = {
