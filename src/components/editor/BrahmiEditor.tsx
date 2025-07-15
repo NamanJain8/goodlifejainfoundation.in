@@ -5,8 +5,6 @@ import Underline from '@tiptap/extension-underline';
 import TextStyle from '@tiptap/extension-text-style';
 import Color from '@tiptap/extension-color';
 import TextAlign from '@tiptap/extension-text-align';
-import Blockquote from '@tiptap/extension-blockquote';
-import HorizontalRule from '@tiptap/extension-horizontal-rule';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import './BrahmiEditor.css';
@@ -32,8 +30,6 @@ const BrahmiEditor: React.FC = () => {
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
-      Blockquote,
-      HorizontalRule,
     ],
     content: '',
     autofocus: 'start',

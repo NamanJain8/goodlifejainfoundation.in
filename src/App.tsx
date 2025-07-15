@@ -12,7 +12,7 @@ import BrahmiEditor from './components/editor/BrahmiEditor';
 
 function App() {
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Routes>
         <Route path="/editor" element={<BrahmiEditor />} />
         <Route path="/" element={
