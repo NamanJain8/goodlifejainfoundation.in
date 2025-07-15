@@ -1,15 +1,28 @@
 {
-  "short_name": "Brahmi",
-  "name": "Good Life Jain Foundation",
+  "short_name": "Brahmi Script",
+  "name": "Good Life Jain Foundation - Brahmi Script",
+  "description": "Preserving the sacred heritage of Brahmi script through modern technology",
   "icons": [
     {
       "src": "favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#d4af37",
+  "background_color": "#0a0a0a",
+  "categories": ["education", "culture", "history"],
+  "lang": "en"
 }
