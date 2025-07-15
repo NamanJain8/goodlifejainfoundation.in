@@ -181,7 +181,7 @@ export const timelineData: TimelineItem[] = [
       'Every language has its own script. For example, languages like Sanskrit, Apabhramsha, Hindi, and Pali use the Devanagari script, the English language uses the Roman script, and Punjabi is written in Gurmukhi. Thus, distinct languages typically have their own dedicated scripts.',
       'While it is possible to write any language using any script — for instance, ॥श्री आदिनाथाय नमः॥ in Devanagari script can be transliterated into the Roman script as Shri Adinathaya Namah — such writing is neither complete nor standard. To achieve accuracy and correctness, the script specific to a language must be used.'
     ],
-    image: '/assets/story/07_scripts_languages.png',
+    image: '/assets/story/07_scripts_languages.jpeg',
   },
   {
     id: 8,
