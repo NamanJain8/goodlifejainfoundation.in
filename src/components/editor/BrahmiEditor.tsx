@@ -19,7 +19,6 @@ import { translateFormattedTextToBrahmi, cleanTranslatedHTML } from '../../utils
 const BrahmiEditor: React.FC = () => {
   const [inputLanguage, setInputLanguage] = useState<'english' | 'hindi' | 'brahmi'>('brahmi');
   const [keyboardLayout, setKeyboardLayout] = useState<'default' | 'shift'>('default');
-  const [showKeyboard, setShowKeyboard] = useState(true);
   const [isCapsLock, setIsCapsLock] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showHeadingDropdown, setShowHeadingDropdown] = useState(false);
@@ -440,38 +439,36 @@ const BrahmiEditor: React.FC = () => {
         </div>
       </div>
       
-      {showKeyboard && (
-        <div className="virtual-keyboard">
-          <Keyboard
-            keyboardRef={r => (keyboardRef.current = r)}
-            layoutName="default"
-            layout={{ 
-              default: getCurrentLayout()
-            }}
-            onKeyPress={handleKeyPress}
-            display={{
-              '{bksp}': '⌫',
-              '{enter}': '↵',
-              '{tab}': '⇥',
-              '{space}': 'Space',
-              '{shift}': '⇧',
-              '{lock}': inputLanguage === 'english' ? (isCapsLock ? '🔒' : '⇪') : '⇪',
-              '{lang}': `🌐 ${inputLanguage.charAt(0).toUpperCase() + inputLanguage.slice(1)}`
-            }}
-            theme="hg-theme-default"
-            buttonTheme={[
-              {
-                class: "special-key",
-                buttons: "{bksp} {enter} {tab} {space} {shift} {lock} {lang}"
-              },
-              ...(keyboardLayout === 'shift' ? [{
-                class: "shift-active",
-                buttons: "{shift}"
-              }] : [])
-            ]}
-          />
-        </div>
-      )}
+      <div className="virtual-keyboard">
+        <Keyboard
+          keyboardRef={r => (keyboardRef.current = r)}
+          layoutName="default"
+          layout={{ 
+            default: getCurrentLayout()
+          }}
+          onKeyPress={handleKeyPress}
+          display={{
+            '{bksp}': '⌫',
+            '{enter}': '↵',
+            '{tab}': '⇥',
+            '{space}': 'Space',
+            '{shift}': '⇧',
+            '{lock}': inputLanguage === 'english' ? (isCapsLock ? '🔒' : '⇪') : '⇪',
+            '{lang}': `🌐 ${inputLanguage.charAt(0).toUpperCase() + inputLanguage.slice(1)}`
+          }}
+          theme="hg-theme-default"
+          buttonTheme={[
+            {
+              class: "special-key",
+              buttons: "{bksp} {enter} {tab} {space} {shift} {lock} {lang}"
+            },
+            ...(keyboardLayout === 'shift' ? [{
+              class: "shift-active",
+              buttons: "{shift}"
+            }] : [])
+          ]}
+        />
+      </div>
     </div>
   );
 };
