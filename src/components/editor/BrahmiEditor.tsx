@@ -48,13 +48,35 @@ const BrahmiEditor: React.FC = () => {
           case 'Enter':
             editor?.chain().focus().setHardBreak().run();
             return true;
-          case 'Backspace':
-            editor?.commands.first(({ commands }) => [
-              () => commands.undoInputRule(),
-              () => commands.deleteSelection(),
-              () => commands.deleteRange({ from: Math.max(0, editor.state.selection.from - 1), to: editor.state.selection.from })
-            ]);
+          case 'Backspace': {
+            if (!editor) return true;
+
+            if (editor.commands.undoInputRule() || editor.commands.deleteSelection()) {
+              return true;
+            }
+
+            const { from, $from } = editor.state.selection;
+
+            if ($from.parentOffset > 0) {
+              const textBefore = $from.parent.textBetween(0, $from.parentOffset, undefined, ' ');
+              if (textBefore) {
+                const segmenter = new Intl.Segmenter();
+                const segments = Array.from(segmenter.segment(textBefore));
+                const lastGrapheme = segments[segments.length - 1]?.segment;
+
+                if (lastGrapheme) {
+                  const newFrom = from - lastGrapheme.length;
+                  editor.chain().focus().deleteRange({ from: newFrom, to: from }).run();
+                  return true;
+                }
+              }
+            }
+
+            if (editor.commands.joinBackward()) {
+              return true;
+            }
             return true;
+          }
           case 'Tab':
             editor?.commands.insertContent('    ');
             return true;
@@ -70,10 +92,33 @@ const BrahmiEditor: React.FC = () => {
   const handleVirtualKeyPress = (key: string) => {
     if (!editor) return;
 
+    editor.commands.focus();
+
     switch (key) {
-      case '{bksp}':
-        editor.commands.deleteSelection();
+      case '{bksp}': {
+        if (editor.commands.undoInputRule() || editor.commands.deleteSelection()) {
+          break;
+        }
+
+        const { from, $from } = editor.state.selection;
+
+        if ($from.parentOffset > 0) {
+          const textBefore = $from.parent.textBetween(0, $from.parentOffset, undefined, ' ');
+          if (textBefore) {
+            const segmenter = new Intl.Segmenter();
+            const segments = Array.from(segmenter.segment(textBefore));
+            const lastGrapheme = segments[segments.length - 1]?.segment;
+
+            if (lastGrapheme) {
+              editor.chain().focus().deleteRange({ from: from - lastGrapheme.length, to: from }).run();
+              break;
+            }
+          }
+        }
+
+        editor.commands.joinBackward();
         break;
+      }
       case '{enter}':
         editor.commands.setHardBreak();
         break;
@@ -87,6 +132,11 @@ const BrahmiEditor: React.FC = () => {
         editor.commands.insertContent(key);
         break;
     }
+
+    // Ensure editor stays focused after the action
+    setTimeout(() => {
+      editor.commands.focus();
+    }, 10);
   };
 
   const downloadPDF = async () => {
