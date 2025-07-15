@@ -208,7 +208,7 @@ export const toolsData: Tool[] = [
     title: 'Multi Keyboard',
     description: 'Type in Hindi or English and automatically convert to Brahmi script with our advanced multi-language keyboard.',
     icon: 'Keyboard',
-    link: 'https://samayjain24.github.io/Multilingual_Keyboard/',
+    link: '/editor',
   },
   {
     id: 'game',
