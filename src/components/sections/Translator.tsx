@@ -87,22 +87,48 @@ const Translator: React.FC = () => {
   };
 
   const handleSpeak = (text: string, language: string) => {
-    if ('speechSynthesis' in window && text && language !== 'brahmi') {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = language === 'hi' ? 'hi-IN' : 
-                      language === 'en' ? 'en-US' :
-                      language === 'gu' ? 'gu-IN' :
-                      language === 'bn' ? 'bn-IN' :
-                      language === 'ta' ? 'ta-IN' :
-                      language === 'te' ? 'te-IN' :
-                      language === 'ml' ? 'ml-IN' :
-                      language === 'kn' ? 'kn-IN' :
-                      language === 'pa' ? 'pa-IN' :
-                      language === 'mr' ? 'mr-IN' :
-                      language === 'ur' ? 'ur-PK' :
-                      language === 'ne' ? 'ne-NP' :
-                      language === 'si' ? 'si-LK' :
-                      'hi-IN';
+    if ('speechSynthesis' in window && text) {
+      let textToSpeak = text;
+      let langCode = 'hi-IN'; // Default fallback
+      
+      // For Brahmi, use the source language to speak the original input text
+      if (language === 'brahmi') {
+        textToSpeak = inputText; // Speak the original input instead of Brahmi output
+        langCode = sourceLanguage === 'hi' ? 'hi-IN' : 
+                   sourceLanguage === 'en' ? 'en-US' :
+                   sourceLanguage === 'gu' ? 'gu-IN' :
+                   sourceLanguage === 'bn' ? 'bn-IN' :
+                   sourceLanguage === 'ta' ? 'ta-IN' :
+                   sourceLanguage === 'te' ? 'te-IN' :
+                   sourceLanguage === 'ml' ? 'ml-IN' :
+                   sourceLanguage === 'kn' ? 'kn-IN' :
+                   sourceLanguage === 'pa' ? 'pa-IN' :
+                   sourceLanguage === 'mr' ? 'mr-IN' :
+                   sourceLanguage === 'ur' ? 'ur-PK' :
+                   sourceLanguage === 'ne' ? 'ne-NP' :
+                   sourceLanguage === 'si' ? 'si-LK' :
+                   sourceLanguage === 'sa' ? 'hi-IN' : // Sanskrit fallback to Hindi
+                   'hi-IN';
+      } else {
+        langCode = language === 'hi' ? 'hi-IN' : 
+                   language === 'en' ? 'en-US' :
+                   language === 'gu' ? 'gu-IN' :
+                   language === 'bn' ? 'bn-IN' :
+                   language === 'ta' ? 'ta-IN' :
+                   language === 'te' ? 'te-IN' :
+                   language === 'ml' ? 'ml-IN' :
+                   language === 'kn' ? 'kn-IN' :
+                   language === 'pa' ? 'pa-IN' :
+                   language === 'mr' ? 'mr-IN' :
+                   language === 'ur' ? 'ur-PK' :
+                   language === 'ne' ? 'ne-NP' :
+                   language === 'si' ? 'si-LK' :
+                   language === 'sa' ? 'hi-IN' : // Sanskrit fallback to Hindi
+                   'hi-IN';
+      }
+      
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      utterance.lang = langCode;
       speechSynthesis.speak(utterance);
     }
   };
