@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
@@ -9,6 +8,12 @@ import Resources from './components/sections/Resources';
 import Gallery from './components/sections/Gallery';
 import Translator from './components/sections/Translator';
 import BrahmiEditor from './components/editor/BrahmiEditor';
+
+declare global {
+  interface Window {
+    keyman?: any;
+  }
+}
 
 function App() {
   return (
