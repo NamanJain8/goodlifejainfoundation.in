@@ -23,6 +23,7 @@ const devanagariToBrahmi = (text: string): string => {
     }
 
     switch (codePoint) {
+      case 0x901: result += String.fromCodePoint(0x11000); break; // CANDRABINDU
       case 0x902: result += String.fromCodePoint(0x11001); break;
       case 0x905: result += String.fromCodePoint(0x11005); break; // A
       case 0x906: result += String.fromCodePoint(0x11006); break; // AA
@@ -122,6 +123,7 @@ const brahmiToDevanagari = (text: string): string => {
     }
 
     switch (codePoint) {
+      case 0x11000: result += String.fromCodePoint(0x901); break; // CANDRABINDU
       case 0x11001: result += String.fromCodePoint(0x902); break;
       case 0x11005: result += String.fromCodePoint(0x905); break; // A
       case 0x11006: result += String.fromCodePoint(0x906); break; // AA
