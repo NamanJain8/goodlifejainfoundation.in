@@ -112,44 +112,136 @@ const About: React.FC = () => {
       </motion.div>
 
       {/* Timeline */}
-      <div className="relative">
+      <div className="relative max-w-7xl mx-auto">
+        {/* Vertical line */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 1 }}
-          className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary-500 to-primary-600 transform md:-translate-x-1/2"
+          className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary-500 to-primary-600 transform md:-translate-x-1/2 z-0"
         />
 
-        <div className="space-y-12">
+        <div className="space-y-16">
           {timelineData.map((item, index) => (
             <motion.div
               key={item.id}
-              initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: index * 0.1 }}
-              className={`relative flex items-center ${
-                index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
-              }`}
+              className="relative"
             >
-              {/* Timeline Number */}
-              <motion.div
-                initial={{ scale: 0 }}
-                whileInView={{ scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
-                className="absolute left-0 md:left-1/2 w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center transform md:-translate-x-1/2 z-10"
-              >
-                <span className="text-dark-950 font-bold text-sm">{item.id}</span>
-              </motion.div>
+              {/* Timeline Number - Removed */}
+              
+              {/* Desktop Layout */}
+              <div className="hidden md:block">
+                <div className="grid grid-cols-2 gap-16 items-center">
+                  {/* Left Column */}
+                  <div className="flex justify-end pr-8">
+                    {index % 2 === 0 ? (
+                      // Content on left for even items
+                      <div className="w-full max-w-md">
+                        <Card variant="hover-lift">
+                          <div className="p-6">
+                            <h3 className="text-xl font-serif font-semibold text-primary-400 mb-3">
+                              {item.title}
+                            </h3>
+                            <p className="text-gray-300 leading-relaxed">
+                              {item.description}
+                            </p>
+                          </div>
+                        </Card>
+                      </div>
+                    ) : (
+                      // Image on left for odd items
+                      item.image && (
+                        <div className="w-full max-w-md">
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                            className="relative overflow-hidden rounded-xl shadow-2xl"
+                          >
+                            <div className="relative aspect-[4/3] overflow-hidden">
+                              <img
+                                src={item.image}
+                                alt={item.title}
+                                className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                                loading="lazy"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                              
+                              {/* Image Overlay with Title */}
+                              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+                                <p className="text-white font-medium text-sm">
+                                  {item.id}: {item.title}
+                                </p>
+                              </div>
+                            </div>
+                          </motion.div>
+                        </div>
+                      )
+                    )}
+                  </div>
 
-              {/* Content */}
-              <div className={`w-full md:w-5/12 ml-12 md:ml-0 ${
-                index % 2 === 0 ? 'md:pr-8' : 'md:pl-8'
-              }`}>
+                  {/* Right Column */}
+                  <div className="flex justify-start pl-8">
+                    {index % 2 === 0 ? (
+                      // Image on right for even items
+                      item.image && (
+                        <div className="w-full max-w-md">
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                            className="relative overflow-hidden rounded-xl shadow-2xl"
+                          >
+                            <div className="relative aspect-[4/3] overflow-hidden">
+                              <img
+                                src={item.image}
+                                alt={item.title}
+                                className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                                loading="lazy"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                              
+                              {/* Image Overlay with Title */}
+                              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+                                <p className="text-white font-medium text-sm">
+                                  {item.id}: {item.title}
+                                </p>
+                              </div>
+                            </div>
+                          </motion.div>
+                        </div>
+                      )
+                    ) : (
+                      // Content on right for odd items
+                      <div className="w-full max-w-md">
+                        <Card variant="hover-lift">
+                          <div className="p-6">
+                            <h3 className="text-xl font-serif font-semibold text-primary-400 mb-3">
+                              {item.title}
+                            </h3>
+                            <p className="text-gray-300 leading-relaxed">
+                              {item.description}
+                            </p>
+                          </div>
+                        </Card>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Mobile Layout */}
+              <div className="md:hidden ml-12 space-y-4">
+                {/* Content */}
                 <Card variant="hover-lift">
-                  <div className="p-2">
+                  <div className="p-6">
                     <h3 className="text-xl font-serif font-semibold text-primary-400 mb-3">
                       {item.title}
                     </h3>
@@ -158,10 +250,35 @@ const About: React.FC = () => {
                     </p>
                   </div>
                 </Card>
-              </div>
 
-              {/* Spacer for desktop */}
-              <div className="hidden md:block w-2/12" />
+                {/* Image */}
+                {item.image && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="relative overflow-hidden rounded-xl shadow-2xl"
+                  >
+                    <div className="relative aspect-[4/3] overflow-hidden">
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                      
+                      {/* Image Overlay with Title */}
+                      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+                        <p className="text-white font-medium text-sm">
+                          {item.id}: {item.title}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
             </motion.div>
           ))}
         </div>
