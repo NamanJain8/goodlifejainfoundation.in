@@ -396,7 +396,7 @@ const Translator: React.FC = () => {
                 onChange={(e) => setSourceLanguage(e.target.value)}
                 className="bg-surface-100 border border-surface-200 rounded-lg px-4 py-3 text-white text-base font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer min-w-[200px]"
               >
-                {Object.entries(languages).filter(([key]) => key !== 'brahmi').map(([key, lang]) => (
+                {Object.entries(languages).map(([key, lang]) => (
                   <option key={key} value={key} className="bg-surface-200">
                     {lang.name}
                   </option>
