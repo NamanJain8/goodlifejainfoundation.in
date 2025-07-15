@@ -70,6 +70,7 @@ const devanagariToBrahmi = (text: string): string => {
       case 0x937: result += String.fromCodePoint(0x11031); break; // SSA
       case 0x938: result += String.fromCodePoint(0x11032); break; // SA
       case 0x939: result += String.fromCodePoint(0x11033); break; // HA
+      case 0x93c: break; // NUKTA - skip nukta when converting to Brahmi  
       case 0x93e: result += String.fromCodePoint(0x11038); break; // AA
       case 0x93f: result += String.fromCodePoint(0x1103A); break; // I
       case 0x940: result += String.fromCodePoint(0x1103B); break; // II
