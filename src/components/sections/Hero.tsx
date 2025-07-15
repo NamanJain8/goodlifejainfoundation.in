@@ -9,18 +9,16 @@ const Hero: React.FC = () => {
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Video */}
+      {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-overlay z-10"></div>
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover"
-        >
-          <source src="/assets/hero-bg.mp4" type="video/mp4" />
-        </video>
+        <div 
+          className="w-full h-full bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: 'url(/assets/brahmi.jpeg)',
+          }}
+        />
+        {/* Lighter overlay for better image visibility while maintaining text readability */}
+        <div className="absolute inset-0 bg-black/60"></div>
       </div>
 
       {/* Content */}
@@ -100,25 +98,7 @@ const Hero: React.FC = () => {
             </Button>
           </motion.div>
 
-          {/* Scroll Indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 2 }}
-            className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-          >
-            <motion.div
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-6 h-10 border-2 border-primary-500 rounded-full flex justify-center"
-            >
-              <motion.div
-                animate={{ y: [0, 12, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="w-1 h-3 bg-primary-500 rounded-full mt-2"
-              />
-            </motion.div>
-          </motion.div>
+
         </motion.div>
       </div>
 
