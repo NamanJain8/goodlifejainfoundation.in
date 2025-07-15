@@ -11,7 +11,6 @@ export const navigationItems: NavItem[] = [
       { label: 'Translator', href: '#translator' },
       { label: 'Multi Keyboard', href: '#keyboard' },
       { label: 'Learning Game', href: '#game' },
-      { label: 'Image Editor', href: '#editor' },
     ],
   },
   { label: 'Resources', href: '#resources' },
@@ -216,12 +215,6 @@ export const toolsData: Tool[] = [
     description: 'Interactive games designed for children and youth to acquire knowledge of Brahmi script through fun and engaging activities.',
     icon: 'Gamepad2',
     link: 'https://samayjain24.github.io/Translator_BrahmiLipi/game/index.html',
-  },
-  {
-    id: 'editor',
-    title: 'Image Editor',
-    description: 'Transform your text into beautiful images with Brahmi script. Create stunning visuals for social sharing and preservation.',
-    icon: 'Edit',
   },
 ];
 

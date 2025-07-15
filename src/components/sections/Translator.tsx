@@ -9,7 +9,7 @@ import { translateText } from '../../utils/translator';
 const Translator: React.FC = () => {
   const [inputText, setInputText] = useState('');
   const [outputText, setOutputText] = useState('');
-  const [sourceLanguage, setSourceLanguage] = useState<string>('hi');
+  const [sourceLanguage, setSourceLanguage] = useState<string>('en');
   const [targetLanguage, setTargetLanguage] = useState<string>('brahmi');
   const [isTranslating, setIsTranslating] = useState(false);
 
@@ -135,7 +135,7 @@ const Translator: React.FC = () => {
       case 'si':
         return 'Noto Sans Sinhala, serif';
       case 'brahmi':
-        return 'inherit';
+        return 'Noto Sans Brahmi, serif';
       default:
         return 'inherit';
     }
@@ -171,12 +171,12 @@ const Translator: React.FC = () => {
       >
         <Card className="overflow-hidden">
           {/* Language Selector Header */}
-          <div className="flex items-center justify-between p-6 border-b border-surface-100">
-            <div className="flex-1">
+          <div className="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 border-b border-surface-100 gap-4 sm:gap-0">
+            <div className="w-full sm:flex-1">
               <select
                 value={sourceLanguage}
                 onChange={(e) => setSourceLanguage(e.target.value)}
-                className="bg-surface-100 border border-surface-200 rounded-lg px-4 py-3 text-white text-base font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer min-w-[200px]"
+                className="w-full sm:min-w-[200px] bg-surface-100 border border-surface-200 rounded-lg px-4 py-3 text-white text-base font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
               >
                 {Object.entries(languages).map(([key, lang]) => (
                   <option key={key} value={key} className="bg-surface-200">
@@ -190,16 +190,16 @@ const Translator: React.FC = () => {
               variant="ghost"
               size="sm"
               onClick={handleSwapLanguages}
-              className="mx-6"
+              className="mx-0 sm:mx-6 my-2 sm:my-0"
             >
               <ArrowLeftRight size={20} />
             </Button>
 
-            <div className="flex-1 flex justify-end">
+            <div className="w-full sm:flex-1 flex justify-start sm:justify-end">
               <select
                 value={targetLanguage}
                 onChange={(e) => setTargetLanguage(e.target.value)}
-                className="bg-surface-100 border border-surface-200 rounded-lg px-4 py-3 text-white text-base font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer min-w-[200px]"
+                className="w-full sm:min-w-[200px] bg-surface-100 border border-surface-200 rounded-lg px-4 py-3 text-white text-base font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
               >
                 {Object.entries(languages).map(([key, lang]) => (
                   <option key={key} value={key} className="bg-surface-200">
@@ -210,30 +210,30 @@ const Translator: React.FC = () => {
             </div>
           </div>
 
-          {/* Translation Areas - Horizontal Layout */}
-          <div className="flex">
+          {/* Translation Areas - Responsive Layout */}
+          <div className="flex flex-col lg:flex-row">
             {/* Input Section */}
-            <div className="flex-1 relative border-r border-surface-100">
+            <div className="flex-1 relative lg:border-r border-surface-100">
               <textarea
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder={`Type in ${languages[sourceLanguage].name}...`}
-                className="w-full h-80 p-6 bg-transparent text-white text-lg resize-none focus:outline-none placeholder-gray-500"
+                className="w-full h-64 sm:h-80 p-4 sm:p-6 bg-transparent text-white text-base sm:text-lg resize-none focus:outline-none placeholder-gray-500"
                 style={{ 
                   fontFamily: getFontFamily(sourceLanguage)
                 }}
               />
               
               {/* Input Actions */}
-              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
+              <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 right-2 sm:right-4 flex items-center justify-between">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={handlePaste}
-                    className="text-gray-400 hover:text-white"
+                    className="text-gray-400 hover:text-white text-xs sm:text-sm"
                   >
-                    <ClipboardPaste size={16} />
+                    <ClipboardPaste size={14} className="sm:w-4 sm:h-4" />
                     <span className="hidden sm:inline ml-1">PASTE</span>
                   </Button>
                   
@@ -242,24 +242,28 @@ const Translator: React.FC = () => {
                     size="sm"
                     onClick={() => handleSpeak(inputText, sourceLanguage)}
                     disabled={!inputText}
-                    className="text-gray-400 hover:text-white"
+                    className="text-gray-400 hover:text-white text-xs sm:text-sm"
                   >
-                    <Volume2 size={16} />
+                    <Volume2 size={14} className="sm:w-4 sm:h-4" />
                     <span className="hidden sm:inline ml-1">SPEAK</span>
                   </Button>
                 </div>
                 
                 <div className="text-xs text-gray-500">
-                  {inputText.length} / 5000
+                  <span className="hidden sm:inline">{inputText.length} / 5000</span>
+                  <span className="sm:hidden">{inputText.length}</span>
                 </div>
               </div>
             </div>
 
+            {/* Mobile Divider */}
+            <div className="lg:hidden border-t border-surface-100"></div>
+
             {/* Output Section */}
             <div className="flex-1 relative">
-              <div className="w-full h-80 p-6 overflow-auto">
+              <div className="w-full h-64 sm:h-80 p-4 sm:p-6 overflow-auto">
                 <div 
-                  className={`text-lg leading-relaxed min-h-full ${
+                  className={`text-base sm:text-lg leading-relaxed min-h-full ${
                     targetLanguage === 'brahmi' ? 'font-brahmi text-primary-400' : 'text-white'
                   }`}
                   style={{ 
@@ -275,16 +279,16 @@ const Translator: React.FC = () => {
               </div>
               
               {/* Output Actions */}
-              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
+              <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 right-2 sm:right-4 flex items-center justify-between">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={handleCopy}
                     disabled={!outputText}
-                    className="text-gray-400 hover:text-white"
+                    className="text-gray-400 hover:text-white text-xs sm:text-sm"
                   >
-                    <Copy size={16} />
+                    <Copy size={14} className="sm:w-4 sm:h-4" />
                     <span className="hidden sm:inline ml-1">COPY</span>
                   </Button>
                   
@@ -293,9 +297,9 @@ const Translator: React.FC = () => {
                     size="sm"
                     onClick={() => handleSpeak(outputText, targetLanguage)}
                     disabled={!outputText}
-                    className="text-gray-400 hover:text-white"
+                    className="text-gray-400 hover:text-white text-xs sm:text-sm"
                   >
-                    <Volume2 size={16} />
+                    <Volume2 size={14} className="sm:w-4 sm:h-4" />
                     <span className="hidden sm:inline ml-1">SPEAK</span>
                   </Button>
                 </div>
