@@ -139,16 +139,149 @@ const BrahmiEditor: React.FC = () => {
     }, 10);
   };
 
+  const generatePDF = async (inputHTML: string, brahmiHTML: string) => {
+    // Create a temporary container for PDF layout
+    const pdfContainer = document.createElement('div');
+    pdfContainer.style.cssText = `
+      width: 794px;
+      height: 1123px;
+      background: white;
+      font-family: 'Noto Sans Brahmi', serif;
+      padding: 40px;
+      box-sizing: border-box;
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+      display: flex;
+      flex-direction: column;
+    `;
+
+    // Brahmi translation section (top half)
+    const brahmiSection = document.createElement('div');
+    brahmiSection.style.cssText = `
+      flex: 1;
+      padding: 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    `;
+    
+    const brahmiContent = document.createElement('div');
+    brahmiContent.innerHTML = brahmiHTML || '<span style="color: #9ca3af; font-style: italic;">No translation available</span>';
+    brahmiContent.style.cssText = `
+      font-size: 28px;
+      line-height: 1.8;
+      color: #111827;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    `;
+    
+    // Add CSS for heading preservation in Brahmi section
+    const brahmiStyle = document.createElement('style');
+    brahmiStyle.textContent = `
+      .brahmi-content h1 { font-size: 56px !important; font-weight: bold !important; margin: 0.67em 0 !important; }
+      .brahmi-content h2 { font-size: 42px !important; font-weight: bold !important; margin: 0.75em 0 !important; }
+      .brahmi-content h3 { font-size: 32px !important; font-weight: bold !important; margin: 0.83em 0 !important; }
+      .brahmi-content h4 { font-size: 28px !important; font-weight: bold !important; margin: 1.12em 0 !important; }
+      .brahmi-content h5 { font-size: 23px !important; font-weight: bold !important; margin: 1.5em 0 !important; }
+      .brahmi-content h6 { font-size: 21px !important; font-weight: bold !important; margin: 1.67em 0 !important; }
+      .brahmi-content p { font-size: 28px !important; margin: 1em 0 !important; }
+      .brahmi-content strong { font-weight: bold !important; }
+      .brahmi-content em { font-style: italic !important; }
+      .brahmi-content u { text-decoration: underline !important; }
+    `;
+    brahmiContent.className = 'brahmi-content';
+
+    // Horizontal divider line
+    const dividerLine = document.createElement('hr');
+    dividerLine.style.cssText = `
+      border: none;
+      border-top: 2px solid #d1d5db;
+      margin: 20px 0;
+      width: 100%;
+    `;
+
+    // Input text section (bottom half)
+    const inputSection = document.createElement('div');
+    inputSection.style.cssText = `
+      flex: 1;
+      padding: 20px 0;
+      opacity: 0.7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    `;
+    
+    const inputContent = document.createElement('div');
+    inputContent.innerHTML = inputHTML;
+    inputContent.style.cssText = `
+      font-size: 16px;
+      line-height: 1.6;
+      color: #4b5563;
+      font-family: system-ui, -apple-system, sans-serif;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      text-align: center;
+    `;
+    
+    // Add CSS for heading preservation in input section
+    const inputStyle = document.createElement('style');
+    inputStyle.textContent = `
+      .input-content h1 { font-size: 32px !important; font-weight: bold !important; margin: 0.67em 0 !important; }
+      .input-content h2 { font-size: 24px !important; font-weight: bold !important; margin: 0.75em 0 !important; }
+      .input-content h3 { font-size: 19px !important; font-weight: bold !important; margin: 0.83em 0 !important; }
+      .input-content h4 { font-size: 16px !important; font-weight: bold !important; margin: 1.12em 0 !important; }
+      .input-content h5 { font-size: 13px !important; font-weight: bold !important; margin: 1.5em 0 !important; }
+      .input-content h6 { font-size: 12px !important; font-weight: bold !important; margin: 1.67em 0 !important; }
+      .input-content p { font-size: 16px !important; margin: 1em 0 !important; }
+      .input-content strong { font-weight: bold !important; }
+      .input-content em { font-style: italic !important; }
+      .input-content u { text-decoration: underline !important; }
+    `;
+    inputContent.className = 'input-content';
+
+    // Assemble the PDF container
+    brahmiSection.appendChild(brahmiContent);
+    inputSection.appendChild(inputContent);
+    pdfContainer.appendChild(brahmiSection);
+    pdfContainer.appendChild(dividerLine);
+    pdfContainer.appendChild(inputSection);
+    
+    // Add to DOM temporarily (including styles)
+    document.head.appendChild(brahmiStyle);
+    document.head.appendChild(inputStyle);
+    document.body.appendChild(pdfContainer);
+
+    try {
+      // Generate PDF
+      const canvas = await html2canvas(pdfContainer, {
+        width: 794,
+        height: 1123,
+        scale: 2,
+        useCORS: true,
+        allowTaint: true
+      });
+      
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgData = canvas.toDataURL('image/png');
+      
+      // A4 dimensions in mm: 210 x 297
+      pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
+      pdf.save('brahmi-translation.pdf');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    } finally {
+      // Clean up
+      document.head.removeChild(brahmiStyle);
+      document.head.removeChild(inputStyle);
+      document.body.removeChild(pdfContainer);
+    }
+  };
+
   const downloadPDF = async () => {
     if (!editor) return;
-    const element = document.querySelector('.ProseMirror');
-    if (!element) return;
-
-    const canvas = await html2canvas(element as HTMLElement);
-    const pdf = new jsPDF();
-    const imgData = canvas.toDataURL('image/png');
-    pdf.addImage(imgData, 'PNG', 10, 10, 190, 277);
-    pdf.save('document.pdf');
+    await generatePDF(editor.getHTML(), brahmiTranslation);
   };
 
   const handleColorChange = (color: string) => {
