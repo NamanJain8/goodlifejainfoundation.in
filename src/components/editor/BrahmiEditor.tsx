@@ -45,9 +45,10 @@ const BrahmiEditor: React.FC = () => {
       handleKeyDown: (view, event) => {
         // We are intercepting special keys to have custom behavior
         switch (event.key) {
-          case 'Enter':
-            editor?.chain().focus().setHardBreak().run();
-            return true;
+          // FIXME: Uncomment this when we have a way to handle line breaks
+          // case 'Enter':
+          //   editor?.chain().focus().setHardBreak().run();
+          //   return true;
           case 'Backspace': {
             if (!editor) return true;
 
