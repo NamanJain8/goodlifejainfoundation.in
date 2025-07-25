@@ -2,6 +2,24 @@
 
 import { TranslationProvider } from './googleTranslate';
 
+// Custom HTTP Error class for handling specific status codes
+export class HTTPError extends Error {
+  public status: number;
+  public statusText: string;
+
+  constructor(status: number, statusText: string, message: string) {
+    super(message);
+    this.name = 'HTTPError';
+    this.status = status;
+    this.statusText = statusText;
+  }
+
+  // Check if it's a 4xx client error
+  is4xx(): boolean {
+    return this.status >= 400 && this.status < 500;
+  }
+}
+
 // Azure Translate configuration
 interface AzureTranslateConfig {
   subscriptionKey?: string;
@@ -51,7 +69,13 @@ const translateWithAzure = async (
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Azure Translate API error (${response.status}): ${errorText}`);
+      
+      // Throw specific HTTPError for better error handling
+      throw new HTTPError(
+        response.status,
+        response.statusText,
+        `Azure Translate API error (${response.status}): ${errorText}`
+      );
     }
 
     const data: AzureTranslateResponse[] = await response.json();
@@ -88,6 +112,12 @@ const translateWithAzureChunked = async (
   try {
     return await translateWithAzure(text, from, to, config);
   } catch (error) {
+    // If it's a 4xx error, propagate it immediately for fallback to Google
+    if (error instanceof HTTPError && error.is4xx()) {
+      console.log(`Azure chunked translation failed with 4xx error (${error.status}), propagating for fallback...`);
+      throw error;
+    }
+    
     console.log('Azure single-shot failed, falling back to chunking...');
     
     // Simple chunking - split by sentences and translate individually
@@ -111,7 +141,15 @@ const translateWithAzureChunked = async (
         }
       } catch (chunkError) {
         console.error(`Error translating sentence ${i + 1}:`, chunkError);
-        translatedSentences.push(sentence); // Keep original on error
+        
+        // If it's a 4xx error, stop chunking and propagate for fallback
+        if (chunkError instanceof HTTPError && chunkError.is4xx()) {
+          console.log(`Azure chunk failed with 4xx error (${chunkError.status}), stopping chunking and propagating for fallback...`);
+          throw chunkError;
+        }
+        
+        // For other errors, keep original text for that chunk and continue
+        translatedSentences.push(sentence);
       }
     }
     

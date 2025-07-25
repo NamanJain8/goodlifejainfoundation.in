@@ -2,7 +2,7 @@
 
 import { TranslationProvider } from './googleTranslate';
 import { googleTranslateProvider } from './googleTranslate';
-import { azureTranslateProvider } from './azureTranslate';
+import { azureTranslateProvider, HTTPError } from './azureTranslate';
 
 export type ProviderName = 'google' | 'azure';
 
@@ -74,13 +74,15 @@ export class TranslationService {
     } catch (error) {
       console.error(`${primaryProvider.name} translation failed:`, error);
       
-      // Try fallback if enabled and available
-      if (this.config.enableFallback && this.config.fallbackProvider) {
+      // Only try fallback for 4xx errors when using Azure as primary provider
+      const shouldFallback = this.shouldFallbackOnError(error);
+      
+      if (shouldFallback && this.config.enableFallback && this.config.fallbackProvider) {
         const fallbackProvider = this.getProvider(this.config.fallbackProvider);
         
         if (this.isProviderAvailable(this.config.fallbackProvider)) {
           try {
-            console.log(`Falling back to ${fallbackProvider.name}...`);
+            console.log(`Falling back to ${fallbackProvider.name} due to 4xx error...`);
             const result = await fallbackProvider.translateChunked(text, from, to);
             console.log(`Translation successful with fallback ${fallbackProvider.name}`);
             return result;
@@ -94,6 +96,19 @@ export class TranslationService {
       // Re-throw original error if no fallback
       throw error;
     }
+  }
+
+  // Determine if we should fallback based on the error type
+  private shouldFallbackOnError(error: any): boolean {
+    // Only fallback on 4xx errors from Azure
+    if (error instanceof HTTPError && error.is4xx()) {
+      console.log(`4xx error detected (${error.status}), enabling fallback to Google Translate`);
+      return true;
+    }
+    
+    // For other errors (network issues, 5xx errors, etc.), don't fallback
+    console.log(`Non-4xx error detected, not falling back:`, error.message);
+    return false;
   }
 
   // Translate with specific provider (bypass fallback)
