@@ -9,6 +9,7 @@ import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import './BrahmiEditor.css';
 import VirtualKeyboard from './VirtualKeyboard';
+import Icon from '../ui/Icon';
 import { getLanguageStats } from '../../utils/languageDetection';
 import { translateFormattedTextToBrahmi, cleanTranslatedHTML } from '../../utils/formattedTranslation';
 
@@ -280,9 +281,161 @@ const BrahmiEditor: React.FC = () => {
     }
   };
 
+  const generateImage = async (inputHTML: string, brahmiHTML: string) => {
+    // Create a temporary container for image layout
+    const imageContainer = document.createElement('div');
+    imageContainer.style.cssText = `
+      width: 1200px;
+      min-height: 800px;
+      background: white;
+      font-family: 'Noto Sans Brahmi', serif;
+      padding: 60px;
+      box-sizing: border-box;
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+      display: flex;
+      flex-direction: column;
+    `;
+
+    // Brahmi translation section (top half)
+    const brahmiSection = document.createElement('div');
+    brahmiSection.style.cssText = `
+      flex: 1;
+      padding: 30px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+    `;
+    
+    const brahmiContent = document.createElement('div');
+    brahmiContent.innerHTML = brahmiHTML || '<span style="color: #9ca3af; font-style: italic;">No translation available</span>';
+    brahmiContent.style.cssText = `
+      font-size: 36px;
+      line-height: 1.8;
+      color: #111827;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      max-width: 100%;
+    `;
+    
+    // Add CSS for heading preservation in Brahmi section
+    const brahmiStyle = document.createElement('style');
+    brahmiStyle.textContent = `
+      .brahmi-content h1 { font-size: 72px !important; font-weight: bold !important; margin: 0.67em 0 !important; }
+      .brahmi-content h2 { font-size: 54px !important; font-weight: bold !important; margin: 0.75em 0 !important; }
+      .brahmi-content h3 { font-size: 42px !important; font-weight: bold !important; margin: 0.83em 0 !important; }
+      .brahmi-content h4 { font-size: 36px !important; font-weight: bold !important; margin: 1.12em 0 !important; }
+      .brahmi-content h5 { font-size: 30px !important; font-weight: bold !important; margin: 1.5em 0 !important; }
+      .brahmi-content h6 { font-size: 28px !important; font-weight: bold !important; margin: 1.67em 0 !important; }
+      .brahmi-content p { font-size: 36px !important; margin: 1em 0 !important; }
+      .brahmi-content strong { font-weight: bold !important; }
+      .brahmi-content em { font-style: italic !important; }
+      .brahmi-content u { text-decoration: underline !important; }
+    `;
+    brahmiContent.className = 'brahmi-content';
+
+    // Horizontal divider line
+    const dividerLine = document.createElement('hr');
+    dividerLine.style.cssText = `
+      border: none;
+      border-top: 3px solid #d1d5db;
+      margin: 30px 0;
+      width: 100%;
+    `;
+
+    // Input text section (bottom half)
+    const inputSection = document.createElement('div');
+    inputSection.style.cssText = `
+      flex: 1;
+      padding: 30px 0;
+      opacity: 0.7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+    `;
+    
+    const inputContent = document.createElement('div');
+    inputContent.innerHTML = inputHTML;
+    inputContent.style.cssText = `
+      font-size: 20px;
+      line-height: 1.6;
+      color: #4b5563;
+      font-family: system-ui, -apple-system, sans-serif;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      text-align: center;
+      max-width: 100%;
+    `;
+    
+    // Add CSS for heading preservation in input section
+    const inputStyle = document.createElement('style');
+    inputStyle.textContent = `
+      .input-content h1 { font-size: 40px !important; font-weight: bold !important; margin: 0.67em 0 !important; }
+      .input-content h2 { font-size: 30px !important; font-weight: bold !important; margin: 0.75em 0 !important; }
+      .input-content h3 { font-size: 24px !important; font-weight: bold !important; margin: 0.83em 0 !important; }
+      .input-content h4 { font-size: 20px !important; font-weight: bold !important; margin: 1.12em 0 !important; }
+      .input-content h5 { font-size: 16px !important; font-weight: bold !important; margin: 1.5em 0 !important; }
+      .input-content h6 { font-size: 14px !important; font-weight: bold !important; margin: 1.67em 0 !important; }
+      .input-content p { font-size: 20px !important; margin: 1em 0 !important; }
+      .input-content strong { font-weight: bold !important; }
+      .input-content em { font-style: italic !important; }
+      .input-content u { text-decoration: underline !important; }
+    `;
+    inputContent.className = 'input-content';
+
+    // Assemble the image container
+    brahmiSection.appendChild(brahmiContent);
+    inputSection.appendChild(inputContent);
+    imageContainer.appendChild(brahmiSection);
+    imageContainer.appendChild(dividerLine);
+    imageContainer.appendChild(inputSection);
+    
+    // Add to DOM temporarily (including styles)
+    document.head.appendChild(brahmiStyle);
+    document.head.appendChild(inputStyle);
+    document.body.appendChild(imageContainer);
+
+    try {
+      // Generate image
+      const canvas = await html2canvas(imageContainer, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      });
+      
+      // Convert to JPG and download
+      const imgData = canvas.toDataURL('image/jpeg', 0.9);
+      
+      // Create download link
+      const link = document.createElement('a');
+      link.download = 'brahmi-translation.jpg';
+      link.href = imgData;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error generating image:', error);
+    } finally {
+      // Clean up
+      document.head.removeChild(brahmiStyle);
+      document.head.removeChild(inputStyle);
+      document.body.removeChild(imageContainer);
+    }
+  };
+
   const downloadPDF = async () => {
     if (!editor) return;
     await generatePDF(editor.getHTML(), brahmiTranslation);
+  };
+
+  const downloadImage = async () => {
+    if (!editor) return;
+    await generateImage(editor.getHTML(), brahmiTranslation);
   };
 
   const handleColorChange = (color: string) => {
@@ -579,7 +732,10 @@ const BrahmiEditor: React.FC = () => {
         </button>
         <div className="divider" />
         <button onClick={downloadPDF} title="Download PDF">
-          📄
+          <Icon name="FileDown" size={18} />
+        </button>
+        <button onClick={downloadImage} title="Download as JPG">
+          <Icon name="ImageDown" size={18} />
         </button>
       </div>
       
