@@ -2,7 +2,73 @@
 
 import { translateText as translateWithService } from './translationProviders/translationService';
 
+// Digit mapping constants
+const ARABIC_DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const DEVANAGARI_DIGITS = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'];
+const BRAHMI_DIGITS = ['𑁦', '𑁧', '𑁨', '𑁩', '𑁪', '𑁫', '𑁬', '𑁭', '𑁮', '𑁯'];
 
+// Convert digits between different numeral systems
+const convertDigits = (text: string, fromDigits: string[], toDigits: string[]): string => {
+  let result = text;
+  for (let i = 0; i < fromDigits.length; i++) {
+    const regex = new RegExp(fromDigits[i].replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+    result = result.replace(regex, toDigits[i]);
+  }
+  return result;
+};
+
+// Convert Arabic numerals to Devanagari
+const convertArabicToDevanagari = (text: string): string => {
+  return convertDigits(text, ARABIC_DIGITS, DEVANAGARI_DIGITS);
+};
+
+// Convert Devanagari numerals to Arabic
+const convertDevanagariToArabic = (text: string): string => {
+  return convertDigits(text, DEVANAGARI_DIGITS, ARABIC_DIGITS);
+};
+
+// Convert Arabic numerals to Brahmi
+const convertArabicToBrahmi = (text: string): string => {
+  return convertDigits(text, ARABIC_DIGITS, BRAHMI_DIGITS);
+};
+
+// Convert Brahmi numerals to Arabic
+const convertBrahmiToArabic = (text: string): string => {
+  return convertDigits(text, BRAHMI_DIGITS, ARABIC_DIGITS);
+};
+
+// Convert Devanagari numerals to Brahmi
+const convertDevanagariToBrahmi = (text: string): string => {
+  return convertDigits(text, DEVANAGARI_DIGITS, BRAHMI_DIGITS);
+};
+
+// Convert Brahmi numerals to Devanagari
+const convertBrahmiToDevanagari = (text: string): string => {
+  return convertDigits(text, BRAHMI_DIGITS, DEVANAGARI_DIGITS);
+};
+
+// Get appropriate digit conversion function based on language
+const convertDigitsForLanguage = (text: string, targetLanguage: string): string => {
+  // Languages that use Devanagari numerals
+  const devanagariLanguages = ['hi', 'sa', 'mr', 'ne'];
+  
+  if (targetLanguage === 'brahmi') {
+    // Convert any Arabic or Devanagari digits to Brahmi
+    let result = convertArabicToBrahmi(text);
+    result = convertDevanagariToBrahmi(result);
+    return result;
+  } else if (devanagariLanguages.includes(targetLanguage)) {
+    // Convert any Arabic or Brahmi digits to Devanagari
+    let result = convertArabicToDevanagari(text);
+    result = convertBrahmiToDevanagari(result);
+    return result;
+  } else {
+    // Convert any Devanagari or Brahmi digits to Arabic
+    let result = convertDevanagariToArabic(text);
+    result = convertBrahmiToArabic(result);
+    return result;
+  }
+};
 
 // Convert Devanagari script to Brahmi script
 const devanagariToBrahmi = (text: string): string => {
@@ -13,7 +79,7 @@ const devanagariToBrahmi = (text: string): string => {
 
     // Handle space explicitly
     if (codePoint === 0x20) {
-      result += ' '; // Keep spaces as spaces
+      result += '   '; // Convert each space to 3 spaces for better Brahmi readability
       continue;
     }
 
@@ -88,16 +154,6 @@ const devanagariToBrahmi = (text: string): string => {
       case 0x94d: result += String.fromCodePoint(0x11046); break; // virama
       case 0x964: result += String.fromCodePoint(0x11047); break; // danda
       case 0x965: result += String.fromCodePoint(0x11048); break; // double danda
-      case 0x966: result += String.fromCodePoint(0x11066); break; // 0
-      case 0x967: result += String.fromCodePoint(0x11067); break; // 1
-      case 0x968: result += String.fromCodePoint(0x11068); break; // 2
-      case 0x969: result += String.fromCodePoint(0x11069); break; // 3
-      case 0x96a: result += String.fromCodePoint(0x1106A); break; // 4
-      case 0x96b: result += String.fromCodePoint(0x1106B); break; // 5
-      case 0x96c: result += String.fromCodePoint(0x1106C); break; // 6
-      case 0x96d: result += String.fromCodePoint(0x1106D); break; // 7
-      case 0x96e: result += String.fromCodePoint(0x1106E); break; // 8
-      case 0x96f: result += String.fromCodePoint(0x1106F); break; // 9
       default: result += String.fromCodePoint(codePoint); break;
     }
   }
@@ -187,16 +243,6 @@ const brahmiToDevanagari = (text: string): string => {
       case 0x11046: result += String.fromCodePoint(0x94D); break; // virama
       case 0x11047: result += String.fromCodePoint(0x964); break; // danda
       case 0x11048: result += String.fromCodePoint(0x965); break; // double danda
-      case 0x11066: result += String.fromCodePoint(0x966); break; // 0
-      case 0x11067: result += String.fromCodePoint(0x967); break; // 1
-      case 0x11068: result += String.fromCodePoint(0x968); break; // 2
-      case 0x11069: result += String.fromCodePoint(0x969); break; // 3
-      case 0x1106a: result += String.fromCodePoint(0x96A); break; // 4
-      case 0x1106b: result += String.fromCodePoint(0x96B); break; // 5
-      case 0x1106c: result += String.fromCodePoint(0x96C); break; // 6
-      case 0x1106d: result += String.fromCodePoint(0x96D); break; // 7
-      case 0x1106e: result += String.fromCodePoint(0x96E); break; // 8
-      case 0x1106f: result += String.fromCodePoint(0x96F); break; // 9
       default: result += String.fromCodePoint(codePoint); break;
     }
   }
@@ -227,8 +273,8 @@ export const translateText = async (
       // Input is Brahmi: convert to Devanagari first, then translate to target
       const devanagariText = brahmiToDevanagari(inputText);
       if (targetLanguage === 'brahmi') {
-        // Brahmi to Brahmi (no change needed)
-        translated = inputText;
+        // Brahmi to Brahmi (convert digits only)
+        translated = convertDigitsForLanguage(inputText, targetLanguage);
       } else if (['hi', 'sa', 'mr', 'ne'].includes(targetLanguage)) {
         // Brahmi to Devanagari-based languages
         translated = devanagariText;
@@ -252,6 +298,9 @@ export const translateText = async (
       translated = await translateWithService(inputText, sourceLanguage, targetLanguage);
     }
     
+    // Apply digit conversion to the final result
+    translated = convertDigitsForLanguage(translated, targetLanguage);
+    
     return translated;
   } catch (error) {
     console.error('Translation failed:', error);
@@ -260,7 +309,17 @@ export const translateText = async (
 };
 
 // Export individual functions for direct use if needed
-export { devanagariToBrahmi, brahmiToDevanagari };
+export { 
+  devanagariToBrahmi, 
+  brahmiToDevanagari,
+  convertDigitsForLanguage,
+  convertArabicToDevanagari,
+  convertDevanagariToArabic,
+  convertArabicToBrahmi,
+  convertBrahmiToArabic,
+  convertDevanagariToBrahmi,
+  convertBrahmiToDevanagari
+};
 
 // Re-export translation service for advanced usage
 export { translationService } from './translationProviders/translationService'; 

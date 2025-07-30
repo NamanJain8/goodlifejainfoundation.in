@@ -105,8 +105,8 @@
   /* Centralized Brahmi text styling */
   .brahmi-text {
     font-family: 'Noto Sans Brahmi', serif;
-    letter-spacing: 0.1em;
-    word-spacing: 0.4em;
+    letter-spacing: 0.15em; /* Slightly increased for better number spacing */
+    word-spacing: 0.5em; /* Increased for better overall spacing including numbers */
     white-space: pre-wrap;
     word-wrap: break-word;
     overflow-wrap: break-word;

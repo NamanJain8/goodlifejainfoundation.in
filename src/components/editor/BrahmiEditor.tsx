@@ -176,8 +176,8 @@ const BrahmiEditor: React.FC = () => {
       color: #111827;
       text-align: center;
       font-family: 'Noto Sans Brahmi', serif;
-      letter-spacing: 0.1em;
-      word-spacing: 0.4em;
+      letter-spacing: 0.15em;
+      word-spacing: 0.5em;
       white-space: pre-wrap;
       word-wrap: break-word;
       overflow-wrap: break-word;

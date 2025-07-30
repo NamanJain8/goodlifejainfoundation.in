@@ -9,13 +9,16 @@ export const detectLanguage = (text: string): string => {
   let englishChars = 0;
   let hindiChars = 0;
   let brahmiChars = 0;
+  let arabicDigits = 0;
+  let devanagariDigits = 0;
+  let brahmiDigits = 0;
   let totalChars = 0;
 
   for (let i = 0; i < text.length; i++) {
     const codePoint = text.codePointAt(i);
     if (!codePoint) continue;
 
-    // Skip whitespace and punctuation
+    // Skip whitespace and punctuation (but not digits)
     if (codePoint <= 0x0020 || (codePoint >= 0x0021 && codePoint <= 0x002F) || 
         (codePoint >= 0x003A && codePoint <= 0x0040) || 
         (codePoint >= 0x005B && codePoint <= 0x0060) || 
@@ -25,21 +28,52 @@ export const detectLanguage = (text: string): string => {
 
     totalChars++;
 
-    // English (Basic Latin)
-    if (codePoint >= 0x0041 && codePoint <= 0x007A) {
+    // Arabic digits (0-9)
+    if (codePoint >= 0x0030 && codePoint <= 0x0039) {
+      arabicDigits++;
+    }
+    // Devanagari digits (०-९)
+    else if (codePoint >= 0x0966 && codePoint <= 0x096F) {
+      devanagariDigits++;
+      hindiChars++; // Count as Hindi
+    }
+    // Brahmi digits (𑁦-𑁯)
+    else if (codePoint >= 0x11066 && codePoint <= 0x1106F) {
+      brahmiDigits++;
+      brahmiChars++; // Count as Brahmi
+    }
+    // English (Basic Latin letters)
+    else if ((codePoint >= 0x0041 && codePoint <= 0x005A) || (codePoint >= 0x0061 && codePoint <= 0x007A)) {
       englishChars++;
     }
-    // Hindi/Devanagari
-    else if (codePoint >= 0x0900 && codePoint <= 0x097F) {
+    // Hindi/Devanagari (excluding digits which are handled above)
+    else if (codePoint >= 0x0900 && codePoint <= 0x097F && !(codePoint >= 0x0966 && codePoint <= 0x096F)) {
       hindiChars++;
     }
-    // Brahmi
-    else if (codePoint >= 0x11000 && codePoint <= 0x1107F) {
+    // Brahmi (excluding digits which are handled above)
+    else if (codePoint >= 0x11000 && codePoint <= 0x1107F && !(codePoint >= 0x11066 && codePoint <= 0x1106F)) {
       brahmiChars++;
     }
   }
 
   if (totalChars === 0) return 'unknown';
+
+  // If text is only Arabic digits, we need context - default to English for standalone numbers
+  if (arabicDigits === totalChars) {
+    return 'en';
+  }
+
+  // Add Arabic digits to the dominant script context
+  if (hindiChars > englishChars && hindiChars > brahmiChars) {
+    // Hindi context - treat Arabic digits as part of Hindi
+    hindiChars += arabicDigits;
+  } else if (brahmiChars > englishChars && brahmiChars > hindiChars) {
+    // Brahmi context - treat Arabic digits as part of Brahmi
+    brahmiChars += arabicDigits;
+  } else {
+    // English context or default - treat Arabic digits as part of English
+    englishChars += arabicDigits;
+  }
 
   // Calculate percentages
   const englishPercentage = englishChars / totalChars;
