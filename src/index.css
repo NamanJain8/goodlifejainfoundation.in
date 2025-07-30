@@ -101,6 +101,16 @@
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-10px); }
   }
+  
+  /* Centralized Brahmi text styling */
+  .brahmi-text {
+    font-family: 'Noto Sans Brahmi', serif;
+    letter-spacing: 0.1em;
+    word-spacing: 0.4em;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
 }
 
 /* Custom scrollbar */

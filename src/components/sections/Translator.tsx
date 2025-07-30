@@ -290,10 +290,10 @@ const Translator: React.FC = () => {
               <div className="w-full h-64 sm:h-80 p-4 sm:p-6 overflow-auto">
                 <div 
                   className={`text-base sm:text-lg leading-relaxed min-h-full ${
-                    targetLanguage === 'brahmi' ? 'font-brahmi text-primary-400' : 'text-white'
+                    targetLanguage === 'brahmi' ? 'text-primary-400 brahmi-text' : 'text-white'
                   }`}
                   style={{ 
-                    fontFamily: targetLanguage === 'brahmi' ? 'inherit' : getFontFamily(targetLanguage)
+                    fontFamily: targetLanguage !== 'brahmi' ? getFontFamily(targetLanguage) : undefined
                   }}
                 >
                   {isTranslating ? (

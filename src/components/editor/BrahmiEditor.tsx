@@ -175,6 +175,10 @@ const BrahmiEditor: React.FC = () => {
       line-height: 1.8;
       color: #111827;
       text-align: center;
+      font-family: 'Noto Sans Brahmi', serif;
+      letter-spacing: 0.1em;
+      word-spacing: 0.4em;
+      white-space: pre-wrap;
       word-wrap: break-word;
       overflow-wrap: break-word;
     `;
@@ -316,6 +320,10 @@ const BrahmiEditor: React.FC = () => {
       line-height: 1.8;
       color: #111827;
       text-align: center;
+      font-family: 'Noto Sans Brahmi', serif;
+      letter-spacing: 0.1em;
+      word-spacing: 0.4em;
+      white-space: pre-wrap;
       word-wrap: break-word;
       overflow-wrap: break-word;
       max-width: 100%;
