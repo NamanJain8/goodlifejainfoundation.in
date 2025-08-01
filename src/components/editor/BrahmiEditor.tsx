@@ -141,8 +141,142 @@ const BrahmiEditor: React.FC = () => {
     }, 10);
   };
 
-  const generatePDF = async (inputHTML: string, brahmiHTML: string) => {
-    // Create a temporary container for PDF layout
+  // Helper function to parse HTML content into structured segments
+  const parseContentIntoSegments = (html: string) => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    
+    const segments: Array<{
+      type: string;
+      content: string;
+      tagName: string;
+      estimatedHeight: number;
+    }> = [];
+    
+    const processNode = (node: Node) => {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        const element = node as Element;
+        const tagName = element.tagName.toLowerCase();
+        
+        // Skip empty elements
+        if (!element.textContent?.trim()) return;
+        
+        // Calculate estimated height based on element type and content
+        const textLength = element.textContent?.length || 0;
+        let baseHeight = 0;
+        
+        switch (tagName) {
+          case 'h1': baseHeight = 80; break;
+          case 'h2': baseHeight = 65; break;
+          case 'h3': baseHeight = 50; break;
+          case 'h4': baseHeight = 40; break;
+          case 'h5': baseHeight = 35; break;
+          case 'h6': baseHeight = 30; break;
+          case 'p': baseHeight = 25; break;
+          case 'blockquote': baseHeight = 35; break;
+          case 'li': baseHeight = 25; break;
+          default: baseHeight = 25; break;
+        }
+        
+        // Add extra height for longer content (rough estimation)
+        const estimatedHeight = baseHeight + Math.floor(textLength / 50) * 20;
+        
+        segments.push({
+          type: tagName,
+          content: element.outerHTML,
+          tagName,
+          estimatedHeight
+        });
+      } else if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
+        // Handle standalone text nodes
+        const textLength = node.textContent.length;
+        const estimatedHeight = 25 + Math.floor(textLength / 60) * 20;
+        
+        segments.push({
+          type: 'text',
+          content: `<p>${node.textContent.trim()}</p>`,
+          tagName: 'p',
+          estimatedHeight
+        });
+      }
+    };
+    
+    Array.from(tempDiv.childNodes).forEach(processNode);
+    return segments;
+  };
+
+  // Helper function to group segments into pages
+  const groupSegmentsIntoPages = (inputSegments: any[], brahmiSegments: any[]) => {
+    const pages: Array<{
+      inputContent: string;
+      brahmiContent: string;
+      pageNumber: number;
+    }> = [];
+    
+    // Maximum height per half-page (rough estimation)
+    const maxHeightPerSection = 400; // pixels, accounting for padding and spacing
+    
+    let currentInputContent = '';
+    let currentBrahmiContent = '';
+    let currentInputHeight = 0;
+    let currentBrahmiHeight = 0;
+    let pageNumber = 1;
+    
+    const finalizePage = () => {
+      if (currentInputContent || currentBrahmiContent) {
+        pages.push({
+          inputContent: currentInputContent,
+          brahmiContent: currentBrahmiContent,
+          pageNumber
+        });
+        pageNumber++;
+        currentInputContent = '';
+        currentBrahmiContent = '';
+        currentInputHeight = 0;
+        currentBrahmiHeight = 0;
+      }
+    };
+    
+    // Process segments in parallel (input and brahmi)
+    const maxSegments = Math.max(inputSegments.length, brahmiSegments.length);
+    
+    for (let i = 0; i < maxSegments; i++) {
+      const inputSegment = inputSegments[i];
+      const brahmiSegment = brahmiSegments[i];
+      
+      const inputHeight = inputSegment?.estimatedHeight || 0;
+      const brahmiHeight = brahmiSegment?.estimatedHeight || 0;
+      
+      // Check if adding this segment would exceed page capacity
+      const wouldExceedCapacity = 
+        (currentInputHeight + inputHeight > maxHeightPerSection) ||
+        (currentBrahmiHeight + brahmiHeight > maxHeightPerSection);
+      
+      if (wouldExceedCapacity && (currentInputContent || currentBrahmiContent)) {
+        // Finalize current page and start a new one
+        finalizePage();
+      }
+      
+      // Add segments to current page
+      if (inputSegment) {
+        currentInputContent += inputSegment.content;
+        currentInputHeight += inputHeight;
+      }
+      
+      if (brahmiSegment) {
+        currentBrahmiContent += brahmiSegment.content;
+        currentBrahmiHeight += brahmiHeight;
+      }
+    }
+    
+    // Finalize the last page
+    finalizePage();
+    
+    return pages;
+  };
+
+  // Helper function to create a single PDF page
+  const createPDFPage = async (inputHTML: string, brahmiHTML: string, pageNumber: number, totalPages: number) => {
     const pdfContainer = document.createElement('div');
     pdfContainer.style.cssText = `
       width: 794px;
@@ -158,44 +292,60 @@ const BrahmiEditor: React.FC = () => {
       flex-direction: column;
     `;
 
+    // Page header with page number
+    const pageHeader = document.createElement('div');
+    pageHeader.style.cssText = `
+      text-align: center;
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 20px;
+      font-family: system-ui, -apple-system, sans-serif;
+    `;
+    pageHeader.textContent = `Page ${pageNumber} of ${totalPages}`;
+
     // Brahmi translation section (top half)
     const brahmiSection = document.createElement('div');
     brahmiSection.style.cssText = `
       flex: 1;
       padding: 20px 0;
       display: flex;
-      align-items: center;
-      justify-content: center;
+      flex-direction: column;
+      justify-content: flex-start;
+      overflow: hidden;
     `;
     
     const brahmiContent = document.createElement('div');
     brahmiContent.innerHTML = brahmiHTML || '<span style="color: #9ca3af; font-style: italic;">No translation available</span>';
     brahmiContent.style.cssText = `
-      font-size: 28px;
-      line-height: 1.8;
+      font-size: 24px;
+      line-height: 1.6;
       color: #111827;
-      text-align: center;
+      text-align: left;
       font-family: 'Noto Sans Brahmi', serif;
-      letter-spacing: 0.15em;
-      word-spacing: 0.5em;
+      letter-spacing: 0.1em;
+      word-spacing: 0.3em;
       white-space: pre-wrap;
       word-wrap: break-word;
       overflow-wrap: break-word;
+      margin-bottom: auto;
     `;
     
     // Add CSS for heading preservation in Brahmi section
     const brahmiStyle = document.createElement('style');
     brahmiStyle.textContent = `
-      .brahmi-content h1 { font-size: 56px !important; font-weight: bold !important; margin: 0.67em 0 !important; }
-      .brahmi-content h2 { font-size: 42px !important; font-weight: bold !important; margin: 0.75em 0 !important; }
-      .brahmi-content h3 { font-size: 32px !important; font-weight: bold !important; margin: 0.83em 0 !important; }
-      .brahmi-content h4 { font-size: 28px !important; font-weight: bold !important; margin: 1.12em 0 !important; }
-      .brahmi-content h5 { font-size: 23px !important; font-weight: bold !important; margin: 1.5em 0 !important; }
-      .brahmi-content h6 { font-size: 21px !important; font-weight: bold !important; margin: 1.67em 0 !important; }
-      .brahmi-content p { font-size: 28px !important; margin: 1em 0 !important; }
+      .brahmi-content h1 { font-size: 48px !important; font-weight: bold !important; margin: 0.5em 0 !important; }
+      .brahmi-content h2 { font-size: 36px !important; font-weight: bold !important; margin: 0.6em 0 !important; }
+      .brahmi-content h3 { font-size: 28px !important; font-weight: bold !important; margin: 0.7em 0 !important; }
+      .brahmi-content h4 { font-size: 24px !important; font-weight: bold !important; margin: 0.8em 0 !important; }
+      .brahmi-content h5 { font-size: 20px !important; font-weight: bold !important; margin: 0.9em 0 !important; }
+      .brahmi-content h6 { font-size: 18px !important; font-weight: bold !important; margin: 1em 0 !important; }
+      .brahmi-content p { font-size: 24px !important; margin: 0.8em 0 !important; }
       .brahmi-content strong { font-weight: bold !important; }
       .brahmi-content em { font-style: italic !important; }
       .brahmi-content u { text-decoration: underline !important; }
+      .brahmi-content blockquote { border-left: 4px solid #d1d5db; padding-left: 1em; margin: 1em 0; font-style: italic; }
+      .brahmi-content ul, .brahmi-content ol { margin: 1em 0; padding-left: 2em; }
+      .brahmi-content li { margin: 0.5em 0; }
     `;
     brahmiContent.className = 'brahmi-content';
 
@@ -206,6 +356,7 @@ const BrahmiEditor: React.FC = () => {
       border-top: 2px solid #d1d5db;
       margin: 20px 0;
       width: 100%;
+      flex-shrink: 0;
     `;
 
     // Input text section (bottom half)
@@ -215,41 +366,46 @@ const BrahmiEditor: React.FC = () => {
       padding: 20px 0;
       opacity: 0.7;
       display: flex;
-      align-items: center;
-      justify-content: center;
+      flex-direction: column;
+      justify-content: flex-start;
+      overflow: hidden;
     `;
     
     const inputContent = document.createElement('div');
     inputContent.innerHTML = inputHTML;
     inputContent.style.cssText = `
-      font-size: 16px;
-      line-height: 1.6;
+      font-size: 14px;
+      line-height: 1.5;
       color: #4b5563;
       font-family: system-ui, -apple-system, sans-serif;
       word-wrap: break-word;
       overflow-wrap: break-word;
-      text-align: center;
+      text-align: left;
     `;
     
     // Add CSS for heading preservation in input section
     const inputStyle = document.createElement('style');
     inputStyle.textContent = `
-      .input-content h1 { font-size: 32px !important; font-weight: bold !important; margin: 0.67em 0 !important; }
-      .input-content h2 { font-size: 24px !important; font-weight: bold !important; margin: 0.75em 0 !important; }
-      .input-content h3 { font-size: 19px !important; font-weight: bold !important; margin: 0.83em 0 !important; }
-      .input-content h4 { font-size: 16px !important; font-weight: bold !important; margin: 1.12em 0 !important; }
-      .input-content h5 { font-size: 13px !important; font-weight: bold !important; margin: 1.5em 0 !important; }
-      .input-content h6 { font-size: 12px !important; font-weight: bold !important; margin: 1.67em 0 !important; }
-      .input-content p { font-size: 16px !important; margin: 1em 0 !important; }
+      .input-content h1 { font-size: 24px !important; font-weight: bold !important; margin: 0.5em 0 !important; }
+      .input-content h2 { font-size: 20px !important; font-weight: bold !important; margin: 0.6em 0 !important; }
+      .input-content h3 { font-size: 17px !important; font-weight: bold !important; margin: 0.7em 0 !important; }
+      .input-content h4 { font-size: 14px !important; font-weight: bold !important; margin: 0.8em 0 !important; }
+      .input-content h5 { font-size: 12px !important; font-weight: bold !important; margin: 0.9em 0 !important; }
+      .input-content h6 { font-size: 11px !important; font-weight: bold !important; margin: 1em 0 !important; }
+      .input-content p { font-size: 14px !important; margin: 0.8em 0 !important; }
       .input-content strong { font-weight: bold !important; }
       .input-content em { font-style: italic !important; }
       .input-content u { text-decoration: underline !important; }
+      .input-content blockquote { border-left: 3px solid #d1d5db; padding-left: 1em; margin: 1em 0; font-style: italic; }
+      .input-content ul, .input-content ol { margin: 1em 0; padding-left: 2em; }
+      .input-content li { margin: 0.3em 0; }
     `;
     inputContent.className = 'input-content';
 
     // Assemble the PDF container
     brahmiSection.appendChild(brahmiContent);
     inputSection.appendChild(inputContent);
+    pdfContainer.appendChild(pageHeader);
     pdfContainer.appendChild(brahmiSection);
     pdfContainer.appendChild(dividerLine);
     pdfContainer.appendChild(inputSection);
@@ -260,7 +416,7 @@ const BrahmiEditor: React.FC = () => {
     document.body.appendChild(pdfContainer);
 
     try {
-      // Generate PDF
+      // Generate canvas for this page
       const canvas = await html2canvas(pdfContainer, {
         width: 794,
         height: 1123,
@@ -269,14 +425,8 @@ const BrahmiEditor: React.FC = () => {
         allowTaint: true
       });
       
-      const pdf = new jsPDF('p', 'mm', 'a4');
       const imgData = canvas.toDataURL('image/png');
-      
-      // A4 dimensions in mm: 210 x 297
-      pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
-      pdf.save('brahmi-translation.pdf');
-    } catch (error) {
-      console.error('Error generating PDF:', error);
+      return imgData;
     } finally {
       // Clean up
       document.head.removeChild(brahmiStyle);
@@ -285,12 +435,69 @@ const BrahmiEditor: React.FC = () => {
     }
   };
 
-  const generateImage = async (inputHTML: string, brahmiHTML: string) => {
-    // Create a temporary container for image layout
+  const generatePDF = async (inputHTML: string, brahmiHTML: string) => {
+    try {
+      // Parse content into segments
+      const inputSegments = parseContentIntoSegments(inputHTML);
+      const brahmiSegments = parseContentIntoSegments(brahmiHTML);
+      
+      // If content is small enough, use single page
+      const totalInputHeight = inputSegments.reduce((sum, seg) => sum + seg.estimatedHeight, 0);
+      const totalBrahmiHeight = brahmiSegments.reduce((sum, seg) => sum + seg.estimatedHeight, 0);
+      
+      if (totalInputHeight <= 400 && totalBrahmiHeight <= 400) {
+        // Use single page for small content
+        const imgData = await createPDFPage(inputHTML, brahmiHTML, 1, 1);
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
+        pdf.save('brahmi-translation.pdf');
+        return;
+      }
+      
+      // Group segments into pages
+      const pages = groupSegmentsIntoPages(inputSegments, brahmiSegments);
+      
+      if (pages.length === 0) {
+        throw new Error('No content to generate PDF');
+      }
+      
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      
+      // Generate each page
+      for (let i = 0; i < pages.length; i++) {
+        const page = pages[i];
+        const imgData = await createPDFPage(
+          page.inputContent, 
+          page.brahmiContent, 
+          i + 1, 
+          pages.length
+        );
+        
+        if (i > 0) {
+          pdf.addPage();
+        }
+        
+        // A4 dimensions in mm: 210 x 297
+        pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
+      }
+      
+      pdf.save('brahmi-translation.pdf');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      // Fallback to simple single page if pagination fails
+      const imgData = await createPDFPage(inputHTML, brahmiHTML, 1, 1);
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
+      pdf.save('brahmi-translation.pdf');
+    }
+  };
+
+  // Helper function to create a single image page
+  const createImagePage = async (inputHTML: string, brahmiHTML: string, pageNumber: number, totalPages: number) => {
     const imageContainer = document.createElement('div');
     imageContainer.style.cssText = `
       width: 1200px;
-      min-height: 800px;
+      min-height: 1600px;
       background: white;
       font-family: 'Noto Sans Brahmi', serif;
       padding: 60px;
@@ -302,27 +509,39 @@ const BrahmiEditor: React.FC = () => {
       flex-direction: column;
     `;
 
+    // Page header with page number
+    const pageHeader = document.createElement('div');
+    pageHeader.style.cssText = `
+      text-align: center;
+      font-size: 16px;
+      color: #6b7280;
+      margin-bottom: 30px;
+      font-family: system-ui, -apple-system, sans-serif;
+    `;
+    pageHeader.textContent = `Page ${pageNumber} of ${totalPages}`;
+
     // Brahmi translation section (top half)
     const brahmiSection = document.createElement('div');
     brahmiSection.style.cssText = `
       flex: 1;
       padding: 30px 0;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 300px;
+      flex-direction: column;
+      justify-content: flex-start;
+      min-height: 600px;
+      overflow: hidden;
     `;
     
     const brahmiContent = document.createElement('div');
     brahmiContent.innerHTML = brahmiHTML || '<span style="color: #9ca3af; font-style: italic;">No translation available</span>';
     brahmiContent.style.cssText = `
-      font-size: 36px;
-      line-height: 1.8;
+      font-size: 32px;
+      line-height: 1.7;
       color: #111827;
-      text-align: center;
+      text-align: left;
       font-family: 'Noto Sans Brahmi', serif;
       letter-spacing: 0.1em;
-      word-spacing: 0.4em;
+      word-spacing: 0.3em;
       white-space: pre-wrap;
       word-wrap: break-word;
       overflow-wrap: break-word;
@@ -332,16 +551,19 @@ const BrahmiEditor: React.FC = () => {
     // Add CSS for heading preservation in Brahmi section
     const brahmiStyle = document.createElement('style');
     brahmiStyle.textContent = `
-      .brahmi-content h1 { font-size: 72px !important; font-weight: bold !important; margin: 0.67em 0 !important; }
-      .brahmi-content h2 { font-size: 54px !important; font-weight: bold !important; margin: 0.75em 0 !important; }
-      .brahmi-content h3 { font-size: 42px !important; font-weight: bold !important; margin: 0.83em 0 !important; }
-      .brahmi-content h4 { font-size: 36px !important; font-weight: bold !important; margin: 1.12em 0 !important; }
-      .brahmi-content h5 { font-size: 30px !important; font-weight: bold !important; margin: 1.5em 0 !important; }
-      .brahmi-content h6 { font-size: 28px !important; font-weight: bold !important; margin: 1.67em 0 !important; }
-      .brahmi-content p { font-size: 36px !important; margin: 1em 0 !important; }
+      .brahmi-content h1 { font-size: 64px !important; font-weight: bold !important; margin: 0.5em 0 !important; }
+      .brahmi-content h2 { font-size: 48px !important; font-weight: bold !important; margin: 0.6em 0 !important; }
+      .brahmi-content h3 { font-size: 38px !important; font-weight: bold !important; margin: 0.7em 0 !important; }
+      .brahmi-content h4 { font-size: 32px !important; font-weight: bold !important; margin: 0.8em 0 !important; }
+      .brahmi-content h5 { font-size: 28px !important; font-weight: bold !important; margin: 0.9em 0 !important; }
+      .brahmi-content h6 { font-size: 25px !important; font-weight: bold !important; margin: 1em 0 !important; }
+      .brahmi-content p { font-size: 32px !important; margin: 0.8em 0 !important; }
       .brahmi-content strong { font-weight: bold !important; }
       .brahmi-content em { font-style: italic !important; }
       .brahmi-content u { text-decoration: underline !important; }
+      .brahmi-content blockquote { border-left: 5px solid #d1d5db; padding-left: 1.5em; margin: 1em 0; font-style: italic; }
+      .brahmi-content ul, .brahmi-content ol { margin: 1em 0; padding-left: 2em; }
+      .brahmi-content li { margin: 0.5em 0; }
     `;
     brahmiContent.className = 'brahmi-content';
 
@@ -350,8 +572,9 @@ const BrahmiEditor: React.FC = () => {
     dividerLine.style.cssText = `
       border: none;
       border-top: 3px solid #d1d5db;
-      margin: 30px 0;
+      margin: 40px 0;
       width: 100%;
+      flex-shrink: 0;
     `;
 
     // Input text section (bottom half)
@@ -361,43 +584,48 @@ const BrahmiEditor: React.FC = () => {
       padding: 30px 0;
       opacity: 0.7;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 200px;
+      flex-direction: column;
+      justify-content: flex-start;
+      min-height: 400px;
+      overflow: hidden;
     `;
     
     const inputContent = document.createElement('div');
     inputContent.innerHTML = inputHTML;
     inputContent.style.cssText = `
-      font-size: 20px;
+      font-size: 18px;
       line-height: 1.6;
       color: #4b5563;
       font-family: system-ui, -apple-system, sans-serif;
       word-wrap: break-word;
       overflow-wrap: break-word;
-      text-align: center;
+      text-align: left;
       max-width: 100%;
     `;
     
     // Add CSS for heading preservation in input section
     const inputStyle = document.createElement('style');
     inputStyle.textContent = `
-      .input-content h1 { font-size: 40px !important; font-weight: bold !important; margin: 0.67em 0 !important; }
-      .input-content h2 { font-size: 30px !important; font-weight: bold !important; margin: 0.75em 0 !important; }
-      .input-content h3 { font-size: 24px !important; font-weight: bold !important; margin: 0.83em 0 !important; }
-      .input-content h4 { font-size: 20px !important; font-weight: bold !important; margin: 1.12em 0 !important; }
-      .input-content h5 { font-size: 16px !important; font-weight: bold !important; margin: 1.5em 0 !important; }
-      .input-content h6 { font-size: 14px !important; font-weight: bold !important; margin: 1.67em 0 !important; }
-      .input-content p { font-size: 20px !important; margin: 1em 0 !important; }
+      .input-content h1 { font-size: 32px !important; font-weight: bold !important; margin: 0.5em 0 !important; }
+      .input-content h2 { font-size: 26px !important; font-weight: bold !important; margin: 0.6em 0 !important; }
+      .input-content h3 { font-size: 22px !important; font-weight: bold !important; margin: 0.7em 0 !important; }
+      .input-content h4 { font-size: 18px !important; font-weight: bold !important; margin: 0.8em 0 !important; }
+      .input-content h5 { font-size: 16px !important; font-weight: bold !important; margin: 0.9em 0 !important; }
+      .input-content h6 { font-size: 14px !important; font-weight: bold !important; margin: 1em 0 !important; }
+      .input-content p { font-size: 18px !important; margin: 0.8em 0 !important; }
       .input-content strong { font-weight: bold !important; }
       .input-content em { font-style: italic !important; }
       .input-content u { text-decoration: underline !important; }
+      .input-content blockquote { border-left: 4px solid #d1d5db; padding-left: 1.5em; margin: 1em 0; font-style: italic; }
+      .input-content ul, .input-content ol { margin: 1em 0; padding-left: 2em; }
+      .input-content li { margin: 0.3em 0; }
     `;
     inputContent.className = 'input-content';
 
     // Assemble the image container
     brahmiSection.appendChild(brahmiContent);
     inputSection.appendChild(inputContent);
+    imageContainer.appendChild(pageHeader);
     imageContainer.appendChild(brahmiSection);
     imageContainer.appendChild(dividerLine);
     imageContainer.appendChild(inputSection);
@@ -416,23 +644,158 @@ const BrahmiEditor: React.FC = () => {
         backgroundColor: '#ffffff'
       });
       
-      // Convert to JPG and download
+      // Convert to JPG
       const imgData = canvas.toDataURL('image/jpeg', 0.9);
+      return imgData;
+    } finally {
+      // Clean up
+      document.head.removeChild(brahmiStyle);
+      document.head.removeChild(inputStyle);
+      document.body.removeChild(imageContainer);
+    }
+  };
+
+  const generateImage = async (inputHTML: string, brahmiHTML: string) => {
+    try {
+      // Parse content into segments using the same logic as PDF
+      const inputSegments = parseContentIntoSegments(inputHTML);
+      const brahmiSegments = parseContentIntoSegments(brahmiHTML);
       
-      // Create download link
+      // Adjust height thresholds for images (larger than PDF since images can be longer)
+      const totalInputHeight = inputSegments.reduce((sum, seg) => sum + seg.estimatedHeight, 0);
+      const totalBrahmiHeight = brahmiSegments.reduce((sum, seg) => sum + seg.estimatedHeight, 0);
+      
+      if (totalInputHeight <= 600 && totalBrahmiHeight <= 600) {
+        // Use single image for small content
+        const imgData = await createImagePage(inputHTML, brahmiHTML, 1, 1);
+        
+        // Create download link
+        const link = document.createElement('a');
+        link.download = 'brahmi-translation.jpg';
+        link.href = imgData;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        return;
+      }
+      
+      // Group segments into pages with higher capacity for images
+      const adjustedGrouping = (inputSegments: any[], brahmiSegments: any[]) => {
+        const pages: Array<{
+          inputContent: string;
+          brahmiContent: string;
+          pageNumber: number;
+        }> = [];
+        
+        // Maximum height per half-page for images (higher than PDF)
+        const maxHeightPerSection = 600; 
+        
+        let currentInputContent = '';
+        let currentBrahmiContent = '';
+        let currentInputHeight = 0;
+        let currentBrahmiHeight = 0;
+        let pageNumber = 1;
+        
+        const finalizePage = () => {
+          if (currentInputContent || currentBrahmiContent) {
+            pages.push({
+              inputContent: currentInputContent,
+              brahmiContent: currentBrahmiContent,
+              pageNumber
+            });
+            pageNumber++;
+            currentInputContent = '';
+            currentBrahmiContent = '';
+            currentInputHeight = 0;
+            currentBrahmiHeight = 0;
+          }
+        };
+        
+        const maxSegments = Math.max(inputSegments.length, brahmiSegments.length);
+        
+        for (let i = 0; i < maxSegments; i++) {
+          const inputSegment = inputSegments[i];
+          const brahmiSegment = brahmiSegments[i];
+          
+          const inputHeight = inputSegment?.estimatedHeight || 0;
+          const brahmiHeight = brahmiSegment?.estimatedHeight || 0;
+          
+          const wouldExceedCapacity = 
+            (currentInputHeight + inputHeight > maxHeightPerSection) ||
+            (currentBrahmiHeight + brahmiHeight > maxHeightPerSection);
+          
+          if (wouldExceedCapacity && (currentInputContent || currentBrahmiContent)) {
+            finalizePage();
+          }
+          
+          if (inputSegment) {
+            currentInputContent += inputSegment.content;
+            currentInputHeight += inputHeight;
+          }
+          
+          if (brahmiSegment) {
+            currentBrahmiContent += brahmiSegment.content;
+            currentBrahmiHeight += brahmiHeight;
+          }
+        }
+        
+        finalizePage();
+        return pages;
+      };
+      
+      const pages = adjustedGrouping(inputSegments, brahmiSegments);
+      
+      if (pages.length === 0) {
+        throw new Error('No content to generate image');
+      }
+      
+      // Generate multiple images and download as ZIP if more than one page
+      if (pages.length === 1) {
+        const imgData = await createImagePage(
+          pages[0].inputContent, 
+          pages[0].brahmiContent, 
+          1, 
+          1
+        );
+        
+        const link = document.createElement('a');
+        link.download = 'brahmi-translation.jpg';
+        link.href = imgData;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        // For multiple pages, create a simple sequential download
+        for (let i = 0; i < pages.length; i++) {
+          const page = pages[i];
+          const imgData = await createImagePage(
+            page.inputContent, 
+            page.brahmiContent, 
+            i + 1, 
+            pages.length
+          );
+          
+          const link = document.createElement('a');
+          link.download = `brahmi-translation-page-${i + 1}.jpg`;
+          link.href = imgData;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          // Small delay between downloads
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
+    } catch (error) {
+      console.error('Error generating image:', error);
+      // Fallback to simple single image if pagination fails
+      const imgData = await createImagePage(inputHTML, brahmiHTML, 1, 1);
       const link = document.createElement('a');
       link.download = 'brahmi-translation.jpg';
       link.href = imgData;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    } catch (error) {
-      console.error('Error generating image:', error);
-    } finally {
-      // Clean up
-      document.head.removeChild(brahmiStyle);
-      document.head.removeChild(inputStyle);
-      document.body.removeChild(imageContainer);
     }
   };
 
