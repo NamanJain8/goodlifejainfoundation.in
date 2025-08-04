@@ -537,18 +537,68 @@
   font-weight: 500;
 }
 
+/* Translate Toolbar Button */
+.translate-toolbar-button {
+  background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%) !important;
+  color: #0a0a0a !important;
+  border: 1px solid #b8941f !important;
+  border-radius: 4px !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  white-space: nowrap !important;
+  min-width: auto !important;
+  height: 36px !important;
+}
+
+.translate-toolbar-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #facc15 0%, #d4af37 100%) !important;
+  border-color: #d4af37 !important;
+  transform: none !important;
+}
+
+.translate-toolbar-button:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  background: linear-gradient(135deg, #a8a8a8 0%, #888888 100%) !important;
+  color: #ffffff !important;
+  border-color: #888888 !important;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Main Editor Adjustments */
 .main-editor-section .ProseMirror {
   border: none;
   border-radius: 0;
   margin-bottom: 0;
+  height: 400px;
+  min-height: auto;
+  overflow-y: auto;
+  max-height: none;
 }
 
 /* Brahmi Translation Output */
 .brahmi-output {
   @apply brahmi-text;
   padding: 1rem;
-  min-height: 200px;
+  height: 400px;
   background: #fff;
   font-size: 1.2rem;
   line-height: 1.6;
@@ -650,10 +700,7 @@
   padding: 0.1em 0.2em;
 }
 
-/* Handle text colors in output */
-.brahmi-output [style*="color"] {
-  /* Preserve inline color styles */
-}
+/* Handle text colors in output - inline color styles are preserved automatically */
 
 /* Ensure proper spacing for formatted content */
 .brahmi-output > :first-child {
@@ -674,11 +721,23 @@
 @media (max-width: 768px) {
   .editor-sections {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
   
   .brahmi-output {
-    min-height: 150px;
+    height: 300px;
     font-size: 1.1rem;
+  }
+  
+  .main-editor-section .ProseMirror {
+    height: 300px;
+    min-height: auto;
+  }
+  
+  .translate-toolbar-button {
+    font-size: 0.8rem !important;
+    padding: 0.4rem 0.6rem !important;
+    gap: 0.3rem !important;
   }
 }
 

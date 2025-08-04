@@ -880,56 +880,37 @@ const BrahmiEditor: React.FC = () => {
     initializeKeyman();
   }, [isMobile, editor]);
 
-  // Translation effect - translate editor content to Brahmi
-  useEffect(() => {
+  // Manual translation function - triggered by button click
+  const handleTranslateClick = async () => {
     if (!editor) return;
 
-    const handleTranslation = async () => {
-      const htmlContent = editor.getHTML();
-      const textContent = editor.getText();
-      
-      if (!textContent.trim()) {
-        setBrahmiTranslation('');
-        setLanguageStats({});
-        return;
-      }
-
-      setIsTranslating(true);
-      
-      try {
-        // Get language statistics for the input (using plain text)
-        const stats = getLanguageStats(textContent);
-        setLanguageStats(stats);
-        
-        // Translate formatted content to Brahmi while preserving formatting
-        const translated = await translateFormattedTextToBrahmi(htmlContent);
-        const cleanedTranslation = cleanTranslatedHTML(translated);
-        setBrahmiTranslation(cleanedTranslation);
-      } catch (error) {
-        console.error('Translation failed:', error);
-        setBrahmiTranslation('Translation failed');
-      } finally {
-        setIsTranslating(false);
-      }
-    };
-
-    // Debounce translation to avoid too many API calls
-    const debounceTimer = setTimeout(handleTranslation, 500);
+    const htmlContent = editor.getHTML();
+    const textContent = editor.getText();
     
-    // Listen for editor updates
-    const handleUpdate = () => {
-      clearTimeout(debounceTimer);
-      const newTimer = setTimeout(handleTranslation, 500);
-      return newTimer;
-    };
+    if (!textContent.trim()) {
+      setBrahmiTranslation('');
+      setLanguageStats({});
+      return;
+    }
 
-    editor.on('update', handleUpdate);
-
-    return () => {
-      clearTimeout(debounceTimer);
-      editor.off('update', handleUpdate);
-    };
-  }, [editor]);
+    setIsTranslating(true);
+    
+    try {
+      // Get language statistics for the input (using plain text)
+      const stats = getLanguageStats(textContent);
+      setLanguageStats(stats);
+      
+      // Translate formatted content to Brahmi while preserving formatting
+      const translated = await translateFormattedTextToBrahmi(htmlContent);
+      const cleanedTranslation = cleanTranslatedHTML(translated);
+      setBrahmiTranslation(cleanedTranslation);
+    } catch (error) {
+      console.error('Translation failed:', error);
+      setBrahmiTranslation('Translation failed');
+    } finally {
+      setIsTranslating(false);
+    }
+  };
 
   if (!editor) return null;
 
@@ -1108,6 +1089,25 @@ const BrahmiEditor: React.FC = () => {
         <button onClick={downloadImage} title="Download as JPG">
           <Icon name="ImageDown" size={18} />
         </button>
+        <div className="divider" />
+        <button 
+          className="translate-toolbar-button"
+          onClick={handleTranslateClick}
+          disabled={isTranslating}
+          title="Translate to Brahmi"
+        >
+          {isTranslating ? (
+            <>
+              <Icon name="Loader2" size={18} className="spinning" />
+              Translating...
+            </>
+          ) : (
+            <>
+              <Icon name="ArrowRight" size={18} />
+              Translate
+            </>
+          )}
+        </button>
       </div>
       
       <div className="editor-sections">
@@ -1131,14 +1131,13 @@ const BrahmiEditor: React.FC = () => {
         {/* Brahmi Translation Section */}
         <div className="brahmi-translation-section">
           <div className="section-header">
-            <h3 className="section-title">Brahmi Translation (Auto-detected)</h3>
-            {isTranslating && <span className="translation-status">Translating...</span>}
+            <h3 className="section-title">Brahmi Translation</h3>
           </div>
           <div 
             className="brahmi-output"
             dangerouslySetInnerHTML={{
               __html: brahmiTranslation || `<span class="placeholder-text">
-                Brahmi translation will appear here as you type...
+                Click "Translate" in the toolbar to see translation here...
               </span>`
             }}
           />
