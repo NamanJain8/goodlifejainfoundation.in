@@ -15,8 +15,17 @@ import { translateFormattedTextToBrahmi, translateFormattedTextToHindi, cleanTra
 
 // Device detection utility
 const isMobileDevice = () => {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-         (typeof navigator.maxTouchPoints === 'number' && navigator.maxTouchPoints > 2 && /MacIntel/.test(navigator.platform));
+  // Check for mobile user agents
+  const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i;
+  
+  // Check for touch capability (but be careful with iPadOS which reports desktop Safari)
+  const hasTouchScreen = typeof navigator.maxTouchPoints === 'number' && navigator.maxTouchPoints > 0;
+  
+  // Check for specific mobile/tablet indicators
+  const isIpadOS = /MacIntel/.test(navigator.platform) && hasTouchScreen;
+  const isSmallScreen = window.innerWidth <= 768; // Common mobile breakpoint
+  
+  return mobileRegex.test(navigator.userAgent) || isIpadOS || (hasTouchScreen && isSmallScreen);
 };
 
 const BrahmiEditor: React.FC = () => {
@@ -46,14 +55,25 @@ const BrahmiEditor: React.FC = () => {
     editorProps: {
       handleKeyDown: (view, event) => {
         // We are intercepting special keys to have custom behavior
+        // For mobile devices, let the native keyboard handle most events
+        const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                               (typeof navigator.maxTouchPoints === 'number' && navigator.maxTouchPoints > 2 && /MacIntel/.test(navigator.platform));
+        
         switch (event.key) {
-          // FIXME: Uncomment this when we have a way to handle line breaks
-          // case 'Enter':
-          //   editor?.chain().focus().setHardBreak().run();
-          //   return true;
+          case 'Enter':
+            // Enable Enter key functionality
+            editor?.chain().focus().setHardBreak().run();
+            return true;
           case 'Backspace': {
-            if (!editor) return true;
+            if (!editor) return false;
 
+            // On mobile devices, use simpler backspace handling to avoid conflicts
+            if (isMobileDevice) {
+              // Let the native mobile keyboard handle backspace
+              return false;
+            }
+
+            // Complex grapheme handling for desktop only
             if (editor.commands.undoInputRule() || editor.commands.deleteSelection()) {
               return true;
             }
@@ -861,24 +881,23 @@ const BrahmiEditor: React.FC = () => {
     setIsMobile(isMobileDevice());
   }, []);
 
-  // Keyman initialization for mobile devices
+  // Mobile keyboard optimization
   useEffect(() => {
-    console.log('isMobile', isMobile);
     if (!isMobile || !editor) return;
 
-    const initializeKeyman = async () => {
-      try {
-        if (typeof window !== 'undefined' && window.keyman) {
-          await window.keyman.init();
-          window.keyman.attachToControl(editor.view.dom);
-          console.log('Keyman initialized for mobile device');
-        }
-      } catch (error) {
-        console.error('Failed to initialize Keyman:', error);
-      }
-    };
-
-    initializeKeyman();
+    const editorElement = editor.view.dom;
+    
+    // Ensure proper mobile keyboard behavior
+    editorElement.setAttribute('autocomplete', 'off');
+    editorElement.setAttribute('autocorrect', 'off');
+    editorElement.setAttribute('autocapitalize', 'off');
+    editorElement.setAttribute('spellcheck', 'false');
+    
+    // Add mobile-specific styling for better keyboard interaction
+    editorElement.style.webkitUserSelect = 'text';
+    editorElement.style.userSelect = 'text';
+    
+    console.log('Mobile keyboard optimizations applied');
   }, [isMobile, editor]);
 
   // Manual translation function - triggered by button click
@@ -1179,8 +1198,6 @@ const BrahmiEditor: React.FC = () => {
           <VirtualKeyboard onKeyPress={handleVirtualKeyPress} />
         </div>
       )}
-      
-      {isMobile && <div id="KeymanWebControl"></div>}
     </div>
   );
 };
