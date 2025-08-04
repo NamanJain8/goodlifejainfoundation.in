@@ -6,12 +6,25 @@ import { translateText } from './translator';
 export const detectLanguage = (text: string): string => {
   if (!text.trim()) return 'unknown';
 
-  let englishChars = 0;
-  let hindiChars = 0;
-  let brahmiChars = 0;
+  // Language counters
+  const languageCharCounts: { [key: string]: number } = {
+    en: 0,        // English
+    hi: 0,        // Hindi/Devanagari
+    kn: 0,        // Kannada
+    ta: 0,        // Tamil
+    te: 0,        // Telugu
+    bn: 0,        // Bengali
+    gu: 0,        // Gujarati
+    ml: 0,        // Malayalam
+    or: 0,        // Odia
+    pa: 0,        // Punjabi
+    sa: 0,        // Sanskrit (using Devanagari)
+    mr: 0,        // Marathi (using Devanagari)
+    ne: 0,        // Nepali (using Devanagari)
+    brahmi: 0     // Brahmi
+  };
+
   let arabicDigits = 0;
-  let devanagariDigits = 0;
-  let brahmiDigits = 0;
   let totalChars = 0;
 
   for (let i = 0; i < text.length; i++) {
@@ -28,67 +41,101 @@ export const detectLanguage = (text: string): string => {
 
     totalChars++;
 
-    // Arabic digits (0-9)
+    // Arabic digits (0-9) - will be assigned to context later
     if (codePoint >= 0x0030 && codePoint <= 0x0039) {
       arabicDigits++;
     }
-    // Devanagari digits (०-९)
-    else if (codePoint >= 0x0966 && codePoint <= 0x096F) {
-      devanagariDigits++;
-      hindiChars++; // Count as Hindi
-    }
-    // Brahmi digits (𑁦-𑁯)
-    else if (codePoint >= 0x11066 && codePoint <= 0x1106F) {
-      brahmiDigits++;
-      brahmiChars++; // Count as Brahmi
-    }
     // English (Basic Latin letters)
     else if ((codePoint >= 0x0041 && codePoint <= 0x005A) || (codePoint >= 0x0061 && codePoint <= 0x007A)) {
-      englishChars++;
+      languageCharCounts.en++;
     }
-    // Hindi/Devanagari (excluding digits which are handled above)
-    else if (codePoint >= 0x0900 && codePoint <= 0x097F && !(codePoint >= 0x0966 && codePoint <= 0x096F)) {
-      hindiChars++;
+    // Hindi/Devanagari (U+0900–U+097F) - also used by Marathi, Nepali, Sanskrit
+    else if (codePoint >= 0x0900 && codePoint <= 0x097F) {
+      languageCharCounts.hi++;
     }
-    // Brahmi (excluding digits which are handled above)
-    else if (codePoint >= 0x11000 && codePoint <= 0x1107F && !(codePoint >= 0x11066 && codePoint <= 0x1106F)) {
-      brahmiChars++;
+    // Bengali (U+0980–U+09FF)
+    else if (codePoint >= 0x0980 && codePoint <= 0x09FF) {
+      languageCharCounts.bn++;
+    }
+    // Gujarati (U+0A80–U+0AFF)
+    else if (codePoint >= 0x0A80 && codePoint <= 0x0AFF) {
+      languageCharCounts.gu++;
+    }
+    // Punjabi/Gurmukhi (U+0A00–U+0A7F)
+    else if (codePoint >= 0x0A00 && codePoint <= 0x0A7F) {
+      languageCharCounts.pa++;
+    }
+    // Odia (U+0B00–U+0B7F)
+    else if (codePoint >= 0x0B00 && codePoint <= 0x0B7F) {
+      languageCharCounts.or++;
+    }
+    // Tamil (U+0B80–U+0BFF)
+    else if (codePoint >= 0x0B80 && codePoint <= 0x0BFF) {
+      languageCharCounts.ta++;
+    }
+    // Telugu (U+0C00–U+0C7F)
+    else if (codePoint >= 0x0C00 && codePoint <= 0x0C7F) {
+      languageCharCounts.te++;
+    }
+    // Kannada (U+0C80–U+0CFF)
+    else if (codePoint >= 0x0C80 && codePoint <= 0x0CFF) {
+      languageCharCounts.kn++;
+    }
+    // Malayalam (U+0D00–U+0D7F)
+    else if (codePoint >= 0x0D00 && codePoint <= 0x0D7F) {
+      languageCharCounts.ml++;
+    }
+    // Brahmi (U+11000–U+1107F)
+    else if (codePoint >= 0x11000 && codePoint <= 0x1107F) {
+      languageCharCounts.brahmi++;
     }
   }
 
   if (totalChars === 0) return 'unknown';
 
-  // If text is only Arabic digits, we need context - default to English for standalone numbers
+  // If text is only Arabic digits, default to English
   if (arabicDigits === totalChars) {
     return 'en';
   }
 
-  // Add Arabic digits to the dominant script context
-  if (hindiChars > englishChars && hindiChars > brahmiChars) {
-    // Hindi context - treat Arabic digits as part of Hindi
-    hindiChars += arabicDigits;
-  } else if (brahmiChars > englishChars && brahmiChars > hindiChars) {
-    // Brahmi context - treat Arabic digits as part of Brahmi
-    brahmiChars += arabicDigits;
-  } else {
-    // English context or default - treat Arabic digits as part of English
-    englishChars += arabicDigits;
+  // Find the dominant script and assign Arabic digits to that context
+  let dominantLanguage = 'en';
+  let maxCount = languageCharCounts.en;
+  
+  for (const [lang, count] of Object.entries(languageCharCounts)) {
+    if (count > maxCount) {
+      maxCount = count;
+      dominantLanguage = lang;
+    }
+  }
+  
+  // Add Arabic digits to dominant language context
+  languageCharCounts[dominantLanguage] += arabicDigits;
+
+  // Calculate percentages and find the best match
+  let bestLanguage = 'en';
+  let bestPercentage = 0;
+  
+  for (const [lang, count] of Object.entries(languageCharCounts)) {
+    const percentage = count / totalChars;
+    if (percentage > bestPercentage && percentage > 0.3) { // 30% threshold
+      bestPercentage = percentage;
+      bestLanguage = lang;
+    }
   }
 
-  // Calculate percentages
-  const englishPercentage = englishChars / totalChars;
-  const hindiPercentage = hindiChars / totalChars;
-  const brahmiPercentage = brahmiChars / totalChars;
+  // If no language meets the 30% threshold, return the one with most characters
+  if (bestPercentage <= 0.3) {
+    let maxChars = 0;
+    for (const [lang, count] of Object.entries(languageCharCounts)) {
+      if (count > maxChars) {
+        maxChars = count;
+        bestLanguage = lang;
+      }
+    }
+  }
 
-  // Return the language with highest percentage (minimum 30% threshold)
-  if (brahmiPercentage > 0.3) return 'brahmi';
-  if (hindiPercentage > 0.3) return 'hi';
-  if (englishPercentage > 0.3) return 'en';
-
-  // If no clear majority, return the one with most characters
-  if (brahmiChars >= hindiChars && brahmiChars >= englishChars) return 'brahmi';
-  if (hindiChars >= englishChars) return 'hi';
-  return 'en';
+  return bestLanguage;
 };
 
 // Text chunk with its detected language
@@ -221,9 +268,24 @@ export const getLanguageStats = (text: string): { [key: string]: number } => {
   const stats: { [key: string]: number } = {};
 
   chunks.forEach(chunk => {
-    const lang = chunk.language === 'en' ? 'English' : 
-                 chunk.language === 'hi' ? 'Hindi' : 
-                 chunk.language === 'brahmi' ? 'Brahmi' : 'Unknown';
+    const languageNames: { [key: string]: string } = {
+      'en': 'English',
+      'hi': 'Hindi',
+      'kn': 'Kannada',
+      'ta': 'Tamil',
+      'te': 'Telugu',
+      'bn': 'Bengali',
+      'gu': 'Gujarati',
+      'ml': 'Malayalam',
+      'or': 'Odia',
+      'pa': 'Punjabi',
+      'sa': 'Sanskrit',
+      'mr': 'Marathi',
+      'ne': 'Nepali',
+      'brahmi': 'Brahmi'
+    };
+    
+    const lang = languageNames[chunk.language] || 'Unknown';
     stats[lang] = (stats[lang] || 0) + chunk.text.trim().length;
   });
 
