@@ -1,6 +1,6 @@
 // Formatted translation utilities that preserve HTML formatting
 
-import { translateMixedTextToBrahmi } from './languageDetection';
+import { translateMixedTextToBrahmi, translateMixedTextToHindi } from './languageDetection';
 
 // Extract text content from HTML while preserving structure
 interface TextNode {
@@ -112,6 +112,40 @@ export const translateFormattedTextToBrahmi = async (html: string): Promise<stri
     return translatedHtml;
   } catch (error) {
     console.error('Formatted translation failed:', error);
+    throw error;
+  }
+};
+
+// Translate HTML content to Hindi while preserving all formatting
+export const translateFormattedTextToHindi = async (html: string): Promise<string> => {
+  if (!html.trim()) return '';
+  
+  try {
+    // Extract text nodes with their formatting context
+    const textNodes = extractTextNodes(html);
+    
+    if (textNodes.length === 0) return html;
+    
+    // Translate each text node
+    const translatedTexts: string[] = [];
+    
+    for (const textNode of textNodes) {
+      try {
+        const translated = await translateMixedTextToHindi(textNode.text);
+        translatedTexts.push(translated);
+      } catch (error) {
+        console.error('Failed to translate text node to Hindi:', textNode.text, error);
+        // Fallback to original text if translation fails
+        translatedTexts.push(textNode.text);
+      }
+    }
+    
+    // Rebuild HTML with translated text
+    const translatedHtml = rebuildHTMLWithTranslation(html, textNodes, translatedTexts);
+    
+    return translatedHtml;
+  } catch (error) {
+    console.error('Formatted translation to Hindi failed:', error);
     throw error;
   }
 };

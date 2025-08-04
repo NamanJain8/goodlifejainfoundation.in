@@ -11,7 +11,7 @@ import './BrahmiEditor.css';
 import VirtualKeyboard from './VirtualKeyboard';
 import Icon from '../ui/Icon';
 import { getLanguageStats } from '../../utils/languageDetection';
-import { translateFormattedTextToBrahmi, cleanTranslatedHTML } from '../../utils/formattedTranslation';
+import { translateFormattedTextToBrahmi, translateFormattedTextToHindi, cleanTranslatedHTML } from '../../utils/formattedTranslation';
 
 // Device detection utility
 const isMobileDevice = () => {
@@ -22,7 +22,8 @@ const isMobileDevice = () => {
 const BrahmiEditor: React.FC = () => {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showHeadingDropdown, setShowHeadingDropdown] = useState(false);
-  const [brahmiTranslation, setBrahmiTranslation] = useState('');
+  const [translation, setTranslation] = useState('');
+  const [outputLanguage, setOutputLanguage] = useState<'brahmi' | 'hindi'>('brahmi');
   const [isTranslating, setIsTranslating] = useState(false);
   const [languageStats, setLanguageStats] = useState<{ [key: string]: number }>({});
   const [isMobile, setIsMobile] = useState(false);
@@ -801,12 +802,12 @@ const BrahmiEditor: React.FC = () => {
 
   const downloadPDF = async () => {
     if (!editor) return;
-    await generatePDF(editor.getHTML(), brahmiTranslation);
+    await generatePDF(editor.getHTML(), translation);
   };
 
   const downloadImage = async () => {
     if (!editor) return;
-    await generateImage(editor.getHTML(), brahmiTranslation);
+    await generateImage(editor.getHTML(), translation);
   };
 
   const handleColorChange = (color: string) => {
@@ -888,7 +889,7 @@ const BrahmiEditor: React.FC = () => {
     const textContent = editor.getText();
     
     if (!textContent.trim()) {
-      setBrahmiTranslation('');
+      setTranslation('');
       setLanguageStats({});
       return;
     }
@@ -900,17 +901,31 @@ const BrahmiEditor: React.FC = () => {
       const stats = getLanguageStats(textContent);
       setLanguageStats(stats);
       
-      // Translate formatted content to Brahmi while preserving formatting
-      const translated = await translateFormattedTextToBrahmi(htmlContent);
+      // Translate formatted content to selected output language while preserving formatting
+      const translated = outputLanguage === 'brahmi' 
+        ? await translateFormattedTextToBrahmi(htmlContent)
+        : await translateFormattedTextToHindi(htmlContent);
       const cleanedTranslation = cleanTranslatedHTML(translated);
-      setBrahmiTranslation(cleanedTranslation);
+      setTranslation(cleanedTranslation);
     } catch (error) {
       console.error('Translation failed:', error);
-      setBrahmiTranslation('Translation failed');
+      setTranslation('Translation failed');
     } finally {
       setIsTranslating(false);
     }
   };
+
+  // Effect to retranslate when output language changes (if there's existing content)
+  useEffect(() => {
+    if (translation && !isTranslating && editor) {
+      const textContent = editor.getText();
+      if (textContent.trim()) {
+        // Auto-retranslate when language toggle changes
+        handleTranslateClick();
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [outputLanguage]);
 
   if (!editor) return null;
 
@@ -1128,16 +1143,30 @@ const BrahmiEditor: React.FC = () => {
           <EditorContent editor={editor} />
         </div>
 
-        {/* Brahmi Translation Section */}
-        <div className="brahmi-translation-section">
+        {/* Translation Output Section */}
+        <div className="translation-section">
           <div className="section-header">
-            <h3 className="section-title">Brahmi Translation</h3>
+            <h3 className="section-title">Translation Output</h3>
+            <div className="language-toggle">
+              <button 
+                className={`toggle-option ${outputLanguage === 'brahmi' ? 'active' : ''}`}
+                onClick={() => setOutputLanguage('brahmi')}
+              >
+                Brahmi
+              </button>
+              <button 
+                className={`toggle-option ${outputLanguage === 'hindi' ? 'active' : ''}`}
+                onClick={() => setOutputLanguage('hindi')}
+              >
+                Hindi
+              </button>
+            </div>
           </div>
           <div 
-            className="brahmi-output"
+            className={`translation-output ${outputLanguage === 'brahmi' ? 'brahmi-font' : 'hindi-font'}`}
             dangerouslySetInnerHTML={{
-              __html: brahmiTranslation || `<span class="placeholder-text">
-                Click "Translate" in the toolbar to see translation here...
+              __html: translation || `<span class="placeholder-text">
+                Click "Translate" in the toolbar to see ${outputLanguage === 'brahmi' ? 'Brahmi' : 'Hindi'} translation here...
               </span>`
             }}
           />

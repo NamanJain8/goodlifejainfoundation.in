@@ -489,7 +489,7 @@
 }
 
 .main-editor-section,
-.brahmi-translation-section {
+.translation-section {
   display: flex;
   flex-direction: column;
   border: 1px solid #dee2e6;
@@ -535,6 +535,39 @@
   border-radius: 12px;
   color: #495057;
   font-weight: 500;
+}
+
+/* Language Toggle */
+.language-toggle {
+  display: flex;
+  background: #f1f3f4;
+  border-radius: 6px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.toggle-option {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+  color: #5f6368;
+}
+
+.toggle-option:hover {
+  background: #e8eaed;
+  color: #3c4043;
+}
+
+.toggle-option.active {
+  background: #d4af37;
+  color: #0a0a0a;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 /* Translate Toolbar Button */
@@ -594,9 +627,8 @@
   max-height: none;
 }
 
-/* Brahmi Translation Output */
-.brahmi-output {
-  @apply brahmi-text;
+/* Translation Output */
+.translation-output {
   padding: 1rem;
   height: 400px;
   background: #fff;
@@ -606,72 +638,84 @@
   overflow-y: auto;
 }
 
+.translation-output.brahmi-font {
+  font-family: 'Noto Sans Brahmi', serif;
+  letter-spacing: 0.05em;
+  word-spacing: 0.2em;
+}
+
+.translation-output.hindi-font {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  letter-spacing: 0.02em;
+  word-spacing: 0.1em;
+}
+
 /* Preserve formatting in Brahmi output */
-.brahmi-output strong {
+.translation-output strong {
   font-weight: bold;
 }
 
-.brahmi-output em {
+.translation-output em {
   font-style: italic;
 }
 
-.brahmi-output u {
+.translation-output u {
   text-decoration: underline;
 }
 
-.brahmi-output h1 {
+.translation-output h1 {
   font-size: 2em;
   font-weight: bold;
   margin: 0.67em 0;
 }
 
-.brahmi-output h2 {
+.translation-output h2 {
   font-size: 1.5em;
   font-weight: bold;
   margin: 0.83em 0;
 }
 
-.brahmi-output h3 {
+.translation-output h3 {
   font-size: 1.17em;
   font-weight: bold;
   margin: 1em 0;
 }
 
-.brahmi-output h4 {
+.translation-output h4 {
   font-size: 1em;
   margin: 1.12em 0;
   font-weight: bold;
 }
 
-.brahmi-output h5 {
+.translation-output h5 {
   font-size: 0.83em;
   margin: 1.5em 0;
   font-weight: bold;
 }
 
-.brahmi-output h6 {
+.translation-output h6 {
   font-size: 0.75em;
   margin: 1.67em 0;
   font-weight: bold;
 }
 
-.brahmi-output p {
+.translation-output p {
   margin: 1em 0;
 }
 
-.brahmi-output ul {
+.translation-output ul {
   list-style-type: disc;
   padding-left: 1.5em;
   margin: 1em 0;
 }
 
-.brahmi-output ol {
+.translation-output ol {
   list-style-type: decimal;
   padding-left: 1.5em;
   margin: 1em 0;
 }
 
-.brahmi-output blockquote {
+.translation-output blockquote {
   border-left: 3px solid #e5e7eb;
   padding-left: 1em;
   margin: 1em 0;
@@ -679,14 +723,14 @@
   font-style: italic;
 }
 
-.brahmi-output code {
+.translation-output code {
   background-color: #f3f4f6;
   padding: 0.2em 0.4em;
   border-radius: 3px;
   font-family: monospace;
 }
 
-.brahmi-output pre {
+.translation-output pre {
   background-color: #f3f4f6;
   padding: 1em;
   border-radius: 4px;
@@ -695,7 +739,7 @@
   margin: 1em 0;
 }
 
-.brahmi-output mark {
+.translation-output mark {
   background-color: #fef08a;
   padding: 0.1em 0.2em;
 }
@@ -703,11 +747,11 @@
 /* Handle text colors in output - inline color styles are preserved automatically */
 
 /* Ensure proper spacing for formatted content */
-.brahmi-output > :first-child {
+.translation-output > :first-child {
   margin-top: 0;
 }
 
-.brahmi-output > :last-child {
+.translation-output > :last-child {
   margin-bottom: 0;
 }
 
@@ -724,7 +768,7 @@
     gap: 1.5rem;
   }
   
-  .brahmi-output {
+  .translation-output {
     height: 300px;
     font-size: 1.1rem;
   }
@@ -739,9 +783,20 @@
     padding: 0.4rem 0.6rem !important;
     gap: 0.3rem !important;
   }
+  
+  .language-toggle {
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+  }
+  
+  .toggle-option {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
 }
 
-.brahmi-output hr {
+.translation-output hr {
   border: none;
   border-top: 2px solid #ddd;
   margin: 2rem 0;

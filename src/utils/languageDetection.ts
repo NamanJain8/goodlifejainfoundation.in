@@ -185,6 +185,36 @@ export const translateMixedTextToBrahmi = async (text: string): Promise<string> 
   }
 };
 
+// Translate mixed-language text to Hindi chunk by chunk
+export const translateMixedTextToHindi = async (text: string): Promise<string> => {
+  if (!text.trim()) return '';
+
+  try {
+    const chunks = splitTextIntoLanguageChunks(text);
+    const translatedChunks: string[] = [];
+
+    for (const chunk of chunks) {
+      if (chunk.language === 'hi') {
+        // Already in Hindi, no translation needed
+        translatedChunks.push(chunk.text);
+      } else if (chunk.language === 'brahmi') {
+        // Convert Brahmi to Hindi (Devanagari)
+        const translated = await translateText(chunk.text, chunk.language, 'hi');
+        translatedChunks.push(translated);
+      } else {
+        // Translate other languages to Hindi
+        const translated = await translateText(chunk.text, chunk.language, 'hi');
+        translatedChunks.push(translated);
+      }
+    }
+
+    return translatedChunks.join('');
+  } catch (error) {
+    console.error('Mixed text translation to Hindi failed:', error);
+    throw error;
+  }
+};
+
 // Get language statistics for debugging/info purposes
 export const getLanguageStats = (text: string): { [key: string]: number } => {
   const chunks = splitTextIntoLanguageChunks(text);
