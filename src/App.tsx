@@ -8,8 +8,6 @@ import Resources from './components/sections/Resources';
 import Gallery from './components/sections/Gallery';
 import Translator from './components/sections/Translator';
 import BrahmiEditor from './components/editor/BrahmiEditor';
-import AppInstallBanner from './components/ui/AppInstallBanner';
-import './components/ui/AppInstallBanner.css';
 
 declare global {
   interface Window {
@@ -20,7 +18,6 @@ declare global {
 function App() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <AppInstallBanner />
       <Routes>
         <Route path="/editor" element={<BrahmiEditor />} />
         <Route path="/" element={
