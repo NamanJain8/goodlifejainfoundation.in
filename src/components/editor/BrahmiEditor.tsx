@@ -830,6 +830,114 @@ const BrahmiEditor: React.FC = () => {
     await generateImage(editor.getHTML(), translation);
   };
 
+  const copyTranslationWithFormatting = async () => {
+    if (!translation) return;
+
+    try {
+      // Create a temporary div to hold the translation content
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = translation;
+      tempDiv.style.position = 'absolute';
+      tempDiv.style.left = '-9999px';
+      tempDiv.style.top = '-9999px';
+      tempDiv.style.opacity = '0';
+      tempDiv.style.pointerEvents = 'none';
+      
+      // Apply the same styling as the translation output
+      tempDiv.className = `translation-output ${outputLanguage === 'brahmi' ? 'brahmi-font' : 'hindi-font'}`;
+      
+      document.body.appendChild(tempDiv);
+
+      // Try to use the Clipboard API with rich text support
+      if (navigator.clipboard && window.ClipboardItem) {
+        try {
+          // Create blob with HTML content
+          const htmlBlob = new Blob([translation], { type: 'text/html' });
+          const textBlob = new Blob([tempDiv.textContent || ''], { type: 'text/plain' });
+          
+          const clipboardItem = new ClipboardItem({
+            'text/html': htmlBlob,
+            'text/plain': textBlob
+          });
+          
+          await navigator.clipboard.write([clipboardItem]);
+          
+          // Show success feedback
+          showCopyFeedback('Copied!');
+        } catch (richTextError) {
+          // Fallback to plain text if rich text fails
+          await navigator.clipboard.writeText(tempDiv.textContent || '');
+          showCopyFeedback('Copied as plain text!');
+        }
+      } else {
+        // Fallback for browsers without Clipboard API
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(tempDiv);
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+        
+        try {
+          const successful = document.execCommand('copy');
+          if (successful) {
+            showCopyFeedback('Copied!');
+          } else {
+            throw new Error('Copy command failed');
+          }
+        } catch (fallbackError) {
+          // Final fallback - copy plain text
+          await navigator.clipboard.writeText(tempDiv.textContent || '');
+          showCopyFeedback('Copied as plain text!');
+        }
+        
+        selection?.removeAllRanges();
+      }
+      
+      document.body.removeChild(tempDiv);
+    } catch (error) {
+      console.error('Failed to copy translation:', error);
+      showCopyFeedback('Copy failed', true);
+    }
+  };
+
+  const showCopyFeedback = (message: string, isError = false) => {
+    // Create a simple toast notification
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: ${isError ? '#dc3545' : '#28a745'};
+      color: white;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 10000;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => {
+      toast.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+      toast.style.transform = 'translateX(100%)';
+      setTimeout(() => {
+        if (document.body.contains(toast)) {
+          document.body.removeChild(toast);
+        }
+      }, 300);
+    }, 3000);
+  };
+
   const handleColorChange = (color: string) => {
     if (editor) {
       editor.chain().focus().setColor(color).run();
@@ -1166,19 +1274,30 @@ const BrahmiEditor: React.FC = () => {
         <div className="translation-section">
           <div className="section-header">
             <h3 className="section-title">Translation Output</h3>
-            <div className="language-toggle">
+            <div className="section-controls">
               <button 
-                className={`toggle-option ${outputLanguage === 'brahmi' ? 'active' : ''}`}
-                onClick={() => setOutputLanguage('brahmi')}
+                className="copy-translation-button"
+                onClick={copyTranslationWithFormatting}
+                disabled={!translation}
+                title="Copy translation with formatting"
               >
-                Brahmi
+                <Icon name="Copy" size={16} />
+                Copy
               </button>
-              <button 
-                className={`toggle-option ${outputLanguage === 'hindi' ? 'active' : ''}`}
-                onClick={() => setOutputLanguage('hindi')}
-              >
-                Hindi
-              </button>
+              <div className="language-toggle">
+                <button 
+                  className={`toggle-option ${outputLanguage === 'brahmi' ? 'active' : ''}`}
+                  onClick={() => setOutputLanguage('brahmi')}
+                >
+                  Brahmi
+                </button>
+                <button 
+                  className={`toggle-option ${outputLanguage === 'hindi' ? 'active' : ''}`}
+                  onClick={() => setOutputLanguage('hindi')}
+                >
+                  Hindi
+                </button>
+              </div>
             </div>
           </div>
           <div 

@@ -508,6 +508,12 @@
   gap: 0.5rem;
 }
 
+.section-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .section-title {
   margin: 0;
   font-size: 0.9rem;
@@ -568,6 +574,39 @@
   color: #0a0a0a;
   font-weight: 600;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* Copy Translation Button */
+.copy-translation-button {
+  background: #ffffff !important;
+  color: #495057 !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 4px !important;
+  padding: 0.4rem 0.6rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  white-space: nowrap !important;
+  min-width: auto !important;
+  height: auto !important;
+}
+
+.copy-translation-button:hover:not(:disabled) {
+  background: #f8f9fa !important;
+  border-color: #ced4da !important;
+  color: #495057 !important;
+}
+
+.copy-translation-button:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  background: #f8f9fa !important;
+  color: #6c757d !important;
+  border-color: #dee2e6 !important;
 }
 
 /* Translate Toolbar Button */
@@ -872,6 +911,19 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
+  }
+  
+  .section-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  
+  .copy-translation-button {
+    font-size: 0.7rem !important;
+    padding: 0.3rem 0.5rem !important;
+    gap: 0.3rem !important;
   }
   
   .language-stats {
