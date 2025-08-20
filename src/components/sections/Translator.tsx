@@ -161,7 +161,7 @@ const Translator: React.FC = () => {
       case 'si':
         return 'Noto Sans Sinhala, serif';
       case 'brahmi':
-        return 'Noto Sans Brahmi, serif';
+        return 'serif';
       default:
         return 'inherit';
     }

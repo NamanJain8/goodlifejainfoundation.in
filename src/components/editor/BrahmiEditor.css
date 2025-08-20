@@ -639,7 +639,7 @@
 }
 
 .translation-output.brahmi-font {
-  font-family: 'Noto Sans Brahmi', serif;
+  font-family: serif;
   letter-spacing: 0.05em;
   word-spacing: 0.2em;
 }

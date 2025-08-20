@@ -303,7 +303,7 @@ const BrahmiEditor: React.FC = () => {
       width: 794px;
       height: 1123px;
       background: white;
-      font-family: 'Noto Sans Brahmi', serif;
+      font-family: serif;
       padding: 40px;
       box-sizing: border-box;
       position: absolute;
@@ -342,7 +342,7 @@ const BrahmiEditor: React.FC = () => {
       line-height: 1.6;
       color: #111827;
       text-align: left;
-      font-family: 'Noto Sans Brahmi', serif;
+      font-family: serif;
       letter-spacing: 0.1em;
       word-spacing: 0.3em;
       white-space: pre-wrap;
@@ -520,7 +520,7 @@ const BrahmiEditor: React.FC = () => {
       width: 1200px;
       min-height: 1600px;
       background: white;
-      font-family: 'Noto Sans Brahmi', serif;
+      font-family: serif;
       padding: 60px;
       box-sizing: border-box;
       position: absolute;
@@ -560,7 +560,7 @@ const BrahmiEditor: React.FC = () => {
       line-height: 1.7;
       color: #111827;
       text-align: left;
-      font-family: 'Noto Sans Brahmi', serif;
+      font-family: serif;
       letter-spacing: 0.1em;
       word-spacing: 0.3em;
       white-space: pre-wrap;

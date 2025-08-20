@@ -65,7 +65,7 @@ module.exports = {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         serif: ['Playfair Display', 'Georgia', 'serif'],
-        brahmi: ['Noto Sans Brahmi', 'serif'],
+        brahmi: ['serif'],
       },
       backgroundImage: {
         'gradient-primary': 'linear-gradient(135deg, var(--tw-colors-primary-500), var(--tw-colors-primary-600))',

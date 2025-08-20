@@ -8,8 +8,7 @@
 /* Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
-/* Brahmi Script Font */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Brahmi&display=swap');
+/* Brahmi Script Font - Using browser default serif */
 
 /* Devanagari Script Font for Hindi */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@300;400;500;600;700&display=swap');
@@ -104,7 +103,7 @@
   
   /* Centralized Brahmi text styling */
   .brahmi-text {
-    font-family: 'Noto Sans Brahmi', serif;
+    font-family: serif;
     letter-spacing: 0.15em; /* Slightly increased for better number spacing */
     word-spacing: 0.5em; /* Increased for better overall spacing including numbers */
     white-space: pre-wrap;
