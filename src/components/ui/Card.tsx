@@ -1,13 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CardProps } from '../../types';
+import { fastVariants } from '../../hooks/useScrollAnimation';
 
 const Card: React.FC<CardProps> = ({
   children,
   className = '',
   variant = 'default',
 }) => {
-  const baseClasses = 'card';
+  const baseClasses = 'card motion-safe';
   
   const variantClasses = {
     default: '',
@@ -19,11 +20,12 @@ const Card: React.FC<CardProps> = ({
   return (
     <motion.div
       className={classes}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-      whileHover={variant === 'hover-lift' ? { y: -8, scale: 1.02 } : { y: -4 }}
+      variants={fastVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-50px" }}
+      whileHover={variant === 'hover-lift' ? { y: -6, scale: 1.01 } : { y: -3 }}
+      transition={{ type: "spring", damping: 25, stiffness: 400 }}
     >
       {children}
     </motion.div>

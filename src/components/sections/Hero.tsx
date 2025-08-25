@@ -26,16 +26,16 @@ const Hero: React.FC = () => {
       {/* Content */}
       <div className="relative z-20 container text-center">
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
           className="max-w-4xl mx-auto"
         >
           {/* Brahmi Script Display */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.5 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
             className="mb-8"
           >
             <div className="text-6xl md:text-8xl font-brahmi text-primary-500 mb-4 animate-float">
@@ -47,9 +47,9 @@ const Hero: React.FC = () => {
 
           {/* Main Heading */}
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
             className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold mb-6 text-shadow"
           >
             Reviving the{' '}
@@ -59,9 +59,9 @@ const Hero: React.FC = () => {
 
           {/* Subtitle */}
           <motion.p
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.9 }}
+            transition={{ duration: 0.4, delay: 0.4 }}
             className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed"
           >
             Preserving the sacred heritage of Brahmi script through modern technology. 
@@ -70,9 +70,9 @@ const Hero: React.FC = () => {
 
           {/* Guidance Attribution */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.1 }}
+            transition={{ duration: 0.3, delay: 0.5 }}
             className="mb-10"
           >
             <p className="text-primary-400 text-sm mb-2">Under the Guidance of</p>
@@ -85,19 +85,20 @@ const Hero: React.FC = () => {
 
           {/* CTA Buttons */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.3 }}
+            transition={{ duration: 0.3, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
             <motion.a
               href={heroVideoUrl}
               data-lity=""
-              className="inline-flex items-center gap-2 px-6 py-3 font-medium text-center border border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-dark-950 rounded-lg transition-all duration-300 ease-in-out group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-950 focus:ring-primary-500"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className="inline-flex items-center gap-2 px-6 py-3 font-medium text-center border border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-dark-950 rounded-lg transition-all duration-200 ease-out group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-950 focus:ring-primary-500"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", damping: 25, stiffness: 400 }}
             >
-              <Play size={20} className="group-hover:scale-110 transition-transform" />
+              <Play size={20} className="group-hover:scale-105 transition-transform duration-150" />
               <span>Watch Story</span>
             </motion.a>
           </motion.div>

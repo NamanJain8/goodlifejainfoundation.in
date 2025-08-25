@@ -4,16 +4,17 @@ import { Clock, BookOpen } from 'lucide-react';
 import Section from '../ui/Section';
 import Card from '../ui/Card';
 import { timelineData, spiritualContent } from '../../utils/data';
+import { fastVariants, staggerContainer } from '../../hooks/useScrollAnimation';
 
 const About: React.FC = () => {
   return (
     <Section id="about" variant="alt">
       {/* Section Header */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        variants={fastVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
         className="text-center mb-16"
       >
         <p className="section-subtitle">The Sacred Origin</p>

@@ -6,6 +6,7 @@ import Card from '../ui/Card';
 import Button from '../ui/Button';
 import Icon from '../ui/Icon';
 import { toolsData } from '../../utils/data';
+import { fastVariants, staggerContainer } from '../../hooks/useScrollAnimation';
 
 const Tools: React.FC = () => {
   const handleToolClick = (tool: typeof toolsData[0]) => {
@@ -24,10 +25,10 @@ const Tools: React.FC = () => {
     <Section id="tools" variant="alt">
       {/* Section Header */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        variants={fastVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
         className="text-center mb-16"
       >
         <p className="section-subtitle">Digital Tools</p>
@@ -41,20 +42,24 @@ const Tools: React.FC = () => {
       </motion.div>
 
       {/* Tools Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <motion.div 
+        className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+        variants={staggerContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-50px" }}
+      >
         {toolsData.map((tool, index) => (
           <motion.div
             key={tool.id}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: index * 0.1 }}
+            variants={fastVariants}
           >
             <Card variant="hover-lift" className="h-full">
               <div className="text-center">
                 {/* Icon */}
                 <motion.div
-                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  whileHover={{ scale: 1.05, rotate: 3 }}
+                  transition={{ type: "spring", damping: 25, stiffness: 400 }}
                   className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-6"
                 >
                   <Icon name={tool.icon} size={24} className="text-dark-950" />
@@ -86,7 +91,7 @@ const Tools: React.FC = () => {
             </Card>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
     </Section>
   );
 };

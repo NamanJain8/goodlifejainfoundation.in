@@ -29,7 +29,7 @@
 
 @layer components {
   .btn {
-    @apply inline-flex items-center gap-2 px-6 py-3 font-medium text-center border border-transparent rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-950;
+    @apply inline-flex items-center gap-2 px-6 py-3 font-medium text-center border border-transparent rounded-lg transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-950;
   }
   
   .btn-primary {
@@ -57,7 +57,7 @@
   }
   
   .card {
-    @apply bg-surface-200 rounded-xl p-6 shadow-lg border border-surface-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+    @apply bg-surface-200 rounded-xl p-6 shadow-lg border border-surface-100 transition-all duration-200 hover:shadow-xl hover:-translate-y-1;
   }
   
   .gradient-text {
@@ -99,6 +99,32 @@
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-10px); }
+  }
+  
+  /* Performance optimizations for animations */
+  .motion-safe {
+    will-change: transform, opacity;
+  }
+  
+  .motion-reduce {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  /* Optimized scroll animation classes */
+  .scroll-animate {
+    will-change: transform, opacity;
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+  }
+  
+  .scroll-animate.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .scroll-animate:not(.visible) {
+    opacity: 0;
+    transform: translateY(20px);
   }
   
   /* Centralized Brahmi text styling */
