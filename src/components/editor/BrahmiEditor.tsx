@@ -22,6 +22,7 @@ const isMobileDevice = () => {
 const BrahmiEditor: React.FC = () => {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showHeadingDropdown, setShowHeadingDropdown] = useState(false);
+  const [showDownloadDropdown, setShowDownloadDropdown] = useState(false);
   const [translation, setTranslation] = useState('');
   const [outputLanguage, setOutputLanguage] = useState<'brahmi' | 'hindi'>('brahmi');
   const [isTranslating, setIsTranslating] = useState(false);
@@ -29,6 +30,7 @@ const BrahmiEditor: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const colorPickerRef = useRef<HTMLDivElement>(null);
   const headingDropdownRef = useRef<HTMLDivElement>(null);
+  const downloadDropdownRef = useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
     extensions: [
@@ -810,6 +812,18 @@ const BrahmiEditor: React.FC = () => {
     await generateImage(editor.getHTML(), translation);
   };
 
+  const handleDownload = async (format: 'pdf' | 'image') => {
+    if (!editor) return;
+    
+    if (format === 'pdf') {
+      await downloadPDF();
+    } else {
+      await downloadImage();
+    }
+    
+    setShowDownloadDropdown(false);
+  };
+
   const copyTranslationWithFormatting = async () => {
     if (!translation) return;
 
@@ -953,16 +967,19 @@ const BrahmiEditor: React.FC = () => {
       if (headingDropdownRef.current && !headingDropdownRef.current.contains(event.target as Node)) {
         setShowHeadingDropdown(false);
       }
+      if (downloadDropdownRef.current && !downloadDropdownRef.current.contains(event.target as Node)) {
+        setShowDownloadDropdown(false);
+      }
     };
 
-    if (showColorPicker || showHeadingDropdown) {
+    if (showColorPicker || showHeadingDropdown || showDownloadDropdown) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showColorPicker, showHeadingDropdown]);
+  }, [showColorPicker, showHeadingDropdown, showDownloadDropdown]);
 
   // Device detection effect
   useEffect(() => {
@@ -1206,12 +1223,37 @@ const BrahmiEditor: React.FC = () => {
           1. List
         </button>
         <div className="divider" />
-        <button onClick={downloadPDF} title="Download PDF">
-          <Icon name="FileDown" size={18} />
-        </button>
-        <button onClick={downloadImage} title="Download as JPG">
-          <Icon name="ImageDown" size={18} />
-        </button>
+        
+        {/* Download Dropdown */}
+        <div className="download-dropdown-container" ref={downloadDropdownRef}>
+          <button
+            onClick={() => setShowDownloadDropdown(!showDownloadDropdown)}
+            className="download-button"
+            title="Download"
+          >
+            <Icon name="Download" size={18} />
+            <span className="dropdown-arrow">▼</span>
+          </button>
+          {showDownloadDropdown && (
+            <div className="download-dropdown">
+              <button
+                onClick={() => handleDownload('pdf')}
+                className="download-option"
+              >
+                <Icon name="FileDown" size={16} />
+                Download as PDF
+              </button>
+              <button
+                onClick={() => handleDownload('image')}
+                className="download-option"
+              >
+                <Icon name="ImageDown" size={16} />
+                Download as JPG
+              </button>
+            </div>
+          )}
+        </div>
+        
         <div className="divider" />
         <button 
           className="translate-toolbar-button"
