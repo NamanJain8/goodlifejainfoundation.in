@@ -10,12 +10,12 @@ const About: React.FC = () => {
   return (
     <Section id="about" variant="alt">
       {/* Section Header */}
-      <motion.div
+              <motion.div
         variants={fastVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
-        className="text-center mb-16"
+        className="text-center mb-12 sm:mb-16 px-4 sm:px-0"
       >
         <p className="section-subtitle">The Sacred Origin</p>
         <h2 className="section-title">
@@ -23,8 +23,7 @@ const About: React.FC = () => {
         </h2>
         <p className="section-description">
           Discover the divine origin of Brahmi script through the teachings of Adinath Bhagwan 
-          Rishabhdev Ji to his daughters Brahmi and Sundari. A journey through time revealing 
-          the foundation of all written communication.
+          Rishabhdev Ji to his daughters Brahmi and Sundari.
         </p>
       </motion.div>
 
@@ -34,7 +33,7 @@ const About: React.FC = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="flex flex-col sm:flex-row justify-center items-center gap-8 sm:gap-16 mb-20"
+        className="flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-8 lg:gap-16 mb-12 sm:mb-16 lg:mb-20 px-4 sm:px-0"
       >
         {[
           { icon: Clock, label: 'Ancient Origin', value: '5000+ Years' },
@@ -48,11 +47,12 @@ const About: React.FC = () => {
             transition={{ duration: 0.5, delay: index * 0.1 }}
             className="text-center"
           >
-            <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <stat.icon size={24} className="text-dark-950" />
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+              <stat.icon size={20} className="text-dark-950 sm:hidden" />
+              <stat.icon size={24} className="text-dark-950 hidden sm:block" />
             </div>
-            <div className="text-2xl font-bold text-primary-500 mb-2">{stat.value}</div>
-            <div className="text-gray-400 text-sm">{stat.label}</div>
+            <div className="text-xl sm:text-2xl font-bold text-primary-500 mb-1 sm:mb-2">{stat.value}</div>
+            <div className="text-gray-400 text-xs sm:text-sm">{stat.label}</div>
           </motion.div>
         ))}
       </motion.div>
@@ -63,19 +63,18 @@ const About: React.FC = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, delay: 0.3 }}
-        className="mb-20"
+        className="mb-12 sm:mb-16 lg:mb-20 px-4 sm:px-0"
       >
-        <div className="text-center mb-12">
-          <h3 className="text-2xl font-serif font-semibold mb-4">
+        <div className="text-center mb-8 sm:mb-12">
+          <h3 className="text-xl sm:text-2xl font-serif font-semibold mb-3 sm:mb-4">
             <span className="gradient-text">Spiritual Heritage</span>
           </h3>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            Sacred terms and greetings preserved through the ancient Brahmi script, 
-            connecting us to our spiritual roots and timeless wisdom.
+          <p className="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
+            Sacred terms and greetings preserved through the ancient Brahmi script.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {[
             spiritualContent.greetings.jayJinendra,
             spiritualContent.greetings.namaskaar,
@@ -94,14 +93,14 @@ const About: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Card variant="hover-lift" className="p-6 text-center">
-                <div className="text-primary-400 font-brahmi text-2xl mb-3">
+              <Card variant="hover-lift" className="p-4 sm:p-6 text-center">
+                <div className="text-primary-400 font-brahmi text-lg sm:text-xl lg:text-2xl mb-2 sm:mb-3">
                   {term.brahmi}
                 </div>
-                <div className="text-white font-medium mb-1" style={{ fontFamily: 'Noto Sans Devanagari, serif' }}>
+                <div className="text-white font-medium mb-1 text-sm sm:text-base" style={{ fontFamily: 'Noto Sans Devanagari, serif' }}>
                   {term.hindi}
                 </div>
-                <div className="text-gray-400 text-sm">
+                <div className="text-gray-400 text-xs sm:text-sm">
                   {term.english}
                 </div>
               </Card>
@@ -110,19 +109,97 @@ const About: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Timeline */}
-      <div className="relative max-w-7xl mx-auto">
-        {/* Vertical line */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
-          className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary-500 to-primary-600 transform md:-translate-x-1/2 z-0"
-        />
+      {/* Timeline - Horizontal Swipe on Mobile, Vertical on Desktop */}
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-0">
+        {/* Mobile Horizontal Timeline */}
+        <div className="block lg:hidden mb-8">
+          <h3 className="text-xl font-serif font-semibold text-center mb-6">
+            <span className="gradient-text">The Origin Story</span>
+          </h3>
+          <p className="text-gray-400 text-sm text-center mb-6">
+            Swipe to explore the complete story
+          </p>
+          
+          {/* Horizontal Scroll Container */}
+          <div className="overflow-x-auto scrollbar-hide">
+            <div className="flex gap-4 pb-4" style={{ width: `${timelineData.length * 300}px` }}>
+              {timelineData.map((item, index) => (
+                <motion.div
+                  key={`mobile-${item.id}`}
+                  initial={{ opacity: 0, x: 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="flex-shrink-0 w-72 bg-surface-200 rounded-xl p-4 border border-surface-100 timeline-card"
+                >
+                  {/* Step Number */}
+                  <div className="flex items-center mb-3">
+                    <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-dark-950 font-bold text-sm mr-3">
+                      {item.id}
+                    </div>
+                    <h4 className="text-primary-400 font-medium text-sm flex-1">{item.title}</h4>
+                  </div>
+                  
+                  {/* Image */}
+                  {item.image && (
+                    <div className="relative aspect-[4/3] overflow-hidden rounded-lg mb-3">
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
+                  
+                  {/* Description */}
+                  <div className="space-y-2">
+                    {Array.isArray(item.description) ? (
+                      item.description.map((paragraph, index) => (
+                        <p key={index} className="text-gray-300 text-xs leading-relaxed">
+                          {paragraph}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="text-gray-300 text-xs leading-relaxed">
+                        {item.description}
+                      </p>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Scroll Indicator */}
+          <div className="flex justify-center mt-4">
+            <div className="flex space-x-1">
+              {timelineData.map((_, index) => (
+                <div
+                  key={index}
+                  className="w-2 h-2 bg-primary-500/30 rounded-full transition-all duration-200"
+                />
+              ))}
+            </div>
+            <p className="ml-3 text-gray-400 text-xs self-center">
+              {timelineData.length} chapters
+            </p>
+          </div>
+        </div>
 
-        <div className="space-y-16">
-          {timelineData.map((item, index) => (
+        {/* Desktop Vertical Timeline */}
+        <div className="hidden lg:block">
+          {/* Vertical line */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1 }}
+            className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary-500 to-primary-600 transform md:-translate-x-1/2 z-0"
+          />
+
+          <div className="space-y-12 lg:space-y-16">
+            {timelineData.map((item, index) => (
             <motion.div
               key={item.id}
               initial={{ opacity: 0, y: 50 }}
@@ -298,6 +375,7 @@ const About: React.FC = () => {
               </div>
             </motion.div>
           ))}
+          </div>
         </div>
       </div>
 
@@ -307,17 +385,16 @@ const About: React.FC = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="text-center mt-20"
+        className="text-center mt-12 sm:mt-16 lg:mt-20 px-4 sm:px-0"
       >
-        <div className="bg-gradient-to-r from-primary-500/10 to-primary-600/10 rounded-2xl p-8 border border-primary-500/20">
-          <h3 className="text-2xl font-serif font-semibold mb-4">
+        <div className="bg-gradient-to-r from-primary-500/10 to-primary-600/10 rounded-2xl p-6 sm:p-8 border border-primary-500/20">
+          <h3 className="text-xl sm:text-2xl font-serif font-semibold mb-3 sm:mb-4">
             Experience the Ancient Wisdom
           </h3>
-          <p className="text-gray-400 mb-6 max-w-2xl mx-auto">
-            Join us in preserving this sacred heritage. Use our modern tools to learn, 
-            translate, and connect with the timeless wisdom of Brahmi script.
+          <p className="text-gray-400 mb-4 sm:mb-6 max-w-2xl mx-auto text-sm sm:text-base">
+            Join us in preserving this sacred heritage. Use our modern tools to learn and translate.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

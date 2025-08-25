@@ -25,10 +25,10 @@ function App() {
             <Header />
             <main>
               <Hero />
-              <Tools />
-              <Resources />
               <About />
+              <Tools />
               <Gallery />
+              <Resources />
               <Translator />
             </main>
             <Footer />

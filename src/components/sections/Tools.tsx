@@ -24,26 +24,25 @@ const Tools: React.FC = () => {
   return (
     <Section id="tools" variant="alt">
       {/* Section Header */}
-      <motion.div
+              <motion.div
         variants={fastVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
-        className="text-center mb-16"
+        className="text-center mb-12 sm:mb-16 px-4 sm:px-0"
       >
         <p className="section-subtitle">Digital Tools</p>
         <h2 className="section-title">
           Modern <span className="gradient-text">Learning Tools</span>
         </h2>
         <p className="section-description">
-          Explore our comprehensive suite of digital tools designed to make learning 
-          and using Brahmi script accessible, engaging, and enjoyable for everyone.
+          Explore our digital tools designed to make learning Brahmi script accessible and engaging.
         </p>
       </motion.div>
 
       {/* Tools Grid */}
       <motion.div 
-        className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 px-4 sm:px-0"
         variants={staggerContainer}
         initial="hidden"
         whileInView="visible"
@@ -55,22 +54,23 @@ const Tools: React.FC = () => {
             variants={fastVariants}
           >
             <Card variant="hover-lift" className="h-full">
-              <div className="text-center">
+              <div className="text-center p-4 sm:p-6">
                 {/* Icon */}
                 <motion.div
                   whileHover={{ scale: 1.05, rotate: 3 }}
                   transition={{ type: "spring", damping: 25, stiffness: 400 }}
-                  className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-6"
+                  className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6"
                 >
-                  <Icon name={tool.icon} size={24} className="text-dark-950" />
+                  <Icon name={tool.icon} size={20} className="text-dark-950 sm:hidden" />
+                  <Icon name={tool.icon} size={24} className="text-dark-950 hidden sm:block" />
                 </motion.div>
 
                 {/* Content */}
-                <h3 className="text-xl font-serif font-semibold text-primary-400 mb-3">
+                <h3 className="text-lg sm:text-xl font-serif font-semibold text-primary-400 mb-2 sm:mb-3">
                   {tool.title}
                 </h3>
                 
-                <p className="text-gray-300 mb-6 leading-relaxed">
+                <p className="text-gray-300 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">
                   {tool.description}
                 </p>
 
@@ -78,13 +78,16 @@ const Tools: React.FC = () => {
                 <Button
                   variant={tool.isWidget ? "primary" : "outline"}
                   onClick={() => handleToolClick(tool)}
-                  className="w-full group"
+                  className="w-full group text-sm sm:text-base py-2 sm:py-3"
                 >
                   <span>
                     {tool.isWidget ? 'Try Now' : 'Open Tool'}
                   </span>
                   {tool.link && (
-                    <ExternalLink size={16} className="group-hover:translate-x-1 transition-transform" />
+                    <ExternalLink size={14} className="group-hover:translate-x-1 transition-transform sm:hidden" />
+                  )}
+                  {tool.link && (
+                    <ExternalLink size={16} className="group-hover:translate-x-1 transition-transform hidden sm:block" />
                   )}
                 </Button>
               </div>

@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-surface-300 border-t border-surface-100">
+    <footer id="contact" className="bg-surface-300 border-t border-surface-100">
       <div className="container py-16">
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Brand Section */}
