@@ -4,7 +4,7 @@ import { Clock, BookOpen } from 'lucide-react';
 import Section from '../ui/Section';
 import Card from '../ui/Card';
 import { timelineData, spiritualContent } from '../../utils/data';
-import { fastVariants, staggerContainer } from '../../hooks/useScrollAnimation';
+import { fastVariants } from '../../hooks/useScrollAnimation';
 
 const About: React.FC = () => {
   return (

@@ -2,9 +2,8 @@
 
 import { TranslationProvider } from './googleTranslate';
 import { googleTranslateProvider } from './googleTranslate';
-import { azureTranslateProvider, HTTPError } from './azureTranslate';
 
-export type ProviderName = 'google' | 'azure';
+export type ProviderName = 'google';
 
 export interface TranslationServiceConfig {
   primaryProvider: ProviderName;
@@ -14,9 +13,9 @@ export interface TranslationServiceConfig {
 
 // Default configuration
 const defaultConfig: TranslationServiceConfig = {
-  primaryProvider: 'azure',
-  fallbackProvider: 'google',
-  enableFallback: true
+  primaryProvider: 'google',
+  fallbackProvider: undefined,
+  enableFallback: false
 };
 
 export class TranslationService {
@@ -29,7 +28,6 @@ export class TranslationService {
     
     // Register available providers
     this.providers.set('google', googleTranslateProvider);
-    this.providers.set('azure', azureTranslateProvider);
   }
 
   // Get provider by name
@@ -44,12 +42,7 @@ export class TranslationService {
   // Check if a provider is available/configured
   private isProviderAvailable(name: ProviderName): boolean {
     try {
-      const provider = this.getProvider(name);
-      
-      // Special check for Azure to see if it's configured
-      if (name === 'azure' && 'isConfigured' in provider) {
-        return (provider as any).isConfigured();
-      }
+      this.getProvider(name);
       
       // Google provider is always available (no API key required for basic usage)
       return true;
@@ -74,24 +67,8 @@ export class TranslationService {
     } catch (error) {
       console.error(`${primaryProvider.name} translation failed:`, error);
       
-      // Only try fallback for 4xx errors when using Azure as primary provider
-      const shouldFallback = this.shouldFallbackOnError(error);
-      
-      if (shouldFallback && this.config.enableFallback && this.config.fallbackProvider) {
-        const fallbackProvider = this.getProvider(this.config.fallbackProvider);
-        
-        if (this.isProviderAvailable(this.config.fallbackProvider)) {
-          try {
-            console.log(`Falling back to ${fallbackProvider.name} due to 4xx error...`);
-            const result = await fallbackProvider.translateChunked(text, from, to);
-            console.log(`Translation successful with fallback ${fallbackProvider.name}`);
-            return result;
-          } catch (fallbackError) {
-            console.error(`${fallbackProvider.name} fallback also failed:`, fallbackError);
-            throw new Error(`Both ${primaryProvider.name} and ${fallbackProvider.name} translation failed`);
-          }
-        }
-      }
+      // No fallback provider configured, just re-throw the error
+      console.log('No fallback provider configured, re-throwing error');
       
       // Re-throw original error if no fallback
       throw error;
@@ -100,14 +77,7 @@ export class TranslationService {
 
   // Determine if we should fallback based on the error type
   private shouldFallbackOnError(error: any): boolean {
-    // Only fallback on 4xx errors from Azure
-    if (error instanceof HTTPError && error.is4xx()) {
-      console.log(`4xx error detected (${error.status}), enabling fallback to Google Translate`);
-      return true;
-    }
-    
-    // For other errors (network issues, 5xx errors, etc.), don't fallback
-    console.log(`Non-4xx error detected, not falling back:`, error.message);
+    // No fallback logic needed since we only have Google Translate
     return false;
   }
 

@@ -251,7 +251,7 @@ const brahmiToDevanagari = (text: string): string => {
 
 /**
  * Main translation function that handles text translation between different languages including Brahmi script
- * Uses the modular translation service with Google Translate and Azure Translate providers
+ * Uses the modular translation service with Google Translate provider
  * @param inputText - The text to translate
  * @param sourceLanguage - The source language code (e.g., 'hi', 'en', 'brahmi')
  * @param targetLanguage - The target language code (e.g., 'hi', 'en', 'brahmi')
