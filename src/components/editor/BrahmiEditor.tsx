@@ -7,6 +7,7 @@ import Color from '@tiptap/extension-color';
 import TextAlign from '@tiptap/extension-text-align';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
+import JSZip from 'jszip';
 import './BrahmiEditor.css';
 import VirtualKeyboard from './VirtualKeyboard';
 import Icon from '../ui/Icon';
@@ -768,7 +769,10 @@ const BrahmiEditor: React.FC = () => {
         link.click();
         document.body.removeChild(link);
       } else {
-        // For multiple pages, create a simple sequential download
+        // For multiple pages, create a ZIP file
+        const zip = new JSZip();
+        
+        // Generate all images and add them to the zip
         for (let i = 0; i < pages.length; i++) {
           const page = pages[i];
           const imgData = await createImagePage(
@@ -778,16 +782,25 @@ const BrahmiEditor: React.FC = () => {
             pages.length
           );
           
-          const link = document.createElement('a');
-          link.download = `brahmi-translation-page-${i + 1}.jpg`;
-          link.href = imgData;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
+          // Convert data URL to blob
+          const response = await fetch(imgData);
+          const blob = await response.blob();
           
-          // Small delay between downloads
-          await new Promise(resolve => setTimeout(resolve, 500));
+          // Add to zip with descriptive filename
+          zip.file(`brahmi-translation-page-${i + 1}.jpg`, blob);
         }
+        
+        // Generate and download the zip file
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        const link = document.createElement('a');
+        link.download = 'brahmi-translation.zip';
+        link.href = URL.createObjectURL(zipBlob);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up the object URL
+        URL.revokeObjectURL(link.href);
       }
     } catch (error) {
       console.error('Error generating image:', error);
@@ -809,6 +822,17 @@ const BrahmiEditor: React.FC = () => {
 
   const downloadImage = async () => {
     if (!editor) return;
+    
+    // Show loading feedback for multiple pages
+    const inputSegments = parseContentIntoSegments(editor.getHTML());
+    const brahmiSegments = parseContentIntoSegments(translation);
+    const totalInputHeight = inputSegments.reduce((sum, seg) => sum + seg.estimatedHeight, 0);
+    const totalBrahmiHeight = brahmiSegments.reduce((sum, seg) => sum + seg.estimatedHeight, 0);
+    
+    if (totalInputHeight > 600 || totalBrahmiHeight > 600) {
+      showCopyFeedback('Generating ZIP file with multiple images...', false);
+    }
+    
     await generateImage(editor.getHTML(), translation);
   };
 
@@ -1248,7 +1272,7 @@ const BrahmiEditor: React.FC = () => {
                 className="download-option"
               >
                 <Icon name="ImageDown" size={16} />
-                Download as JPG
+                Download as Images
               </button>
             </div>
           )}
