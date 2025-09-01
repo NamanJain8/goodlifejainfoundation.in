@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Variants } from 'framer-motion';
 
 interface UseScrollAnimationOptions {
   threshold?: number;
@@ -50,7 +51,7 @@ export const useScrollAnimation = ({
 };
 
 // Optimized framer-motion variants for better performance
-export const fastVariants = {
+export const fastVariants: Variants = {
   hidden: { 
     opacity: 0, 
     y: 15,
@@ -66,7 +67,7 @@ export const fastVariants = {
   },
 };
 
-export const scaleVariants = {
+export const scaleVariants: Variants = {
   hidden: { 
     opacity: 0, 
     scale: 0.95,
@@ -82,7 +83,7 @@ export const scaleVariants = {
   },
 };
 
-export const staggerContainer = {
+export const staggerContainer: Variants = {
   hidden: {},
   visible: {
     transition: {
