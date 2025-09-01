@@ -17,13 +17,7 @@ const Resources: React.FC = () => {
   return (
     <Section id="resources">
       {/* Section Header */}
-              <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-        className="text-center mb-12 sm:mb-16 px-4 sm:px-0"
-      >
+      <div className="text-center mb-12 sm:mb-16 px-4 sm:px-0">
         <p className="section-subtitle">Spiritual Resources</p>
         <h2 className="section-title">
           Sacred <span className="gradient-text">Jain Heritage</span>
@@ -31,18 +25,12 @@ const Resources: React.FC = () => {
         <p className="section-description">
           Explore our collection of Jain spiritual resources including scriptures and pilgrimage sites.
         </p>
-      </motion.div>
+      </div>
 
       {/* Resources Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto px-4 sm:px-0">
         {resourcesData.map((resource, index) => (
-          <motion.div
-            key={resource.id}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: index * 0.1 }}
-          >
+          <div key={resource.id}>
             <Card variant="hover-lift" className="h-full">
               <div className="text-center p-4 sm:p-6">
                 {/* Icon */}
@@ -75,18 +63,12 @@ const Resources: React.FC = () => {
                 </Button>
               </div>
             </Card>
-          </motion.div>
+          </div>
         ))}
       </div>
 
       {/* Additional Info */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, delay: 0.4 }}
-        className="text-center mt-12 sm:mt-16 px-4 sm:px-0"
-      >
+      <div className="text-center mt-12 sm:mt-16 px-4 sm:px-0">
         <div className="bg-gradient-to-r from-primary-500/10 to-primary-600/10 rounded-2xl p-6 sm:p-8 border border-primary-500/20 max-w-4xl mx-auto">
           <h3 className="text-xl sm:text-2xl font-serif font-semibold mb-3 sm:mb-4">
             Preserving Ancient Wisdom
@@ -109,7 +91,7 @@ const Resources: React.FC = () => {
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </Section>
   );
 };

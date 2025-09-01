@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { navigationItems, toolsData } from '../../utils/data';
 import Button from '../ui/Button';
@@ -55,21 +54,15 @@ const Header: React.FC = () => {
   };
 
   return (
-    <motion.header
+    <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled ? 'backdrop-blur-glass shadow-lg' : 'bg-transparent'
       }`}
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
     >
       <div className="container">
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
-          <motion.div
-            className="flex items-center space-x-3"
-            whileHover={{ scale: 1.05 }}
-          >
+          <div className="flex items-center space-x-3">
             <img 
               src="/logo.png" 
               alt="Good Life Jain Foundation Logo" 
@@ -81,7 +74,7 @@ const Header: React.FC = () => {
               </h1>
               <p className="text-xs text-gray-400">Reviving Brahmi Script</p>
             </div>
-          </motion.div>
+          </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
@@ -98,15 +91,8 @@ const Header: React.FC = () => {
                       <ChevronDown size={16} />
                     </button>
                     
-                    <AnimatePresence>
-                      {activeDropdown === item.label && (
-                        <motion.div
-                          className="absolute top-full left-0 mt-2 w-48 bg-surface-200 rounded-lg shadow-xl border border-surface-100 py-2"
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          transition={{ duration: 0.2 }}
-                        >
+                    {activeDropdown === item.label && (
+                      <div className="absolute top-full left-0 mt-2 w-48 bg-surface-200 rounded-lg shadow-xl border border-surface-100 py-2">
                           {item.children.map((child) => (
                             <button
                               key={child.label}
@@ -116,9 +102,8 @@ const Header: React.FC = () => {
                               {child.label}
                             </button>
                           ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <button
@@ -153,15 +138,8 @@ const Header: React.FC = () => {
       </div>
 
       {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            className="lg:hidden backdrop-blur-glass border-t border-surface-100"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-          >
+      {isMobileMenuOpen && (
+        <div className="lg:hidden backdrop-blur-glass border-t border-surface-100">
             <div className="container py-4">
               <nav className="space-y-4">
                 {navigationItems.map((item) => (
@@ -183,15 +161,8 @@ const Header: React.FC = () => {
                           />
                         </button>
                         
-                        <AnimatePresence>
-                          {activeDropdown === item.label && (
-                            <motion.div
-                              className="mt-2 ml-4 space-y-2"
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: 'auto' }}
-                              exit={{ opacity: 0, height: 0 }}
-                              transition={{ duration: 0.2 }}
-                            >
+                        {activeDropdown === item.label && (
+                          <div className="mt-2 ml-4 space-y-2">
                               {item.children.map((child) => (
                                 <button
                                   key={child.label}
@@ -201,9 +172,8 @@ const Header: React.FC = () => {
                                   {child.label}
                                 </button>
                               ))}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <button
@@ -227,10 +197,9 @@ const Header: React.FC = () => {
                 </div>
               </nav>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.header>
+        </div>
+      )}
+    </header>
   );
 };
 

@@ -1,22 +1,14 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Clock, BookOpen } from 'lucide-react';
 import Section from '../ui/Section';
 import Card from '../ui/Card';
 import { timelineData, spiritualContent } from '../../utils/data';
-import { fastVariants } from '../../hooks/useScrollAnimation';
 
 const About: React.FC = () => {
   return (
     <Section id="about" variant="alt">
       {/* Section Header */}
-              <motion.div
-        variants={fastVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        className="text-center mb-12 sm:mb-16 px-4 sm:px-0"
-      >
+      <div className="text-center mb-12 sm:mb-16 px-4 sm:px-0">
         <p className="section-subtitle">The Sacred Origin</p>
         <h2 className="section-title">
           The Story of <span className="gradient-text">Brahmi Script</span>
@@ -25,26 +17,16 @@ const About: React.FC = () => {
           Discover the divine origin of Brahmi script through the teachings of Adinath Bhagwan 
           Rishabhdev Ji to his daughters Brahmi and Sundari.
         </p>
-      </motion.div>
+      </div>
 
       {/* Stats */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className="flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-8 lg:gap-16 mb-12 sm:mb-16 lg:mb-20 px-4 sm:px-0"
-      >
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-8 lg:gap-16 mb-12 sm:mb-16 lg:mb-20 px-4 sm:px-0">
         {[
           { icon: Clock, label: 'Ancient Origin', value: '5000+ Years' },
           { icon: BookOpen, label: 'Scripts Derived', value: '200+' },
         ].map((stat, index) => (
-          <motion.div
+          <div
             key={stat.label}
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
             className="text-center"
           >
             <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
@@ -53,18 +35,12 @@ const About: React.FC = () => {
             </div>
             <div className="text-xl sm:text-2xl font-bold text-primary-500 mb-1 sm:mb-2">{stat.value}</div>
             <div className="text-gray-400 text-xs sm:text-sm">{stat.label}</div>
-          </motion.div>
+          </div>
         ))}
-      </motion.div>
+      </div>
 
       {/* Spiritual Heritage Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, delay: 0.3 }}
-        className="mb-12 sm:mb-16 lg:mb-20 px-4 sm:px-0"
-      >
+      <div className="mb-12 sm:mb-16 lg:mb-20 px-4 sm:px-0">
         <div className="text-center mb-8 sm:mb-12">
           <h3 className="text-xl sm:text-2xl font-serif font-semibold mb-3 sm:mb-4">
             <span className="gradient-text">Spiritual Heritage</span>
@@ -86,13 +62,7 @@ const About: React.FC = () => {
             spiritualContent.jainTerms.acharya,
             spiritualContent.jainTerms.sant,
           ].map((term, index) => (
-            <motion.div
-              key={term.english}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-            >
+            <div key={term.english}>
               <Card variant="hover-lift" className="p-4 sm:p-6 text-center">
                 <div className="text-primary-400 font-brahmi text-lg sm:text-xl lg:text-2xl mb-2 sm:mb-3">
                   {term.brahmi}
@@ -104,10 +74,10 @@ const About: React.FC = () => {
                   {term.english}
                 </div>
               </Card>
-            </motion.div>
+            </div>
           ))}
         </div>
-      </motion.div>
+      </div>
 
       {/* Timeline - Horizontal Swipe on Mobile, Vertical on Desktop */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-0">
@@ -124,12 +94,8 @@ const About: React.FC = () => {
           <div className="overflow-x-auto scrollbar-hide">
             <div className="flex gap-4 pb-4" style={{ width: `${timelineData.length * 300}px` }}>
               {timelineData.map((item, index) => (
-                <motion.div
+                <div
                   key={`mobile-${item.id}`}
-                  initial={{ opacity: 0, x: 50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="flex-shrink-0 w-72 bg-surface-200 rounded-xl p-4 border border-surface-100 timeline-card"
                 >
                   {/* Step Number */}
@@ -166,7 +132,7 @@ const About: React.FC = () => {
                       </p>
                     )}
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
@@ -190,22 +156,12 @@ const About: React.FC = () => {
         {/* Desktop Vertical Timeline */}
         <div className="hidden lg:block">
           {/* Vertical line */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-            className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary-500 to-primary-600 transform md:-translate-x-1/2 z-0"
-          />
+          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary-500 to-primary-600 transform md:-translate-x-1/2 z-0" />
 
           <div className="space-y-12 lg:space-y-16">
             {timelineData.map((item, index) => (
-            <motion.div
+            <div
               key={item.id}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: index * 0.1 }}
               className="relative"
             >
               {/* Timeline Number - Removed */}
@@ -239,13 +195,7 @@ const About: React.FC = () => {
                       // Image on left for odd items
                       item.image && (
                         <div className="w-full max-w-md">
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
-                            className="relative overflow-hidden rounded-xl shadow-2xl"
-                          >
+                          <div className="relative overflow-hidden rounded-xl shadow-2xl">
                             <div className="relative aspect-[4/3] overflow-hidden">
                               <img
                                 src={item.image}
@@ -262,7 +212,7 @@ const About: React.FC = () => {
                                 </p>
                               </div>
                             </div>
-                          </motion.div>
+                          </div>
                         </div>
                       )
                     )}
@@ -274,13 +224,7 @@ const About: React.FC = () => {
                       // Image on right for even items
                       item.image && (
                         <div className="w-full max-w-md">
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
-                            className="relative overflow-hidden rounded-xl shadow-2xl"
-                          >
+                          <div className="relative overflow-hidden rounded-xl shadow-2xl">
                             <div className="relative aspect-[4/3] overflow-hidden">
                               <img
                                 src={item.image}
@@ -297,7 +241,7 @@ const About: React.FC = () => {
                                 </p>
                               </div>
                             </div>
-                          </motion.div>
+                          </div>
                         </div>
                       )
                     ) : (
@@ -347,13 +291,7 @@ const About: React.FC = () => {
 
                 {/* Image */}
                 {item.image && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                    className="relative overflow-hidden rounded-xl shadow-2xl"
-                  >
+                  <div className="relative overflow-hidden rounded-xl shadow-2xl">
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <img
                         src={item.image}
@@ -370,23 +308,17 @@ const About: React.FC = () => {
                         </p>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 )}
               </div>
-            </motion.div>
+            </div>
           ))}
           </div>
         </div>
       </div>
 
       {/* Call to Action */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-        className="text-center mt-12 sm:mt-16 lg:mt-20 px-4 sm:px-0"
-      >
+      <div className="text-center mt-12 sm:mt-16 lg:mt-20 px-4 sm:px-0">
         <div className="bg-gradient-to-r from-primary-500/10 to-primary-600/10 rounded-2xl p-6 sm:p-8 border border-primary-500/20">
           <h3 className="text-xl sm:text-2xl font-serif font-semibold mb-3 sm:mb-4">
             Experience the Ancient Wisdom
@@ -395,31 +327,27 @@ const About: React.FC = () => {
             Join us in preserving this sacred heritage. Use our modern tools to learn and translate.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <button
               onClick={() => {
                 const element = document.querySelector('#tools');
                 if (element) element.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="btn btn-primary"
+              className="btn btn-primary hover:scale-105 active:scale-95 transition-transform"
             >
               Explore Tools
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            </button>
+            <button
               onClick={() => {
                 const element = document.querySelector('#resources');
                 if (element) element.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="btn btn-outline"
+              className="btn btn-outline hover:scale-105 active:scale-95 transition-transform"
             >
               View Resources
-            </motion.button>
+            </button>
           </div>
         </div>
-      </motion.div>
+      </div>
     </Section>
   );
 };

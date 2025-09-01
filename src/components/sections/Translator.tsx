@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { ArrowLeftRight, Copy, Volume2, ClipboardPaste } from 'lucide-react';
 import Section from '../ui/Section';
 import Card from '../ui/Card';
@@ -170,13 +169,7 @@ const Translator: React.FC = () => {
   return (
     <Section id="translator">
       {/* Section Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-        className="text-center mb-16"
-      >
+      <div className="text-center mb-16">
         <p className="section-subtitle">Live Translation</p>
         <h2 className="section-title">
           <span className="gradient-text">Brahmi Script</span> Translator
@@ -185,16 +178,10 @@ const Translator: React.FC = () => {
           Transform your text into the ancient Brahmi script instantly with live translation. 
           Experience real-time conversion as you type.
         </p>
-      </motion.div>
+      </div>
 
       {/* Translator Interface */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className="max-w-7xl mx-auto"
-      >
+      <div className="max-w-7xl mx-auto">
         <Card className="overflow-hidden">
           {/* Language Selector Header */}
           <div className="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 border-b border-surface-100 gap-4 sm:gap-0">
@@ -333,7 +320,7 @@ const Translator: React.FC = () => {
             </div>
           </div>
         </Card>
-      </motion.div>
+      </div>
     </Section>
   );
 };

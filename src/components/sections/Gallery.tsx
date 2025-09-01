@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ZoomIn } from 'lucide-react';
 import Section from '../ui/Section';
 import { galleryData } from '../../utils/data';
-import { fastVariants, staggerContainer } from '../../hooks/useScrollAnimation';
 
 const Gallery: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -19,13 +18,7 @@ const Gallery: React.FC = () => {
   return (
     <Section id="gallery" variant="alt">
       {/* Section Header */}
-              <motion.div
-        variants={fastVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        className="text-center mb-12 sm:mb-16 px-4 sm:px-0"
-      >
+      <div className="text-center mb-12 sm:mb-16 px-4 sm:px-0">
         <p className="section-subtitle">Visual Journey</p>
         <h2 className="section-title">
           Sacred <span className="gradient-text">Gallery</span>
@@ -33,7 +26,7 @@ const Gallery: React.FC = () => {
         <p className="section-description">
           Witness the beauty of Jain heritage through our curated collection.
         </p>
-      </motion.div>
+      </div>
 
       {/* Mobile Horizontal Gallery */}
       <div className="block sm:hidden mb-8">
@@ -45,12 +38,8 @@ const Gallery: React.FC = () => {
         <div className="overflow-x-auto scrollbar-hide px-4">
           <div className="flex gap-4 pb-4" style={{ width: `${galleryData.length * 280}px` }}>
             {galleryData.map((item, index) => (
-              <motion.div
+              <div
                 key={`mobile-${item.id}`}
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="flex-shrink-0 w-64 group relative overflow-hidden rounded-xl bg-surface-200 shadow-lg gallery-card"
               >
                 {/* Image */}
@@ -75,7 +64,7 @@ const Gallery: React.FC = () => {
                     <ZoomIn size={16} />
                   </motion.button>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -94,18 +83,11 @@ const Gallery: React.FC = () => {
       </div>
 
       {/* Desktop Grid Gallery */}
-      <motion.div
-        className="hidden sm:grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-7xl mx-auto px-4 sm:px-0"
-        variants={staggerContainer}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-50px" }}
-      >
+      <div className="hidden sm:grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-7xl mx-auto px-4 sm:px-0">
         <AnimatePresence>
           {galleryData.map((item, index) => (
-            <motion.div
+            <div
               key={item.id}
-              variants={fastVariants}
               className="group relative overflow-hidden rounded-xl bg-surface-200 shadow-lg hover:shadow-2xl transition-all duration-200"
             >
               {/* Image */}
@@ -131,10 +113,10 @@ const Gallery: React.FC = () => {
                   <ZoomIn size={20} />
                 </motion.button>
               </div>
-            </motion.div>
+            </div>
           ))}
         </AnimatePresence>
-      </motion.div>
+      </div>
 
       {/* Lightbox Modal */}
       <AnimatePresence>

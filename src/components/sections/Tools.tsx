@@ -6,7 +6,6 @@ import Card from '../ui/Card';
 import Button from '../ui/Button';
 import Icon from '../ui/Icon';
 import { toolsData } from '../../utils/data';
-import { fastVariants, staggerContainer } from '../../hooks/useScrollAnimation';
 
 const Tools: React.FC = () => {
   const handleToolClick = (tool: typeof toolsData[0]) => {
@@ -24,13 +23,7 @@ const Tools: React.FC = () => {
   return (
     <Section id="tools" variant="alt">
       {/* Section Header */}
-              <motion.div
-        variants={fastVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        className="text-center mb-12 sm:mb-16 px-4 sm:px-0"
-      >
+      <div className="text-center mb-12 sm:mb-16 px-4 sm:px-0">
         <p className="section-subtitle">Digital Tools</p>
         <h2 className="section-title">
           Modern <span className="gradient-text">Learning Tools</span>
@@ -38,21 +31,12 @@ const Tools: React.FC = () => {
         <p className="section-description">
           Explore our digital tools designed to make learning Brahmi script accessible and engaging.
         </p>
-      </motion.div>
+      </div>
 
       {/* Tools Grid */}
-      <motion.div 
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 px-4 sm:px-0"
-        variants={staggerContainer}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-50px" }}
-      >
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 px-4 sm:px-0">
         {toolsData.map((tool, index) => (
-          <motion.div
-            key={tool.id}
-            variants={fastVariants}
-          >
+          <div key={tool.id}>
             <Card variant="hover-lift" className="h-full">
               <div className="text-center p-4 sm:p-6">
                 {/* Icon */}
@@ -92,9 +76,9 @@ const Tools: React.FC = () => {
                 </Button>
               </div>
             </Card>
-          </motion.div>
+          </div>
         ))}
-      </motion.div>
+      </div>
     </Section>
   );
 };

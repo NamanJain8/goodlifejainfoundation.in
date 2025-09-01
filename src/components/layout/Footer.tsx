@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Mail, Facebook, Instagram, Youtube, Smartphone, Heart } from 'lucide-react';
 import { socialLinks, contactInfo } from '../../utils/data';
 
@@ -18,13 +17,7 @@ const Footer: React.FC = () => {
       <div className="container py-16">
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Brand Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="lg:col-span-2"
-          >
+          <div className="lg:col-span-2">
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
                 <span className="text-dark-950 font-bold text-xl font-brahmi">𑀩</span>
@@ -56,29 +49,22 @@ const Footer: React.FC = () => {
               {Object.entries(socialLinks).map(([platform, url]) => {
                 const IconComponent = socialIcons[platform as keyof typeof socialIcons];
                 return (
-                  <motion.a
+                  <a
                     key={platform}
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ scale: 1.1, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-10 h-10 bg-surface-200 rounded-lg flex items-center justify-center text-gray-400 hover:text-primary-500 hover:bg-primary-500/10 transition-all duration-200"
+                    className="w-10 h-10 bg-surface-200 rounded-lg flex items-center justify-center text-gray-400 hover:text-primary-500 hover:bg-primary-500/10 transition-all duration-200 hover:scale-110 hover:-translate-y-0.5"
                   >
                     <IconComponent size={20} />
-                  </motion.a>
+                  </a>
                 );
               })}
             </div>
-          </motion.div>
+          </div>
 
           {/* Quick Links */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-          >
+          <div>
             <h4 className="text-lg font-serif font-semibold text-primary-400 mb-6">
               Quick Links
             </h4>
@@ -104,15 +90,10 @@ const Footer: React.FC = () => {
                 </li>
               ))}
             </ul>
-          </motion.div>
+          </div>
 
           {/* Contact Info */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
+          <div>
             <h4 className="text-lg font-serif font-semibold text-primary-400 mb-6">
               Contact
             </h4>
@@ -136,17 +117,11 @@ const Footer: React.FC = () => {
               </div>
               <p className="text-xs text-gray-500 mt-1">Namaskaar (Greetings)</p>
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Bottom Bar */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="border-t border-surface-100 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center"
-        >
+        <div className="border-t border-surface-100 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm mb-4 md:mb-0">
             © {currentYear} Good Life Jain Foundation. All rights reserved.
           </p>
@@ -156,7 +131,7 @@ const Footer: React.FC = () => {
             <Heart size={16} className="text-red-500" />
             <span>for preserving ancient wisdom</span>
           </div>
-        </motion.div>
+        </div>
       </div>
     </footer>
   );
