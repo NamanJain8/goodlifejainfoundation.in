@@ -937,7 +937,7 @@
   }
   
   .translation-output-container {
-    height: 300px;
+    height: 400px;
   }
   
   .translation-output {
@@ -945,8 +945,32 @@
   }
   
   .main-editor-section .ProseMirror {
-    height: 300px;
-    min-height: auto;
+    height: 100px;
+    min-height: 100px;
+    max-height: 100px;
+    font-size: 14px;
+    line-height: 1.4;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f7fafc;
+  }
+  
+  .main-editor-section .ProseMirror::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .main-editor-section .ProseMirror::-webkit-scrollbar-track {
+    background: #f7fafc;
+  }
+  
+  .main-editor-section .ProseMirror::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 2px;
+  }
+  
+  .main-editor-section .ProseMirror p {
+    margin: 0;
+    min-height: 1.4em;
   }
   
   .translate-toolbar-button {
@@ -1034,6 +1058,16 @@
   /* Hide text labels on mobile for compact toolbar */
   .mobile-hide {
     display: none;
+  }
+  
+  /* Ensure input area is compact on mobile */
+  .main-editor-section {
+    flex-shrink: 0;
+  }
+  
+  .translation-section {
+    flex: 1;
+    min-height: 0;
   }
   
   /* Hide less important buttons on very small screens */
