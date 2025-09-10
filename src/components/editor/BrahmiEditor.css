@@ -7,6 +7,8 @@
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: visible;
 }
 
 /* Editor */
@@ -54,7 +56,7 @@
 .toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.4rem;
   padding: 0.5rem;
   background: #f8f9fa;
   border: 1px solid #dee2e6;
@@ -62,8 +64,67 @@
   margin-bottom: 1rem;
 }
 
+/* Desktop: Single line toolbar */
+@media (min-width: 769px) {
+  .toolbar {
+    flex-wrap: nowrap;
+    overflow: visible;
+    position: relative;
+  }
+  
+  .toolbar-row {
+    display: contents;
+  }
+  
+  /* Ensure dropdowns are visible on desktop */
+  .color-picker-container,
+  .heading-dropdown-container,
+  .download-dropdown-container {
+    overflow: visible;
+  }
+}
+
+/* Mobile: Two row toolbar */
+@media (max-width: 768px) {
+  .toolbar-row {
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  
+  .toolbar-row:not(:last-child) {
+    margin-bottom: 0.3rem;
+  }
+}
+
+/* Toolbar groups for better organization */
+.toolbar-group {
+  display: flex;
+  gap: 0.2rem;
+  align-items: center;
+}
+
+.toolbar-group:not(:last-child)::after {
+  content: '';
+  width: 1px;
+  height: 20px;
+  background: #dee2e6;
+  margin: 0 0.3rem;
+}
+
+/* Translate group positioning */
+.translate-group {
+  margin-left: auto;
+}
+
+.translate-group::after {
+  display: none;
+}
+
 .toolbar button {
-  padding: 0.5rem;
+  padding: 0.3rem 0.4rem;
   background: white;
   border: 1px solid #dee2e6;
   border-radius: 4px;
@@ -71,10 +132,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 36px;
-  height: 36px;
+  min-width: 28px;
+  height: 28px;
   color: #495057;
   transition: all 0.2s;
+  flex-shrink: 0;
+  font-size: 0.8rem;
 }
 
 .toolbar button:hover {
@@ -91,22 +154,26 @@
 .toolbar .divider {
   width: 1px;
   background: #dee2e6;
-  margin: 0 0.5rem;
+  margin: 0 0.25rem;
+  flex-shrink: 0;
 }
 
 /* Color Picker Styles */
 .color-picker-container {
   position: relative;
+  z-index: 1;
 }
 
 /* Heading Dropdown Styles */
 .heading-dropdown-container {
   position: relative;
+  z-index: 1;
 }
 
 /* Download Dropdown Styles */
 .download-dropdown-container {
   position: relative;
+  z-index: 1;
 }
 
 .heading-dropdown-container button {
@@ -125,7 +192,7 @@
   position: absolute;
   top: 100%;
   left: 0;
-  z-index: 1000;
+  z-index: 10000;
   background: white;
   border: 1px solid #dee2e6;
   border-radius: 4px;
@@ -170,7 +237,7 @@
   position: absolute;
   top: 100%;
   left: 0;
-  z-index: 1000;
+  z-index: 10000;
   background: white;
   border: 1px solid #dee2e6;
   border-radius: 4px;
@@ -240,13 +307,15 @@
   position: absolute;
   top: 100%;
   left: 0;
-  z-index: 1000;
+  z-index: 10000;
   background: white;
   border: 1px solid #dee2e6;
   border-radius: 4px;
   padding: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-top: 0.25rem;
+  min-width: 200px;
+  max-width: 300px;
 }
 
 .color-grid {
@@ -542,7 +611,7 @@
   flex-direction: column;
   border: 1px solid #dee2e6;
   border-radius: 4px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .section-header {
@@ -880,6 +949,84 @@
   .toggle-option {
     padding: 0.5rem 1rem;
     font-size: 0.8rem;
+  }
+  
+  /* Mobile toolbar optimizations */
+  .toolbar {
+    padding: 0.3rem;
+    gap: 0.2rem;
+  }
+  
+  .toolbar-row {
+    gap: 0.2rem;
+  }
+  
+  .toolbar button:not(.translate-toolbar-button) {
+    padding: 0.4rem 0.5rem;
+    min-width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+  }
+  
+  /* Keep translate button rectangular on mobile */
+  .translate-toolbar-button {
+    padding: 0.5rem 0.8rem !important;
+    min-width: auto !important;
+    width: auto !important;
+    height: 32px !important;
+    font-size: 0.8rem !important;
+    border-radius: 6px !important;
+  }
+  
+  .toolbar-group {
+    gap: 0.15rem;
+  }
+  
+  .toolbar-group:not(:last-child)::after {
+    margin: 0 0.2rem;
+    height: 16px;
+  }
+  
+  /* Compact dropdown buttons */
+  .heading-dropdown-container button,
+  .download-button {
+    min-width: 32px !important;
+    height: 32px !important;
+    font-size: 0.8rem !important;
+    padding: 0.4rem 0.5rem !important;
+    border-radius: 6px !important;
+  }
+  
+  /* Make color palette squares more square on mobile */
+  .color-swatch {
+    width: 18px !important;
+    height: 18px !important;
+    border-radius: 3px !important;
+    min-width: 18px !important;
+    flex-shrink: 0 !important;
+  }
+  
+  .color-grid {
+    grid-template-columns: repeat(6, 1fr) !important;
+    gap: 0.2rem !important;
+    justify-items: center !important;
+  }
+  
+  /* Hide text labels on mobile for compact toolbar */
+  .mobile-hide {
+    display: none;
+  }
+  
+  /* Hide less important buttons on very small screens */
+  @media (max-width: 480px) {
+    .toolbar button[title="Justify"],
+    .toolbar button[title="Horizontal Rule"] {
+      display: none;
+    }
   }
 }
 

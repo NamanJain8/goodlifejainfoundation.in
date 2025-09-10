@@ -13,6 +13,25 @@ import VirtualKeyboard from './VirtualKeyboard';
 import Icon from '../ui/Icon';
 import { getLanguageStats } from '../../utils/languageDetection';
 import { translateFormattedTextToBrahmi, translateFormattedTextToHindi, cleanTranslatedHTML } from '../../utils/formattedTranslation';
+import { BiListUl, BiListOl, BiBold, BiItalic, BiUnderline, BiAlignLeft, BiAlignMiddle, BiAlignRight, BiAlignJustify, BiMinus } from 'react-icons/bi';
+
+// Extend Intl interface for Segmenter support
+declare global {
+  namespace Intl {
+    class Segmenter {
+      constructor(locales?: string | string[], options?: Intl.SegmenterOptions);
+      segment(input: string): Iterable<Intl.SegmentData>;
+    }
+    interface SegmenterOptions {
+      granularity?: 'grapheme' | 'word' | 'sentence';
+    }
+    interface SegmentData {
+      segment: string;
+      index: number;
+      input: string;
+    }
+  }
+}
 
 // Device detection utility
 const isMobileDevice = () => {
@@ -47,7 +66,7 @@ const BrahmiEditor: React.FC = () => {
     autofocus: 'start',
     editable: true,
     editorProps: {
-      handleKeyDown: (view, event) => {
+      handleKeyDown: (_view, event) => {
         // We are intercepting special keys to have custom behavior
         switch (event.key) {
           // FIXME: Uncomment this when we have a way to handle line breaks
@@ -1087,216 +1106,225 @@ const BrahmiEditor: React.FC = () => {
   return (
     <div className="editor-container">
       <div className="toolbar">
-        <button
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          className={editor.isActive('bold') ? 'active' : ''}
-          title="Bold"
-        >
-          <strong>B</strong>
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={editor.isActive('italic') ? 'active' : ''}
-          title="Italic"
-        >
-          <em>I</em>
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
-          className={editor.isActive('underline') ? 'active' : ''}
-          title="Underline"
-        >
-          <u>U</u>
-        </button>
-        <div className="divider" />
-        
-        {/* Color Picker */}
-        <div className="color-picker-container" ref={colorPickerRef}>
-          <button
-            onClick={() => setShowColorPicker(!showColorPicker)}
-            className="color-button"
-            title="Text Color"
-          >
-            A
-          </button>
-          {showColorPicker && (
-            <div className="color-picker-dropdown">
-              <div className="color-grid">
-                {commonColors.map((color) => (
+        {/* First Row */}
+        <div className="toolbar-row">
+          {/* Text Formatting Group */}
+          <div className="toolbar-group">
+            <button
+              onClick={() => editor.chain().focus().toggleBold().run()}
+              className={editor.isActive('bold') ? 'active' : ''}
+              title="Bold"
+            >
+              <BiBold size={16} />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().toggleItalic().run()}
+              className={editor.isActive('italic') ? 'active' : ''}
+              title="Italic"
+            >
+              <BiItalic size={16} />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().toggleUnderline().run()}
+              className={editor.isActive('underline') ? 'active' : ''}
+              title="Underline"
+            >
+              <BiUnderline size={16} />
+            </button>
+          </div>
+          
+          {/* Color Picker Group */}
+          <div className="toolbar-group">
+            <div className="color-picker-container" ref={colorPickerRef}>
+              <button
+                onClick={() => setShowColorPicker(!showColorPicker)}
+                className="color-button"
+                title="Text Color"
+              >
+                A
+              </button>
+              {showColorPicker && (
+                <div className="color-picker-dropdown">
+                  <div className="color-grid">
+                    {commonColors.map((color) => (
+                      <button
+                        key={color}
+                        className="color-swatch"
+                        style={{ backgroundColor: color }}
+                        onClick={() => handleColorChange(color)}
+                        title={color}
+                      />
+                    ))}
+                  </div>
                   <button
-                    key={color}
-                    className="color-swatch"
-                    style={{ backgroundColor: color }}
-                    onClick={() => handleColorChange(color)}
-                    title={color}
-                  />
-                ))}
-              </div>
-              <button
-                onClick={() => {
-                  editor.chain().focus().unsetColor().run();
-                  setShowColorPicker(false);
-                }}
-                className="reset-color-btn"
-                title="Reset Color"
-              >
-                Reset Color
-              </button>
+                    onClick={() => {
+                      editor.chain().focus().unsetColor().run();
+                      setShowColorPicker(false);
+                    }}
+                    className="reset-color-btn"
+                    title="Reset Color"
+                  >
+                    Reset Color
+                  </button>
+                </div>
+              )}
             </div>
-          )}
+          </div>
+          
+          {/* Text Alignment Group */}
+          <div className="toolbar-group">
+            <button
+              onClick={() => editor.chain().focus().setTextAlign('left').run()}
+              className={editor.isActive({ textAlign: 'left' }) ? 'active' : ''}
+              title="Align Left"
+            >
+              <BiAlignLeft size={16} />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().setTextAlign('center').run()}
+              className={editor.isActive({ textAlign: 'center' }) ? 'active' : ''}
+              title="Align Center"
+            >
+              <BiAlignMiddle size={16} />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().setTextAlign('right').run()}
+              className={editor.isActive({ textAlign: 'right' }) ? 'active' : ''}
+              title="Align Right"
+            >
+              <BiAlignRight size={16} />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().setTextAlign('justify').run()}
+              className={editor.isActive({ textAlign: 'justify' }) ? 'active' : ''}
+              title="Justify"
+            >
+              <BiAlignJustify size={16} />
+            </button>
+          </div>
         </div>
         
-        <div className="divider" />
-        
-        {/* Text Alignment */}
-        <button
-          onClick={() => editor.chain().focus().setTextAlign('left').run()}
-          className={editor.isActive({ textAlign: 'left' }) ? 'active' : ''}
-          title="Align Left"
-        >
-          ⫷
-        </button>
-        <button
-          onClick={() => editor.chain().focus().setTextAlign('center').run()}
-          className={editor.isActive({ textAlign: 'center' }) ? 'active' : ''}
-          title="Align Center"
-        >
-          ≡
-        </button>
-        <button
-          onClick={() => editor.chain().focus().setTextAlign('right').run()}
-          className={editor.isActive({ textAlign: 'right' }) ? 'active' : ''}
-          title="Align Right"
-        >
-          ⫸
-        </button>
-        <button
-          onClick={() => editor.chain().focus().setTextAlign('justify').run()}
-          className={editor.isActive({ textAlign: 'justify' }) ? 'active' : ''}
-          title="Justify"
-        >
-          ≣
-        </button>
-        
-        <div className="divider" />
-        
-        {/* Heading Dropdown */}
-        <div className="heading-dropdown-container" ref={headingDropdownRef}>
-          <button
-            onClick={() => setShowHeadingDropdown(!showHeadingDropdown)}
-            className={getCurrentHeadingLevel() ? 'active' : ''}
-            title="Headings"
-          >
-            {getCurrentHeadingLevel() ? `H${getCurrentHeadingLevel()}` : 'Heading'}
-            <span className="dropdown-arrow">▼</span>
-          </button>
-          {showHeadingDropdown && (
-            <div className="heading-dropdown">
+        {/* Second Row */}
+        <div className="toolbar-row">
+          {/* Structure Group */}
+          <div className="toolbar-group">
+            <div className="heading-dropdown-container" ref={headingDropdownRef}>
               <button
-                onClick={() => setHeading(null)}
-                className={!getCurrentHeadingLevel() ? 'active' : ''}
+                onClick={() => setShowHeadingDropdown(!showHeadingDropdown)}
+                className={getCurrentHeadingLevel() ? 'active' : ''}
+                title="Headings"
               >
-                Normal Text
+                {getCurrentHeadingLevel() ? `H${getCurrentHeadingLevel()}` : 'H'}
+                <span className="dropdown-arrow">▼</span>
               </button>
-              {[1, 2, 3, 4, 5, 6].map(level => (
-                <button
-                  key={level}
-                  onClick={() => setHeading(level)}
-                  className={getCurrentHeadingLevel() === level ? 'active' : ''}
-                >
-                  Heading {level}
-                </button>
-              ))}
+              {showHeadingDropdown && (
+                <div className="heading-dropdown">
+                  <button
+                    onClick={() => setHeading(null)}
+                    className={!getCurrentHeadingLevel() ? 'active' : ''}
+                  >
+                    Normal
+                  </button>
+                  {[1, 2, 3, 4, 5, 6].map(level => (
+                    <button
+                      key={level}
+                      onClick={() => setHeading(level)}
+                      className={getCurrentHeadingLevel() === level ? 'active' : ''}
+                    >
+                      H{level}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        
-        <div className="divider" />
-        
-        {/* Blockquote */}
-        <button
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={editor.isActive('blockquote') ? 'active' : ''}
-          title="Blockquote"
-        >
-          ❝
-        </button>
-        
-        {/* Horizontal Rule */}
-        <button
-          onClick={() => editor.chain().focus().setHorizontalRule().run()}
-          title="Horizontal Rule"
-        >
-          ―
-        </button>
-        
-        <div className="divider" />
-        
-        <button
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={editor.isActive('bulletList') ? 'active' : ''}
-          title="Bullet List"
-        >
-          • List
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={editor.isActive('orderedList') ? 'active' : ''}
-          title="Numbered List"
-        >
-          1. List
-        </button>
-        <div className="divider" />
-        
-        {/* Download Dropdown */}
-        <div className="download-dropdown-container" ref={downloadDropdownRef}>
-          <button
-            onClick={() => setShowDownloadDropdown(!showDownloadDropdown)}
-            className="download-button"
-            title="Download"
-          >
-            <Icon name="Download" size={18} />
-            <span className="dropdown-arrow">▼</span>
-          </button>
-          {showDownloadDropdown && (
-            <div className="download-dropdown">
+            
+            <button
+              onClick={() => editor.chain().focus().toggleBlockquote().run()}
+              className={editor.isActive('blockquote') ? 'active' : ''}
+              title="Blockquote"
+            >
+              ❝
+            </button>
+          </div>
+          
+          {/* Lists Group */}
+          <div className="toolbar-group">
+            <button
+              onClick={() => editor.chain().focus().toggleBulletList().run()}
+              className={editor.isActive('bulletList') ? 'active' : ''}
+              title="Bullet List"
+            >
+              <BiListUl size={16} />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().toggleOrderedList().run()}
+              className={editor.isActive('orderedList') ? 'active' : ''}
+              title="Numbered List"
+            >
+              <BiListOl size={16} />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().setHorizontalRule().run()}
+              title="Horizontal Rule"
+            >
+              <BiMinus size={16} />
+            </button>
+          </div>
+          
+          {/* Actions Group */}
+          <div className="toolbar-group">
+            <div className="download-dropdown-container" ref={downloadDropdownRef}>
               <button
-                onClick={() => handleDownload('pdf')}
-                className="download-option"
+                onClick={() => setShowDownloadDropdown(!showDownloadDropdown)}
+                className="download-button"
+                title="Download"
               >
-                <Icon name="FileDown" size={16} />
-                Download as PDF
+                <Icon name="Download" size={14} />
+                <span className="dropdown-arrow">▼</span>
               </button>
-              <button
-                onClick={() => handleDownload('image')}
-                className="download-option"
-              >
-                <Icon name="ImageDown" size={16} />
-                Download as Images
-              </button>
+              {showDownloadDropdown && (
+                <div className="download-dropdown">
+                  <button
+                    onClick={() => handleDownload('pdf')}
+                    className="download-option"
+                  >
+                    <Icon name="FileDown" size={16} />
+                    Download as PDF
+                  </button>
+                  <button
+                    onClick={() => handleDownload('image')}
+                    className="download-option"
+                  >
+                    <Icon name="ImageDown" size={16} />
+                    Download as Images
+                  </button>
+                </div>
+              )}
             </div>
-          )}
+          </div>
+          
+          {/* Translate Button - Right Side */}
+          <div className="toolbar-group translate-group">
+            <button 
+              className="translate-toolbar-button"
+              onClick={handleTranslateClick}
+              disabled={isTranslating}
+              title="Translate to Brahmi"
+            >
+              {isTranslating ? (
+                <>
+                  <Icon name="Loader2" size={14} className="spinning" />
+                  <span className="mobile-hide">Translating...</span>
+                </>
+              ) : (
+                <>
+                  <Icon name="ArrowRight" size={14} />
+                  <span className="mobile-hide">Translate</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
-        
-        <div className="divider" />
-        <button 
-          className="translate-toolbar-button"
-          onClick={handleTranslateClick}
-          disabled={isTranslating}
-          title="Translate to Brahmi"
-        >
-          {isTranslating ? (
-            <>
-              <Icon name="Loader2" size={18} className="spinning" />
-              Translating...
-            </>
-          ) : (
-            <>
-              <Icon name="ArrowRight" size={18} />
-              Translate
-            </>
-          )}
-        </button>
       </div>
       
       <div className="editor-sections">
