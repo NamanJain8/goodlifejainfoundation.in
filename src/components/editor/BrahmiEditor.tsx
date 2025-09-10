@@ -1350,15 +1350,6 @@ const BrahmiEditor: React.FC = () => {
           <div className="section-header">
             <h3 className="section-title">Translation Output</h3>
             <div className="section-controls">
-              <button 
-                className="copy-translation-button"
-                onClick={copyTranslationWithFormatting}
-                disabled={!translation}
-                title="Copy translation with formatting"
-              >
-                <Icon name="Copy" size={16} />
-                Copy
-              </button>
               <div className="language-toggle">
                 <button 
                   className={`toggle-option ${outputLanguage === 'brahmi' ? 'active' : ''}`}
@@ -1375,14 +1366,24 @@ const BrahmiEditor: React.FC = () => {
               </div>
             </div>
           </div>
-          <div 
-            className={`translation-output ${outputLanguage === 'brahmi' ? 'brahmi-font' : 'hindi-font'}`}
-            dangerouslySetInnerHTML={{
-              __html: translation || `<span class="placeholder-text">
-                Click "Translate" in the toolbar to see ${outputLanguage === 'brahmi' ? 'Brahmi' : 'Hindi'} translation here...
-              </span>`
-            }}
-          />
+          <div className="translation-output-container">
+            <button 
+              className="copy-translation-button"
+              onClick={copyTranslationWithFormatting}
+              disabled={!translation}
+              title="Copy translation with formatting"
+            >
+              <Icon name="Copy" size={16} />
+            </button>
+            <div 
+              className={`translation-output ${outputLanguage === 'brahmi' ? 'brahmi-font' : 'hindi-font'}`}
+              dangerouslySetInnerHTML={{
+                __html: translation || `<span class="placeholder-text">
+                  Click "Translate" in the toolbar to see ${outputLanguage === 'brahmi' ? 'Brahmi' : 'Hindi'} translation here...
+                </span>`
+              }}
+            />
+          </div>
         </div>
       </div>
       

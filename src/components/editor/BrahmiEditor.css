@@ -695,21 +695,26 @@
 
 /* Copy Translation Button */
 .copy-translation-button {
+  position: absolute !important;
+  top: 0.75rem !important;
+  right: 0.75rem !important;
+  z-index: 10 !important;
   background: #ffffff !important;
   color: #495057 !important;
   border: 1px solid #dee2e6 !important;
   border-radius: 4px !important;
-  padding: 0.4rem 0.6rem !important;
+  padding: 0.5rem !important;
   font-size: 0.75rem !important;
   font-weight: 500 !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
   display: flex !important;
   align-items: center !important;
-  gap: 0.4rem !important;
+  justify-content: center !important;
   white-space: nowrap !important;
-  min-width: auto !important;
-  height: auto !important;
+  min-width: 32px !important;
+  height: 32px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
 .copy-translation-button:hover:not(:disabled) {
@@ -783,10 +788,17 @@
   max-height: none;
 }
 
+/* Translation Output Container */
+.translation-output-container {
+  position: relative;
+  height: 400px;
+  background: #fff;
+}
+
 /* Translation Output */
 .translation-output {
   padding: 1rem;
-  height: 400px;
+  height: 100%;
   background: #fff;
   font-size: 1.2rem;
   line-height: 1.6;
@@ -924,8 +936,11 @@
     gap: 1.5rem;
   }
   
-  .translation-output {
+  .translation-output-container {
     height: 300px;
+  }
+  
+  .translation-output {
     font-size: 1.1rem;
   }
   
