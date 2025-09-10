@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Clock, BookOpen } from 'lucide-react';
 import Section from '../ui/Section';
 import Card from '../ui/Card';
 import { timelineData, spiritualContent } from '../../utils/data';
+import { trackSectionView } from '../../utils/analytics';
 
 const About: React.FC = () => {
+  useEffect(() => {
+    // Track section view
+    trackSectionView('about');
+  }, []);
+
   return (
     <Section id="about" variant="alt">
       {/* Section Header */}

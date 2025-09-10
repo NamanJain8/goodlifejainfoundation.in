@@ -1,11 +1,15 @@
 import React, { useEffect } from 'react';
 import { Play } from 'lucide-react';
 import { heroVideoUrl, spiritualContent } from '../../utils/data';
+import { trackSectionView } from '../../utils/analytics';
 
 const Hero: React.FC = () => {
   useEffect(() => {
     // Initialize Lity - dynamic import to avoid TypeScript issues
     import('lity').catch(console.error);
+    
+    // Track section view
+    trackSectionView('hero');
   }, []);
 
   return (

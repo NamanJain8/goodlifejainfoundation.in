@@ -13,6 +13,7 @@ import VirtualKeyboard from './VirtualKeyboard';
 import Icon from '../ui/Icon';
 import { getLanguageStats } from '../../utils/languageDetection';
 import { translateFormattedTextToBrahmi, translateFormattedTextToHindi, cleanTranslatedHTML } from '../../utils/formattedTranslation';
+import { trackTranslation, trackCopyTranslation, trackDownload, trackToolbarAction, trackLanguageToggle, trackPageView } from '../../utils/analytics';
 import { BiListUl, BiListOl, BiBold, BiItalic, BiUnderline, BiAlignLeft, BiAlignMiddle, BiAlignRight, BiAlignJustify, BiMinus } from 'react-icons/bi';
 
 // Extend Intl interface for Segmenter support
@@ -837,6 +838,8 @@ const BrahmiEditor: React.FC = () => {
   const downloadPDF = async () => {
     if (!editor) return;
     await generatePDF(editor.getHTML(), translation);
+    // Track download event
+    trackDownload('pdf', editor.getText().length);
   };
 
   const downloadImage = async () => {
@@ -853,6 +856,8 @@ const BrahmiEditor: React.FC = () => {
     }
     
     await generateImage(editor.getHTML(), translation);
+    // Track download event
+    trackDownload('image', editor.getText().length);
   };
 
   const handleDownload = async (format: 'pdf' | 'image') => {
@@ -901,10 +906,16 @@ const BrahmiEditor: React.FC = () => {
           
           // Show success feedback
           showCopyFeedback('Copied!');
+          
+          // Track copy event
+          trackCopyTranslation(outputLanguage, translation.length);
         } catch (richTextError) {
           // Fallback to plain text if rich text fails
           await navigator.clipboard.writeText(tempDiv.textContent || '');
           showCopyFeedback('Copied as plain text!');
+          
+          // Track copy event
+          trackCopyTranslation(outputLanguage, translation.length);
         }
       } else {
         // Fallback for browsers without Clipboard API
@@ -918,6 +929,8 @@ const BrahmiEditor: React.FC = () => {
           const successful = document.execCommand('copy');
           if (successful) {
             showCopyFeedback('Copied!');
+            // Track copy event
+            trackCopyTranslation(outputLanguage, translation.length);
           } else {
             throw new Error('Copy command failed');
           }
@@ -925,6 +938,8 @@ const BrahmiEditor: React.FC = () => {
           // Final fallback - copy plain text
           await navigator.clipboard.writeText(tempDiv.textContent || '');
           showCopyFeedback('Copied as plain text!');
+          // Track copy event
+          trackCopyTranslation(outputLanguage, translation.length);
         }
         
         selection?.removeAllRanges();
@@ -1027,6 +1042,9 @@ const BrahmiEditor: React.FC = () => {
   // Device detection effect
   useEffect(() => {
     setIsMobile(isMobileDevice());
+    
+    // Track editor page view
+    trackPageView('Brahmi Editor', '/editor');
   }, []);
 
   // Keyman initialization for mobile devices
@@ -1075,6 +1093,9 @@ const BrahmiEditor: React.FC = () => {
         : await translateFormattedTextToHindi(htmlContent);
       const cleanedTranslation = cleanTranslatedHTML(translated);
       setTranslation(cleanedTranslation);
+      
+      // Track translation event
+      trackTranslation('mixed', outputLanguage, textContent.length);
     } catch (error) {
       console.error('Translation failed:', error);
       setTranslation('Translation failed');
@@ -1088,6 +1109,8 @@ const BrahmiEditor: React.FC = () => {
     if (translation && !isTranslating && editor) {
       const textContent = editor.getText();
       if (textContent.trim()) {
+        // Track language toggle
+        trackLanguageToggle(outputLanguage);
         // Auto-retranslate when language toggle changes
         handleTranslateClick();
       }
@@ -1111,14 +1134,20 @@ const BrahmiEditor: React.FC = () => {
           {/* Text Formatting Group */}
           <div className="toolbar-group">
             <button
-              onClick={() => editor.chain().focus().toggleBold().run()}
+              onClick={() => {
+                editor.chain().focus().toggleBold().run();
+                trackToolbarAction('toggle_bold', 'bold');
+              }}
               className={editor.isActive('bold') ? 'active' : ''}
               title="Bold"
             >
               <BiBold size={16} />
             </button>
             <button
-              onClick={() => editor.chain().focus().toggleItalic().run()}
+              onClick={() => {
+                editor.chain().focus().toggleItalic().run();
+                trackToolbarAction('toggle_italic', 'italic');
+              }}
               className={editor.isActive('italic') ? 'active' : ''}
               title="Italic"
             >
