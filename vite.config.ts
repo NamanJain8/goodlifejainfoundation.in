@@ -22,10 +22,6 @@ export default defineConfig({
             '@tiptap/react', 
             '@tiptap/starter-kit',
             '@tiptap/extension-color',
-            '@tiptap/extension-highlight',
-            '@tiptap/extension-image',
-            '@tiptap/extension-link',
-            '@tiptap/extension-placeholder',
             '@tiptap/extension-text-align',
             '@tiptap/extension-text-style',
             '@tiptap/extension-underline'

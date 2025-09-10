@@ -151,6 +151,62 @@
   border-color: #0056b3;
 }
 
+.feedback-button {
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  color: white !important;
+  border-color: #b45309 !important;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.feedback-button:hover {
+  background: linear-gradient(135deg, #d97706, #b45309) !important;
+  border-color: #92400e !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(245, 158, 11, 0.3);
+}
+
+/* Floating Feedback Button */
+.floating-feedback-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #d4af37, #b8941f);
+  color: #0a0a0a;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  font-size: 0;
+}
+
+.floating-feedback-button:hover {
+  background: linear-gradient(135deg, #b8941f, #a16207);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+}
+
+.floating-feedback-button:active {
+  transform: translateY(0) scale(0.95);
+}
+
+/* Responsive adjustments for floating button */
+@media (max-width: 768px) {
+  .floating-feedback-button {
+    bottom: 15px;
+    right: 15px;
+    width: 48px;
+    height: 48px;
+  }
+}
+
 .toolbar .divider {
   width: 1px;
   background: #dee2e6;

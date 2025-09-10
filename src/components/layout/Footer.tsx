@@ -1,9 +1,11 @@
-import React from 'react';
-import { Mail, Facebook, Instagram, Youtube, Smartphone, Heart } from 'lucide-react';
+import React, { useState } from 'react';
+import { Mail, Facebook, Instagram, Youtube, Smartphone, Heart, MessageSquare } from 'lucide-react';
 import { socialLinks, contactInfo } from '../../utils/data';
+import FeedbackModal from '../ui/FeedbackModal';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 
   const socialIcons = {
     facebook: Facebook,
@@ -107,6 +109,17 @@ const Footer: React.FC = () => {
                   {contactInfo.email}
                 </a>
               </div>
+              
+              {/* Feedback Button */}
+              <div className="pt-2">
+                <button
+                  onClick={() => setIsFeedbackModalOpen(true)}
+                  className="inline-flex items-center space-x-2 px-4 py-2.5 bg-primary-500 hover:bg-primary-600 text-dark-950 font-medium rounded-lg transition-all duration-200 hover:scale-105 active:scale-95"
+                >
+                  <MessageSquare size={16} />
+                  <span>Share Your Thoughts</span>
+                </button>
+              </div>
             </div>
 
             {/* Brahmi Script Display */}
@@ -118,6 +131,7 @@ const Footer: React.FC = () => {
               <p className="text-xs text-gray-500 mt-1">Namaskaar (Greetings)</p>
             </div>
           </div>
+
         </div>
 
         {/* Bottom Bar */}
@@ -133,6 +147,13 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Feedback Modal */}
+      <FeedbackModal
+        isOpen={isFeedbackModalOpen}
+        onClose={() => setIsFeedbackModalOpen(false)}
+        title="Share Your Feedback"
+      />
     </footer>
   );
 };

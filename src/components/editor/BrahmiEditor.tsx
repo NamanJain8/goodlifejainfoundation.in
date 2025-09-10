@@ -11,6 +11,7 @@ import JSZip from 'jszip';
 import './BrahmiEditor.css';
 import VirtualKeyboard from './VirtualKeyboard';
 import Icon from '../ui/Icon';
+import FeedbackModal from '../ui/FeedbackModal';
 import { getLanguageStats } from '../../utils/languageDetection';
 import { translateFormattedTextToBrahmi, translateFormattedTextToHindi, cleanTranslatedHTML } from '../../utils/formattedTranslation';
 import { trackTranslation, trackCopyTranslation, trackDownload, trackToolbarAction, trackLanguageToggle, trackPageView } from '../../utils/analytics';
@@ -44,6 +45,7 @@ const BrahmiEditor: React.FC = () => {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showHeadingDropdown, setShowHeadingDropdown] = useState(false);
   const [showDownloadDropdown, setShowDownloadDropdown] = useState(false);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [translation, setTranslation] = useState('');
   const [outputLanguage, setOutputLanguage] = useState<'brahmi' | 'hindi'>('brahmi');
   const [isTranslating, setIsTranslating] = useState(false);
@@ -1424,6 +1426,22 @@ const BrahmiEditor: React.FC = () => {
       )}
       
       {isMobile && <div id="KeymanWebControl"></div>}
+      
+      {/* Floating Feedback Button */}
+      <button
+        onClick={() => setIsFeedbackModalOpen(true)}
+        className="floating-feedback-button"
+        title="Share Feedback"
+      >
+        <Icon name="MessageSquare" size={20} />
+      </button>
+      
+      {/* Feedback Modal */}
+      <FeedbackModal
+        isOpen={isFeedbackModalOpen}
+        onClose={() => setIsFeedbackModalOpen(false)}
+        title="Share Your Feedback"
+      />
     </div>
   );
 };
