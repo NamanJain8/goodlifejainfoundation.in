@@ -31,8 +31,12 @@ const Hero: React.FC = () => {
         <div className="max-w-4xl mx-auto">
           {/* Brahmi Script Display */}
           <div className="mb-6 sm:mb-8">
-            <div className="text-3xl sm:text-5xl md:text-6xl lg:text-8xl font-brahmi text-primary-500 mb-3 sm:mb-4">
-              𑀩𑁆𑀭𑀸𑀳𑁆𑀫𑀻 𑀮𑀺𑀧𑀺
+            <div className="mb-3 sm:mb-4">
+              <img 
+                src="/assets/BrahmiLipi.png" 
+                alt="Brahmi Lipi" 
+                className="h-12 sm:h-16 md:h-20 lg:h-24 xl:h-28 mx-auto object-contain"
+              />
             </div>
             <p className="text-primary-400 text-base sm:text-lg">Brahmi Lipi</p>
             <p className="text-primary-100 text-base sm:text-lg">Mother of all scripts</p>
