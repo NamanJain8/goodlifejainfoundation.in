@@ -1233,6 +1233,24 @@ const BrahmiEditor: React.FC = () => {
               <BiAlignJustify size={16} />
             </button>
           </div>
+          
+          {/* Lists Group */}
+          <div className="toolbar-group">
+            <button
+              onClick={() => editor.chain().focus().toggleBulletList().run()}
+              className={editor.isActive('bulletList') ? 'active' : ''}
+              title="Bullet List"
+            >
+              <BiListUl size={16} />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().toggleOrderedList().run()}
+              className={editor.isActive('orderedList') ? 'active' : ''}
+              title="Numbered List"
+            >
+              <BiListOl size={16} />
+            </button>
+          </div>
         </div>
         
         {/* Second Row */}
@@ -1278,22 +1296,8 @@ const BrahmiEditor: React.FC = () => {
             </button>
           </div>
           
-          {/* Lists Group */}
+          {/* Horizontal Rule Group */}
           <div className="toolbar-group">
-            <button
-              onClick={() => editor.chain().focus().toggleBulletList().run()}
-              className={editor.isActive('bulletList') ? 'active' : ''}
-              title="Bullet List"
-            >
-              <BiListUl size={16} />
-            </button>
-            <button
-              onClick={() => editor.chain().focus().toggleOrderedList().run()}
-              className={editor.isActive('orderedList') ? 'active' : ''}
-              title="Numbered List"
-            >
-              <BiListOl size={16} />
-            </button>
             <button
               onClick={() => editor.chain().focus().setHorizontalRule().run()}
               title="Horizontal Rule"
@@ -1345,12 +1349,12 @@ const BrahmiEditor: React.FC = () => {
               {isTranslating ? (
                 <>
                   <Icon name="Loader2" size={14} className="spinning" />
-                  <span className="mobile-hide">Translating...</span>
+                  <span>Translating...</span>
                 </>
               ) : (
                 <>
                   <Icon name="ArrowRight" size={14} />
-                  <span className="mobile-hide">Translate</span>
+                  <span>Translate</span>
                 </>
               )}
             </button>

@@ -70,6 +70,7 @@
     flex-wrap: nowrap;
     overflow: visible;
     position: relative;
+    justify-content: space-between;
   }
   
   .toolbar-row {
@@ -92,10 +93,15 @@
     align-items: center;
     flex-wrap: wrap;
     width: 100%;
+    justify-content: space-between;
   }
   
   .toolbar-row:not(:last-child) {
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.2rem;
+  }
+  
+  .toolbar-row:last-child {
+    justify-content: space-between;
   }
 }
 
@@ -104,6 +110,7 @@
   display: flex;
   gap: 0.2rem;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .toolbar-group:not(:last-child)::after {
@@ -979,33 +986,40 @@
   margin-bottom: 0;
 }
 
-.placeholder-text {
-  color: #adb5bd;
-  font-style: italic;
-  font-size: 1rem;
-}
+  .placeholder-text {
+    color: #adb5bd;
+    font-style: italic;
+    font-size: 0.9rem;
+  }
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .editor-container {
+    padding: 0.4rem;
+    gap: 0.4rem;
+  }
+  
   .editor-sections {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 0.4rem;
   }
   
   .translation-output-container {
-    height: 400px;
+    height: 200px;
   }
   
   .translation-output {
-    font-size: 1.1rem;
+    font-size: 0.9rem;
+    padding: 0.6rem;
   }
   
   .main-editor-section .ProseMirror {
     height: 100px;
     min-height: 100px;
     max-height: 100px;
-    font-size: 14px;
-    line-height: 1.4;
+    font-size: 12px;
+    line-height: 1.2;
+    padding: 0.6rem;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #cbd5e0 #f7fafc;
@@ -1036,45 +1050,73 @@
   }
   
   .language-toggle {
-    flex-direction: column;
-    gap: 4px;
-    width: 100%;
+    flex-direction: row;
+    gap: 2px;
+    width: auto;
   }
   
   .toggle-option {
-    padding: 0.5rem 1rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+  }
+  
+  .section-header {
+    padding: 0.3rem 0.6rem;
+    gap: 0.15rem;
+  }
+  
+  .section-title {
+    font-size: 0.75rem;
+  }
+  
+  .placeholder-text {
     font-size: 0.8rem;
+  }
+  
+  .lang-stat {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+  
+  .copy-translation-button {
+    top: 0.5rem !important;
+    right: 0.5rem !important;
+    padding: 0.3rem !important;
+    min-width: 28px !important;
+    height: 28px !important;
+    font-size: 0.7rem !important;
   }
   
   /* Mobile toolbar optimizations */
   .toolbar {
-    padding: 0.3rem;
-    gap: 0.2rem;
+    padding: 0.25rem;
+    gap: 0.15rem;
+    margin-bottom: 0.3rem;
   }
   
   .toolbar-row {
-    gap: 0.2rem;
+    gap: 0.15rem;
   }
   
   .toolbar button:not(.translate-toolbar-button) {
-    padding: 0.4rem 0.5rem;
-    min-width: 32px;
-    height: 32px;
-    font-size: 0.8rem;
+    padding: 0.3rem 0.4rem;
+    min-width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 6px;
+    border-radius: 4px;
   }
   
   /* Keep translate button rectangular on mobile */
   .translate-toolbar-button {
-    padding: 0.5rem 0.8rem !important;
+    padding: 0.4rem 0.6rem !important;
     min-width: auto !important;
     width: auto !important;
-    height: 32px !important;
-    font-size: 0.8rem !important;
-    border-radius: 6px !important;
+    height: 28px !important;
+    font-size: 0.75rem !important;
+    border-radius: 4px !important;
   }
   
   .toolbar-group {
@@ -1089,19 +1131,19 @@
   /* Compact dropdown buttons */
   .heading-dropdown-container button,
   .download-button {
-    min-width: 32px !important;
-    height: 32px !important;
-    font-size: 0.8rem !important;
-    padding: 0.4rem 0.5rem !important;
-    border-radius: 6px !important;
+    min-width: 28px !important;
+    height: 28px !important;
+    font-size: 0.75rem !important;
+    padding: 0.3rem 0.4rem !important;
+    border-radius: 4px !important;
   }
   
   /* Make color palette squares more square on mobile */
   .color-swatch {
-    width: 18px !important;
-    height: 18px !important;
-    border-radius: 3px !important;
-    min-width: 18px !important;
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 2px !important;
+    min-width: 16px !important;
     flex-shrink: 0 !important;
   }
   
