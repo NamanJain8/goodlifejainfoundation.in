@@ -8,8 +8,8 @@ export const navigationItems: NavItem[] = [
     label: 'Tools',
     href: '#tools',
     children: [
+      { label: 'Brahmi Text Editor', href: '#keyboard' },
       { label: 'Translator', href: '#translator' },
-      { label: 'Multi Keyboard', href: '#keyboard' },
       { label: 'Learning Game', href: '#game' },
     ],
   },
@@ -196,18 +196,18 @@ export const timelineData: TimelineItem[] = [
 // Tools Data
 export const toolsData: Tool[] = [
   {
+    id: 'keyboard',
+    title: 'Brahmi Text Editor',
+    description: 'Type in all major Indic languages and automatically convert to Brahmi script with our advanced multi-language keyboard.',
+    icon: 'Keyboard',
+    link: '/editor',
+  },
+  {
     id: 'translator',
     title: 'Translator',
     description: 'Convert any text into Brahmi script with just a click. Bridge the gap between modern communication and ancient writing systems.',
     icon: 'Languages',
     isWidget: true,
-  },
-  {
-    id: 'keyboard',
-    title: 'Multi Keyboard',
-    description: 'Type in Hindi or English and automatically convert to Brahmi script with our advanced multi-language keyboard.',
-    icon: 'Keyboard',
-    link: '/editor',
   },
   {
     id: 'game',

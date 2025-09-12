@@ -92,7 +92,11 @@ const Header: React.FC = () => {
                     </button>
                     
                     {activeDropdown === item.label && (
-                      <div className="absolute top-full left-0 mt-2 w-48 bg-surface-200 rounded-lg shadow-xl border border-surface-100 py-2">
+                      <div 
+                        className="absolute top-full left-0 mt-1 w-48 bg-surface-200 rounded-lg shadow-xl border border-surface-100 py-2 z-50"
+                        onMouseEnter={() => setActiveDropdown(item.label)}
+                        onMouseLeave={() => setActiveDropdown(null)}
+                      >
                           {item.children.map((child) => (
                             <button
                               key={child.label}
